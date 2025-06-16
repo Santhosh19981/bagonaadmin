@@ -361,7 +361,7 @@ body {
 }
 
 #sidebar .side-menu li.active {
-	background: #ff8f1a;
+	background: #e95e38;
 	position: relative;
 
 }
@@ -374,7 +374,7 @@ body {
 	border-radius: 50%;
 	top: -40px;
 	right: 0;
-	box-shadow: 20px 20px 0 #ff8f1a;
+	box-shadow: 20px 20px 0 #e95e38;
 	z-index: -1;
 }
 
@@ -386,7 +386,7 @@ body {
 	border-radius: 50%;
 	bottom: -40px;
 	right: 0;
-	box-shadow: 20px -20px 0 #ff8f1a;
+	box-shadow: 20px -20px 0 #e95e38;
 	z-index: -1;
 }
 
@@ -946,6 +946,7 @@ body.dark #content nav .profile-menu li a {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	text-align: left;
 }
 
 #content main .table-data .order table tr td:first-child {
@@ -1217,11 +1218,6 @@ body.dark #content nav .profile-menu li a {
 /** Search Form CSS Start **/
 
 
-form {
-	max-width: 400px;
-	width: 100%;
-
-}
 
 form .form-input {
 	display: flex;

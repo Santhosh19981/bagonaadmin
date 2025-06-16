@@ -1,0 +1,11 @@
+.charts-container h2,.chart-header h3{
+    font-size: 20px;
+    font-weight: 700;
+}
+.revenue-header,.chart-header {
+    display: flex
+;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
