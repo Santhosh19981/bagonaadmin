@@ -15,4 +15,5 @@ export const routes: Routes = [
   { path: 'orders', component: OrdersComponent },
   { path: 'payment-history', component: PaymentHistoryComponent },
   { path: 'users', component: UsersComponent },
+   { path: 'vendors', component: VendorsComponent },
 ];
