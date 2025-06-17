@@ -1,42 +1,50 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { Router, NavigationEnd, RouterLink } from '@angular/router';
+import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidemenu',
+  imports: [],
   templateUrl: './sidemenu.component.html',
-  styleUrls: ['./sidemenu.component.scss'],
-  imports : [CommonModule]
+  styleUrl: './sidemenu.component.scss'
 })
-export class SidemenuComponent implements OnInit {
-  menu: string = 'dashboard';
+export class SidemenuComponent {
+   @Input() menuFromParent: string = '';
+  menu:string = "dashboard";
 
-  constructor(private router: Router) {}
+  constructor(private router: Router){
 
-  ngOnInit() {
-    debugger; 
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        const currentUrl = event.urlAfterRedirects;
-        if (currentUrl.includes('/dashboard')) {
-          this.menu = 'dashboard';
-        } else if (currentUrl.includes('/cheffs')) {
-          this.menu = 'cheffs';
-        } else if (currentUrl.includes('/orders')) {
-          this.menu = 'orders';
-        } else if (currentUrl.includes('/payment-history')) {
-          this.menu = 'payment-history';
-        } else if (currentUrl.includes('/users')) {
-          this.menu = 'users';
-        } else if (currentUrl.includes('/vendors')) {
-          this.menu = 'vendors';  
-        }
-      }
-    });
+  }
+
+
+  ngOnInit(): void {
+    if (this.menuFromParent) {
+      this.gotoMenu(this.menuFromParent);
+    }
   }
 
   gotoMenu(route: string) {
     this.menu = route;
-    this.router.navigate([`/${route}`]);
+    switch (route) {
+      case 'dashboard':
+        this.router.navigate(['/dashboard']);
+        break;
+      case 'cheffs':
+        this.router.navigate(['/cheffs']);
+        break;
+      case 'orders':
+        this.router.navigate(['/orders']);
+        break;
+      case 'payment-history':
+        this.router.navigate(['/payment-history']);
+        break;
+      case 'users':
+        this.router.navigate(['/users']);
+        break;
+      case 'vendors':
+        this.router.navigate(['/vendors']);
+        break;
+      default:
+        break;
+    }
   }
 }
