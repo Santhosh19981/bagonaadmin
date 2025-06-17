@@ -6,14 +6,15 @@ import { OrdersComponent } from './components/orders/orders.component';
 import { PaymentHistoryComponent } from './components/payment-history/payment-history.component';
 import { UsersComponent } from './components/users/users.component';
 import { VendorsComponent } from './components/vendors/vendors.component';
+import { AuthGuard } from './auth.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'cheffs', component: CheffsComponent },
+  { path: '', redirectTo: 'login', pathMatch: 'full',  },
+  { path: 'dashboard', component: DashboardComponent,canActivate:  [AuthGuard]  },
+  { path: 'cheffs', component: CheffsComponent , canActivate:  [AuthGuard] },
   { path: 'login', component: LoginComponent },
-  { path: 'orders', component: OrdersComponent },
-  { path: 'payment-history', component: PaymentHistoryComponent },
-  { path: 'users', component: UsersComponent },
-   { path: 'vendors', component: VendorsComponent },
+  { path: 'orders', component: OrdersComponent,canActivate:  [AuthGuard]  },
+  { path: 'payment-history', component: PaymentHistoryComponent,canActivate:  [AuthGuard]  },
+  { path: 'users', component: UsersComponent,canActivate:  [AuthGuard]  },
+   { path: 'vendors', component: VendorsComponent,canActivate:  [AuthGuard]  },
 ];
