@@ -1,6 +1,6 @@
 <div class="admin-dashboard">
   <!-- SIDEBAR -->
- <app-sidemenu [menuFromParent]="'orders'"></app-sidemenu>
+  <app-sidemenu [menuFromParent]="'orders'"></app-sidemenu>
   <!-- SIDEBAR -->
 
 
@@ -81,7 +81,7 @@
                 </a>
             </div> -->
 
-      <ul class="box-info">
+      <ul class="box-info" style="display: none;">
 
         <li>
           <div class="bx">
@@ -144,7 +144,7 @@
       </ul>
 
       <!--  Orders Table -->
-      <div class="table-data">
+      <div class="table-data" style="display: none;">
         <div class="order">
           <div class="head">
             <h3>Recent Orders</h3>
@@ -195,8 +195,8 @@
                             <path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0Z"></path>
                           </g>
                         </svg></a>
-                      <a href="#!" class="admin-btn btn-soft-primary"><svg xmlns="http://www.w3.org/2000/svg" width="1em"
-                          height="1em" viewBox="0 0 24 24">
+                      <a href="#!" class="admin-btn btn-soft-primary"><svg xmlns="http://www.w3.org/2000/svg"
+                          width="1em" height="1em" viewBox="0 0 24 24">
                           <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"
                             d="M4 22h4m12 0h-8m1.888-18.337l.742-.742a3.146 3.146 0 1 1 4.449 4.45l-.742.74m-4.449-4.448s.093 1.576 1.483 2.966s2.966 1.483 2.966 1.483m-4.449-4.45L7.071 10.48c-.462.462-.693.692-.891.947a5.2 5.2 0 0 0-.599.969c-.139.291-.242.601-.449 1.22l-.875 2.626m14.08-8.13L14.93 11.52m-3.41 3.41c-.462.462-.692.692-.947.891q-.451.352-.969.599c-.291.139-.601.242-1.22.448l-2.626.876m0 0l-.641.213a.848.848 0 0 1-1.073-1.073l.213-.641m1.501 1.5l-1.5-1.5">
                           </path>
@@ -219,8 +219,978 @@
 
       </div>
 
+      <!-- Orders View start -->
+      <div class="card">
+        <div class="card-header">
+          <ul class="nav nav-tabs nav-tabs-neutral justify-content-center" role="tablist"
+            data-background-color="orange">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#Events" role="tab">Events</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#Service" role="tab">Service</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#Vendors" role="tab">Vendors</a>
+            </li>
 
-     
+          </ul>
+        </div>
+        <div class="card-body">
+          <!-- Tab panes -->
+          <div class="tab-content text-center">
+            <div class="tab-pane active" id="Events" role="tabpanel">
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-3">
+                    <!-- From Uiverse.io by iconicchandu -->
+                    <div class="Event-View-Card">
+                      <div class="Event-View-Card__border"></div>
+                      <div class="Event-View-Card_title__container">
+                        <span class="Event-View-Card_title">Marriage Event</span>
+                        <div class="">
+                          <img src="https://cbeditz.com/public/cbeditz/preview/wedding-marriage-couple-image-background-free-si9jz.jpg">
+                        </div>
+                      </div>
+                      <hr class="line" />
+                      <ul class="Event-View-Card__list">
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Date : 24/09/25</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Time : 07:45 PM</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Total Members : 200</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Contact : 9876543210</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Address : Western Dallas center 5th Floor, Survey No: 83/1 Raidurg Village, Serillingmpally Mandal, Ranga Reddy District Hyderabad,500084</span>
+                        </li>
+                       
+                      </ul>
+                      <div class="buttonContainer">
+                        <button class="Accept">Accept</button>
+                        <button class="Decline">Decline</button>
+                      </div>
+                      
+                    </div>
+
+                  </div>
+                  <div class="col-md-3">
+                    <!-- From Uiverse.io by iconicchandu -->
+                    <div class="Event-View-Card">
+                      <div class="Event-View-Card__border"></div>
+                      <div class="Event-View-Card_title__container">
+                        <span class="Event-View-Card_title">Marriage Event</span>
+                        <div class="">
+                          <img src="https://cbeditz.com/public/cbeditz/preview/wedding-marriage-couple-image-background-free-si9jz.jpg">
+                        </div>
+                      </div>
+                      <hr class="line" />
+                      <ul class="Event-View-Card__list">
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Date : 24/09/25</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Time : 07:45 PM</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Total Members : 200</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Contact : 9876543210</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Address : Western Dallas center 5th Floor, Survey No: 83/1 Raidurg Village, Serillingmpally Mandal, Ranga Reddy District Hyderabad,500084</span>
+                        </li>
+                       
+                      </ul>
+                      <div class="buttonContainer">
+                        <button class="Accept">Accept</button>
+                        <button class="Decline">Decline</button>
+                      </div>
+                      
+                    </div>
+
+                  </div>
+                  <div class="col-md-3">
+                    <!-- From Uiverse.io by iconicchandu -->
+                    <div class="Event-View-Card">
+                      <div class="Event-View-Card__border"></div>
+                      <div class="Event-View-Card_title__container">
+                        <span class="Event-View-Card_title">Birthday Event</span>
+                        <div class="">
+                          <img src="https://img.freepik.com/premium-photo/poster-that-says-happy-birthday-it_445744-963.jpg">
+                        </div>
+                      </div>
+                      <hr class="line" />
+                      <ul class="Event-View-Card__list">
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Date : 24/09/25</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Time : 07:45 PM</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Total Members : 200</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Contact : 9876543210</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Address : Western Dallas center 5th Floor, Survey No: 83/1 Raidurg Village, Serillingmpally Mandal, Ranga Reddy District Hyderabad,500084</span>
+                        </li>
+                       
+                      </ul>
+                      <div class="buttonContainer">
+                        <button class="Accept">Accept</button>
+                        <button class="Decline">Decline</button>
+                      </div>
+                      
+                    </div>
+
+                  </div>
+                  <div class="col-md-3">
+                    <!-- From Uiverse.io by iconicchandu -->
+                    <div class="Event-View-Card">
+                      <div class="Event-View-Card__border"></div>
+                      <div class="Event-View-Card_title__container">
+                        <span class="Event-View-Card_title">Baby Shower Event</span>
+                        <div class="">
+                          <img src="https://www.nscoc.org/wp-content/uploads/2023/09/BABY-SHOWER_web-thumbnail_blue-1.png">
+                        </div>
+                      </div>
+                      <hr class="line" />
+                      <ul class="Event-View-Card__list">
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Date : 24/09/25</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Time : 07:45 PM</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Total Members : 200</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Contact : 9876543210</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Address : Western Dallas center 5th Floor, Survey No: 83/1 Raidurg Village, Serillingmpally Mandal, Ranga Reddy District Hyderabad,500084</span>
+                        </li>
+                       
+                      </ul>
+                      <div class="buttonContainer">
+                        <button class="Accept">Accept</button>
+                        <button class="Decline">Decline</button>
+                      </div>
+                      
+                    </div>
+
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane" id="Service" role="tabpanel">
+             <div class="container">
+                <div class="row">
+                  <div class="col-md-3">
+                    <!-- From Uiverse.io by iconicchandu -->
+                    <div class="Event-View-Card">
+                      <div class="Event-View-Card__border"></div>
+                      <div class="Event-View-Card_title__container">
+                        <span class="Event-View-Card_title">⁠Function halls</span>
+                        <div class="">
+                          <img src="https://d3vinz9hlbe3sy.cloudfront.net/v_2037/image_12993">
+                        </div>
+                      </div>
+                      <hr class="line" />
+                      <ul class="Event-View-Card__list">
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Date : 24/09/25</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Time : 07:45 PM</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Total Members : 200</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Contact : 9876543210</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Address : Western Dallas center 5th Floor, Survey No: 83/1 Raidurg Village, Serillingmpally Mandal, Ranga Reddy District Hyderabad,500084</span>
+                        </li>
+                       
+                      </ul>
+                      <div class="buttonContainer">
+                        <button class="Accept">Accept</button>
+                        <button class="Decline">Decline</button>
+                      </div>
+                      
+                    </div>
+
+                  </div>
+                  <div class="col-md-3">
+                    <!-- From Uiverse.io by iconicchandu -->
+                    <div class="Event-View-Card">
+                      <div class="Event-View-Card__border"></div>
+                      <div class="Event-View-Card_title__container">
+                        <span class="Event-View-Card_title">Kirana/grocery </span>
+                        <div class="">
+                          <img src="https://i.ytimg.com/vi/DPuJ_J0apJU/maxresdefault.jpg">
+                        </div>
+                      </div>
+                      <hr class="line" />
+                      <ul class="Event-View-Card__list">
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Date : 24/09/25</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Time : 07:45 PM</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Total Members : 200</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Contact : 9876543210</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Address : Western Dallas center 5th Floor, Survey No: 83/1 Raidurg Village, Serillingmpally Mandal, Ranga Reddy District Hyderabad,500084</span>
+                        </li>
+                       
+                      </ul>
+                      <div class="buttonContainer">
+                        <button class="Accept">Accept</button>
+                        <button class="Decline">Decline</button>
+                      </div>
+                      
+                    </div>
+
+                  </div>
+                   <div class="col-md-3">
+                    <!-- From Uiverse.io by iconicchandu -->
+                    <div class="Event-View-Card">
+                      <div class="Event-View-Card__border"></div>
+                      <div class="Event-View-Card_title__container">
+                        <span class="Event-View-Card_title">Photography </span>
+                        <div class="">
+                          <img src="https://www.weddingphotoplanet.com/admin_image/slider/164792624253955002602.JPG">
+                        </div>
+                      </div>
+                      <hr class="line" />
+                      <ul class="Event-View-Card__list">
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Date : 24/09/25</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Time : 07:45 PM</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Total Members : 200</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Contact : 9876543210</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Address : Western Dallas center 5th Floor, Survey No: 83/1 Raidurg Village, Serillingmpally Mandal, Ranga Reddy District Hyderabad,500084</span>
+                        </li>
+                       
+                      </ul>
+                      <div class="buttonContainer">
+                        <button class="Accept">Accept</button>
+                        <button class="Decline">Decline</button>
+                      </div>
+                      
+                    </div>
+
+                  </div>
+                  <div class="col-md-3">
+                    <!-- From Uiverse.io by iconicchandu -->
+                    <div class="Event-View-Card">
+                      <div class="Event-View-Card__border"></div>
+                      <div class="Event-View-Card_title__container">
+                        <span class="Event-View-Card_title">⁠Tenthouse </span>
+                        <div class="">
+                          <img src="https://cdn0.weddingwire.in/vendor/2470/3_2/960/jpeg/tent-house-maha-shakti-tent-house-wedding-decor-2_15_382470-163135490658592.webp">
+                        </div>
+                      </div>
+                      <hr class="line" />
+                      <ul class="Event-View-Card__list">
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Date : 24/09/25</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Time : 07:45 PM</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Total Members : 200</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Contact : 9876543210</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Address : Western Dallas center 5th Floor, Survey No: 83/1 Raidurg Village, Serillingmpally Mandal, Ranga Reddy District Hyderabad,500084</span>
+                        </li>
+                       
+                      </ul>
+                      <div class="buttonContainer">
+                        <button class="Accept">Accept</button>
+                        <button class="Decline">Decline</button>
+                      </div>
+                      
+                    </div>
+
+                  </div>
+                 
+                  
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane" id="Vendors" role="tabpanel">
+             <div class="container">
+                <div class="row">
+                  <div class="col-md-3">
+                    <!-- From Uiverse.io by iconicchandu -->
+                    <div class="Event-View-Card">
+                      <div class="Event-View-Card__border"></div>
+                      <div class="Event-View-Card_title__container">
+                        <span class="Event-View-Card_title">Marriage Event</span>
+                        <div class="">
+                          <img src="https://cbeditz.com/public/cbeditz/preview/wedding-marriage-couple-image-background-free-si9jz.jpg">
+                        </div>
+                      </div>
+                      <hr class="line" />
+                      <ul class="Event-View-Card__list">
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Date : 24/09/25</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Time : 07:45 PM</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Total Members : 200</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Contact : 9876543210</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Address : Western Dallas center 5th Floor, Survey No: 83/1 Raidurg Village, Serillingmpally Mandal, Ranga Reddy District Hyderabad,500084</span>
+                        </li>
+                       
+                      </ul>
+                      <div class="buttonContainer">
+                        <button class="Accept">Accept</button>
+                        <button class="Decline">Decline</button>
+                      </div>
+                      
+                    </div>
+
+                  </div>
+                  <div class="col-md-3">
+                    <!-- From Uiverse.io by iconicchandu -->
+                    <div class="Event-View-Card">
+                      <div class="Event-View-Card__border"></div>
+                      <div class="Event-View-Card_title__container">
+                        <span class="Event-View-Card_title">Marriage Event</span>
+                        <div class="">
+                          <img src="https://cbeditz.com/public/cbeditz/preview/wedding-marriage-couple-image-background-free-si9jz.jpg">
+                        </div>
+                      </div>
+                      <hr class="line" />
+                      <ul class="Event-View-Card__list">
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Date : 24/09/25</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Time : 07:45 PM</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Total Members : 200</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Contact : 9876543210</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Address : Western Dallas center 5th Floor, Survey No: 83/1 Raidurg Village, Serillingmpally Mandal, Ranga Reddy District Hyderabad,500084</span>
+                        </li>
+                       
+                      </ul>
+                      <div class="buttonContainer">
+                        <button class="Accept">Accept</button>
+                        <button class="Decline">Decline</button>
+                      </div>
+                      
+                    </div>
+
+                  </div>
+                  <div class="col-md-3">
+                    <!-- From Uiverse.io by iconicchandu -->
+                    <div class="Event-View-Card">
+                      <div class="Event-View-Card__border"></div>
+                      <div class="Event-View-Card_title__container">
+                        <span class="Event-View-Card_title">Birthday Event</span>
+                        <div class="">
+                          <img src="https://img.freepik.com/premium-photo/poster-that-says-happy-birthday-it_445744-963.jpg">
+                        </div>
+                      </div>
+                      <hr class="line" />
+                      <ul class="Event-View-Card__list">
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Date : 24/09/25</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Time : 07:45 PM</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Total Members : 200</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Contact : 9876543210</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Address : Western Dallas center 5th Floor, Survey No: 83/1 Raidurg Village, Serillingmpally Mandal, Ranga Reddy District Hyderabad,500084</span>
+                        </li>
+                       
+                      </ul>
+                      <div class="buttonContainer">
+                        <button class="Accept">Accept</button>
+                        <button class="Decline">Decline</button>
+                      </div>
+                      
+                    </div>
+
+                  </div>
+                  <div class="col-md-3">
+                    <!-- From Uiverse.io by iconicchandu -->
+                    <div class="Event-View-Card">
+                      <div class="Event-View-Card__border"></div>
+                      <div class="Event-View-Card_title__container">
+                        <span class="Event-View-Card_title">Baby Shower Event</span>
+                        <div class="">
+                          <img src="https://www.nscoc.org/wp-content/uploads/2023/09/BABY-SHOWER_web-thumbnail_blue-1.png">
+                        </div>
+                      </div>
+                      <hr class="line" />
+                      <ul class="Event-View-Card__list">
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Date : 24/09/25</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Time : 07:45 PM</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Total Members : 200</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Contact : 9876543210</span>
+                        </li>
+                        <li class="Event-View-Card__list_item">
+                          <span class="check">
+                            <svg class="check_svg" fill="currentColor" viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd"
+                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                fill-rule="evenodd"></path>
+                            </svg>
+                          </span>
+                          <span class="list_text">Address : Western Dallas center 5th Floor, Survey No: 83/1 Raidurg Village, Serillingmpally Mandal, Ranga Reddy District Hyderabad,500084</span>
+                        </li>
+                       
+                      </ul>
+                      <div class="buttonContainer">
+                        <button class="Accept">Accept</button>
+                        <button class="Decline">Decline</button>
+                      </div>
+                      
+                    </div>
+
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+      <!-- Orders View End-->
 
 
 
