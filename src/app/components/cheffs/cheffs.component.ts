@@ -39,6 +39,7 @@ export class CheffsComponent {
 
   deleteCheff(id: number) {
     this.cheffs = this.cheffs.filter(c => c.id !== id);
+     this.showForm = this.cheffs.length === 0;
   }
 
   private initCheff() {

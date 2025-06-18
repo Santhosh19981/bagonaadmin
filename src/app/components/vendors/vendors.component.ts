@@ -1,46 +1,32 @@
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { SidemenuComponent } from "../sidemenu/sidemenu.component";
 import { FormsModule } from '@angular/forms';
+import { SidemenuComponent } from '../sidemenu/sidemenu.component';
 
 @Component({
   selector: 'app-vendors',
-  imports: [CommonModule, SidemenuComponent, FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, SidemenuComponent],
   templateUrl: './vendors.component.html',
   styleUrl: './vendors.component.scss'
 })
-export class VendorsComponent {
-  showForm: boolean = false;  // Show the list first
+export class VendorsComponent implements OnInit {
+  showForm: boolean = false;
   selectedVendor: any = null;
 
-  vendors: any[] = [
-    {
-      id: 1,
-      name: 'Ravi Kumar',
-      phone: '9876543210',
-      email: 'ravi@example.com',
-      experience: '5 years',
-      address: 'Delhi',
-      services: 'Service 1'
-    },
-    {
-      id: 2,
-      name: 'Anita Sharma',
-      phone: '8765432109',
-      email: 'anita@example.com',
-      experience: '3 years',
-      address: 'Mumbai',
-      services: 'Service 2'
-    },
-    {
-      id: 3,
-      name: 'Joseph Mathew',
-      phone: '9123456789',
-      email: 'joseph@example.com',
-      experience: '8 years',
-      address: 'Bangalore',
-      services: 'Service 1'
-    }
+  vendors: any[] = [];
+
+  servicesList: string[] = [
+    'Function Halls',
+    'Kirana',
+    'Vegetables',
+    'Poultry',
+    'Tent House',
+    'Dairy Products',
+    'Photography',
+    'Catering',
+    'Decoration',
+    'Water Supply'
   ];
 
   newVendor: any = {
@@ -52,29 +38,54 @@ export class VendorsComponent {
     services: ''
   };
 
-  toggleForm(vendor?: any) {
+ngOnInit(): void {
+  const data = localStorage.getItem('vendors');
+  this.vendors = data ? JSON.parse(data) : [];
+
+  
+  this.showForm = this.vendors.length === 0;
+}
+
+  toggleForm(vendor?: any): void {
     this.selectedVendor = vendor || null;
-    this.newVendor = vendor ? { ...vendor } : {
-      name: '',
-      phone: '',
-      email: '',
-      experience: '',
-      address: '',
-      services: ''
-    };
-    this.showForm = !this.showForm;
+    this.newVendor = vendor
+      ? { ...vendor }
+      : {
+          name: '',
+          phone: '',
+          email: '',
+          experience: '',
+          address: '',
+          services: ''
+        };
+    this.showForm = true;
   }
 
-  saveVendor() {
+  saveVendor(): void {
     if (this.selectedVendor) {
       const index = this.vendors.findIndex(v => v.id === this.selectedVendor.id);
       if (index !== -1) {
-        this.vendors[index] = { ...this.vendors[index], ...this.newVendor };
+        this.vendors[index] = { ...this.newVendor, id: this.selectedVendor.id };
       }
     } else {
       this.vendors.push({ ...this.newVendor, id: Date.now() });
     }
 
+    this.saveToStorage();
+    this.resetForm();
+  }
+
+  deleteVendor(id: number): void {
+    this.vendors = this.vendors.filter(v => v.id !== id);
+    this.saveToStorage();
+    this.showForm = this.vendors.length === 0;
+  }
+
+  saveToStorage(): void {
+    localStorage.setItem('vendors', JSON.stringify(this.vendors));
+  }
+
+  resetForm(): void {
     this.showForm = false;
     this.selectedVendor = null;
     this.newVendor = {
@@ -85,9 +96,5 @@ export class VendorsComponent {
       address: '',
       services: ''
     };
-  }
-
-  deleteVendor(vendorId: number) {
-    this.vendors = this.vendors.filter(v => v.id !== vendorId);
   }
 }

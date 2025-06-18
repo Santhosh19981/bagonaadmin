@@ -55,7 +55,7 @@
               d="m6.323 4.484l.1-.052l1.493-.784l9.1 5.005l4.025-2.011q.205.232.362.498c.15.254.262.524.346.825L17.75 9.964V13a.75.75 0 0 1-1.5 0v-2.286l-3.5 1.75v9.44A3 3 0 0 1 12 22c-.248 0-.493-.032-.75-.096v-9.44l-8.998-4.5c.084-.3.196-.57.346-.824q.156-.266.362-.498l9.04 4.52l3.387-1.693z">
             </path>
           </svg>
-          <span class="text">Users</span>
+          <span class="text">Customers</span>
         </a>
       </li>
 
@@ -71,7 +71,7 @@
               d="M7 6.75a.75.75 0 0 0 0 1.5h.5a.75.75 0 0 0 0-1.5zm3.5 0a.75.75 0 0 0 0 1.5H17a.75.75 0 0 0 0-1.5zM7 10.25a.75.75 0 0 0 0 1.5h.5a.75.75 0 0 0 0-1.5zm3.5 0a.75.75 0 0 0 0 1.5H17a.75.75 0 0 0 0-1.5zM7 13.75a.75.75 0 0 0 0 1.5h.5a.75.75 0 0 0 0-1.5zm3.5 0a.75.75 0 0 0 0 1.5H17a.75.75 0 0 0 0-1.5z">
             </path>
           </svg>
-          <span class="text">Cheff </span>
+          <span class="text">Cheffs </span>
         </a>
       </li>
 
@@ -107,8 +107,14 @@
           <span class="text">Payment History </span>
         </a>
       </li>
+       <li [class.active]="menu ==  'logout'">
+        <a  (click)="logout()">
+          <i class='bx bx-power-off bx-sm bx-burst-hover'></i>
+          <span class="text" >Logout</span>
+        </a>
+      </li>
     </ul>
-    <ul class="side-menu bottom">
+    <!-- <ul class="side-menu bottom"> -->
       <!-- <li>
                 <a>
 
@@ -124,13 +130,13 @@
                     <span class="text">Settings</span>
                 </a>
             </li> -->
-      <li>
+      <!-- <li>
         <a class="logout">
           <i class='bx bx-power-off bx-sm bx-burst-hover'></i>
           <span class="text" >Logout</span>
         </a>
       </li>
-    </ul>
+    </ul> -->
   </section>
   <!-- SIDEBAR -->
 

@@ -1,8 +1,54 @@
 <div class="admin-dashboard">
   <app-sidemenu [menuFromParent]="'vendors'"></app-sidemenu>
   <section id="content">
-    <nav>
-      <!-- Your navbar code -->
+   <nav>
+
+      <svg class='bx bx-menu bx-sm' xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M6.25 19a.75.75 0 0 0 1.32.488l6-7a.75.75 0 0 0 0-.976l-6-7A.75.75 0 0 0 6.25 5z"
+          opacity=".5">
+        </path>
+        <path fill="currentColor" fill-rule="evenodd"
+          d="M10.512 19.57a.75.75 0 0 1-.081-1.058L16.012 12l-5.581-6.512a.75.75 0 1 1 1.139-.976l6 7a.75.75 0 0 1 0 .976l-6 7a.75.75 0 0 1-1.058.082"
+          clip-rule="evenodd"></path>
+      </svg>
+      <div class="sign-in-box">
+
+        <!-- Notification Bell -->
+        <a class="notification" id="notificationIcon">
+          <!-- <i class='bx bxs-bell bx-tada-hover'></i> -->
+          <svg class='bx bxs-bell bx-tada-hover' xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+            viewBox="0 0 24 24">
+            <path fill="currentColor"
+              d="M18.75 9v.704c0 .845.24 1.671.692 2.374l1.108 1.723c1.011 1.574.239 3.713-1.52 4.21a25.8 25.8 0 0 1-14.06 0c-1.759-.497-2.531-2.636-1.52-4.21l1.108-1.723a4.4 4.4 0 0 0 .693-2.374V9c0-3.866 3.022-7 6.749-7s6.75 3.134 6.75 7"
+              opacity=".5"></path>
+            <path fill="currentColor"
+              d="M12.75 6a.75.75 0 0 0-1.5 0v4a.75.75 0 0 0 1.5 0zM7.243 18.545a5.002 5.002 0 0 0 9.513 0c-3.145.59-6.367.59-9.513 0">
+            </path>
+          </svg>
+          <span class="num">8</span>
+        </a>
+        <div class="notification-menu" id="notificationMenu">
+          <ul>
+            <li>New message from John</li>
+            <li>Your order has been shipped</li>
+            <li>New comment on your post</li>
+            <li>Update available for your app</li>
+            <li>Reminder: Meeting at 3PM</li>
+          </ul>
+        </div>
+
+        <!-- Profile Menu -->
+        <a class="profile" id="profileIcon">
+          <img src="https://cdn-icons-png.flaticon.com/512/8792/8792047.png" alt="Profile">
+        </a>
+        <div class="profile-menu" id="profileMenu">
+          <ul>
+            <li><a>My Profile</a></li>
+            <li><a>Settings</a></li>
+            <li><a>Log Out</a></li>
+          </ul>
+        </div>
+      </div>
     </nav>
     <main>
       <!-- Create Start -->
@@ -38,10 +84,21 @@
               <div class="form-group">
                 <label>Services</label>
                 <select class="form-control user" [(ngModel)]="newVendor.services" name="services">
-                  <option>Service 1</option>
-                  <option>Service 2</option>
+                <option value="Function Halls">Function Halls</option>
+    <option value="Kirana">Kirana</option>
+    <option value="Vegetables">Vegetables</option>
+    <option value="Poultry">Poultry</option>
+    <option value="Tent House">Tent House</option>
+    <option value="Dairy Products">Dairy Products</option>
+    <option value="Photography">Photography</option>
+    <option value="Catering">Catering</option>
+    <option value="Decoration">Decoration</option>
+    <option value="Water Supply">Water Supply</option>
                 </select>
               </div>
+                 <button class="custom-btn btn-7 mt-2 me-2" type="button" (click)="toggleForm()"  [disabled]="vendors.length === 0">
+        <span>Back</span>
+      </button>
               <button class="custom-btn btn-7 mt-2" type="submit"><span>Save</span></button>
             </form>
           </div>
@@ -84,7 +141,7 @@
                   <td>{{ vendor.address || 'N/A' }}</td>
                   <td>
                     <div class="inline-flex gap-2">
-                      <a href="#!" class="admin-btn btn-light"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                      <a  class="admin-btn btn-light"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
                         <g fill="none" stroke="currentColor" stroke-width="1.5">
                           <path stroke-linecap="round" d="M9 4.46A9.8 9.8 0 0 1 12 4c4.182 0 7.028 2.5 8.725 4.704C21.575 9.81 22 10.361 22 12c0 1.64-.425 2.191-1.275 3.296C19.028 17.5 16.182 20 12 20s-7.028-2.5-8.725-4.704C2.425 14.192 2 13.639 2 12c0-1.64.425-2.191 1.275-3.296A14.5 14.5 0 0 1 5 6.821">
                           </path>

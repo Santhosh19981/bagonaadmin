@@ -3,34 +3,48 @@
   <app-sidemenu [menuFromParent]="'payment-history'"></app-sidemenu>
   <!-- SIDEBAR -->
 
-
-
   <!-- CONTENT -->
   <section id="content">
     <!-- NAVBAR -->
     <nav>
-
-      <svg class='bx bx-menu bx-sm' xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-        <path fill="currentColor" d="M6.25 19a.75.75 0 0 0 1.32.488l6-7a.75.75 0 0 0 0-.976l-6-7A.75.75 0 0 0 6.25 5z"
-          opacity=".5">
-        </path>
-        <path fill="currentColor" fill-rule="evenodd"
+      <svg
+        class="bx bx-menu bx-sm"
+        xmlns="http://www.w3.org/2000/svg"
+        width="1em"
+        height="1em"
+        viewBox="0 0 24 24"
+      >
+        <path
+          fill="currentColor"
+          d="M6.25 19a.75.75 0 0 0 1.32.488l6-7a.75.75 0 0 0 0-.976l-6-7A.75.75 0 0 0 6.25 5z"
+          opacity=".5"
+        ></path>
+        <path
+          fill="currentColor"
+          fill-rule="evenodd"
           d="M10.512 19.57a.75.75 0 0 1-.081-1.058L16.012 12l-5.581-6.512a.75.75 0 1 1 1.139-.976l6 7a.75.75 0 0 1 0 .976l-6 7a.75.75 0 0 1-1.058.082"
-          clip-rule="evenodd"></path>
+          clip-rule="evenodd"
+        ></path>
       </svg>
       <div class="sign-in-box">
-
         <!-- Notification Bell -->
         <a class="notification" id="notificationIcon">
-          <!-- <i class='bx bxs-bell bx-tada-hover'></i> -->
-          <svg class='bx bxs-bell bx-tada-hover' xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-            viewBox="0 0 24 24">
-            <path fill="currentColor"
+          <svg
+            class="bx bxs-bell bx-tada-hover"
+            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
+            height="1em"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill="currentColor"
               d="M18.75 9v.704c0 .845.24 1.671.692 2.374l1.108 1.723c1.011 1.574.239 3.713-1.52 4.21a25.8 25.8 0 0 1-14.06 0c-1.759-.497-2.531-2.636-1.52-4.21l1.108-1.723a4.4 4.4 0 0 0 .693-2.374V9c0-3.866 3.022-7 6.749-7s6.75 3.134 6.75 7"
-              opacity=".5"></path>
-            <path fill="currentColor"
-              d="M12.75 6a.75.75 0 0 0-1.5 0v4a.75.75 0 0 0 1.5 0zM7.243 18.545a5.002 5.002 0 0 0 9.513 0c-3.145.59-6.367.59-9.513 0">
-            </path>
+              opacity=".5"
+            ></path>
+            <path
+              fill="currentColor"
+              d="M12.75 6a.75.75 0 0 0-1.5 0v4a.75.75 0 0 0 1.5 0zM7.243 18.545a5.002 5.002 0 0 0 9.513 0c-3.145.59-6.367.59-9.513 0"
+            ></path>
           </svg>
           <span class="num">8</span>
         </a>
@@ -46,7 +60,7 @@
 
         <!-- Profile Menu -->
         <a class="profile" id="profileIcon">
-          <img src="https://cdn-icons-png.flaticon.com/512/8792/8792047.png" alt="Profile">
+          <img src="https://cdn-icons-png.flaticon.com/512/8792/8792047.png" alt="Profile" />
         </a>
         <div class="profile-menu" id="profileMenu">
           <ul>
@@ -59,130 +73,126 @@
     </nav>
     <!-- NAVBAR -->
 
-
     <!-- MAIN -->
     <main>
-      <!-- <div class="head-title">
-                <div class="left">
-                    <h1>Dashboard</h1>
-                    <ul class="breadcrumb">
-                        <li>
-                            <a>Dashboard</a>
-                        </li>
-                        <li><i class='bx bx-chevron-right'></i></li>
-                        <li>
-                            <a class="active">Home</a>
-                        </li>
-                    </ul>
-                </div>
-                <a class="btn-download">
-                    <i class='bx bxs-cloud-download bx-fade-down-hover'></i>
-                    <span class="text">Get PDF</span>
-                </a>
-            </div> -->
-
-      <!-- Create Start -->
-
       <div class="card">
         <div class="card-header">
-          <ul class="nav nav-tabs nav-tabs-neutral justify-content-center" role="tablist"
-            data-background-color="orange">
+          <ul
+            class="nav nav-tabs nav-tabs-neutral justify-content-center"
+            role="tablist"
+            data-background-color="orange"
+          >
             <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#all-history" role="tab" [class.active]="activeTab === 'All'" (click)="setTab('All')">All History</a>
+              <a
+                class="nav-link"
+                [class.active]="activeTab === 'All'"
+                href="javascript:void(0)"
+                (click)="setTab('All')"
+                role="tab"
+                >All History</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#Credit" role="tab"  [class.active]="activeTab === 'Credit'" (click)="setTab('Credit')">Credit</a>
+              <a
+                class="nav-link"
+                [class.active]="activeTab === 'Credit'"
+                href="javascript:void(0)"
+                (click)="setTab('Credit')"
+                role="tab"
+                >Credit</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#Debit" role="tab" [class.active]="activeTab === 'Debit'" (click)="setTab('Debit')">Debit</a>
+              <a
+                class="nav-link"
+                [class.active]="activeTab === 'Debit'"
+                href="javascript:void(0)"
+                (click)="setTab('Debit')"
+                role="tab"
+                >Debit</a
+              >
             </li>
-            
           </ul>
         </div>
         <div class="card-body">
           <!-- Tab panes -->
           <div class="tab-content text-center">
-            <div class="tab-pane active" id="all-history" role="tabpanel">
+            <div *ngIf="activeTab === 'All'" class="tab-pane active" id="all-history" role="tabpanel">
               <div class="table-data">
-        <div class="order">
-          <div class="head">
-            <h3>Recent Orders</h3>
-            <form>
-              <div class="form-input"><input type="search" placeholder="Search..."><button type="submit"
-                  class="search-btn"><i class="bx bx-search"></i></button></div>
-            </form>
+                <div class="order">
+                  <div class="head">
+                    <h3>Recent Orders</h3>
+                    <form>
+                      <div class="form-input">
+                        <input type="search" placeholder="Search..." />
+                        <button type="submit" class="search-btn">
+                          <i class="bx bx-search"></i>
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="overflow-auto pr-1 relative h-[calc(100dvh_-_375px)]">
+                    <table>
+                      <thead
+                        class="text-xs border-b uppercase text-gray-500 bg-gray-50 z-10 top-0 sticky p-2"
+                      >
+                        <tr>
+                          <th>ID</th>
+                          <th>Payment Date</th>
+                          <th>Payment Type</th>
+                          <th>Amount</th>
+                          <th>Payment Form</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
 
-          </div>
-          <div class="overflow-auto pr-1 relative h-[calc(100dvh_-_375px)]">
-            <table>
-              <thead class="text-xs border-b uppercase text-gray-500 bg-gray-50 z-10 top-0 sticky p-2">
-                <tr>
-                  <th>ID</th>
-                  <th>Payment Date</th>
-                  <th>Payment Type</th>
-                  <th>Amout </th>
-                  <th>payment form</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-
-              <tbody>
-
-              <tr *ngFor="let tx of filteredTransactions">
-    <td>#{{ tx.id }}</td>
-    <td>{{ tx.date }}</td>
-    <td>{{ tx.type }}</td>
-    <td><span class="status completed">${{ tx.amount }}</span></td>
-    <td>{{ tx.location }}</td>
-    <td>
-      <div class="inline-flex gap-2">
-        <!-- Action buttons here -->
-        <a href="#" class="admin-btn btn-light">View</a>
-        <a href="#" class="admin-btn btn-soft-primary">Edit</a>
-        <a href="#" class="admin-btn btn-soft-danger">Delete</a>
-      </div>
-    </td>
-  </tr>
-
-              </tbody>
-
-            </table>
-          </div>
-        </div>
-
-      </div>
+                      <tbody>
+                        <tr *ngFor="let tx of filteredTransactions">
+                          <td>#{{ tx.id }}</td>
+                          <td>{{ tx.date }}</td>
+                          <td>{{ tx.type }}</td>
+                          <td><span class="status completed">${{ tx.amount }}</span></td>
+                          <td>{{ tx.location }}</td>
+                          <td>
+                            <div class="inline-flex gap-2">
+                              <a class="admin-btn btn-light text-decoration-none" href="javascript:void(0)">View</a>
+                              <a
+                                class="admin-btn btn-soft-danger text-decoration-none"
+                                href="javascript:void(0)"
+                                (click)="deleteTransaction(tx.id)"
+                                >Delete</a
+                              >
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="tab-pane" id="Credit" role="tabpanel">
-              <p> I will be the leader of a company that ends up being worth billions of dollars, because I got the
+
+            <div *ngIf="activeTab === 'Credit'" class="tab-pane" id="Credit" role="tabpanel">
+              <p>
+                I will be the leader of a company that ends up being worth billions of dollars, because I got the
                 answers. I understand culture. I am the nucleus. I think that’s a responsibility that I have, to push
                 possibilities, to show people, this is the level that things could be at. I think that’s a
                 responsibility that I have, to push possibilities, to show people, this is the level that things could
-                be at. </p>
+                be at.
+              </p>
             </div>
-            <div class="tab-pane" id="Debit" role="tabpanel">
-              <p>I think that’s a responsibility that I have, to push possibilities, to show people, this is the level
-                that things could be at. So when you get something that has the name Kanye West on it, it’s supposed to
-                be pushing the furthest possibilities. I will be the leader of a company that ends up being worth
-                billions of dollars, because I got the answers. I understand culture. I am the nucleus.</p>
-            </div>
-            <div class="tab-pane" id="settings1" role="tabpanel">
+
+            <div *ngIf="activeTab === 'Debit'" class="tab-pane" id="Debit" role="tabpanel">
               <p>
-                "I will be the leader of a company that ends up being worth billions of dollars, because I got the
-                answers. I understand culture. I am the nucleus. I think that’s a responsibility that I have, to push
-                possibilities, to show people, this is the level that things could be at."
+                I think that’s a responsibility that I have, to push possibilities, to show people, this is the level
+                that things could be at. So when you get something that has the name Kanye West on it, it’s supposed
+                to be pushing the furthest possibilities. I will be the leader of a company that ends up being worth
+                billions of dollars, because I got the answers. I understand culture. I am the nucleus.
               </p>
             </div>
           </div>
         </div>
       </div>
-      <!-- User table -->
-
-
-
-
-
-
-
     </main>
     <!-- MAIN -->
   </section>

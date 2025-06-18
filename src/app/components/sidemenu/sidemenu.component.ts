@@ -21,6 +21,9 @@ export class SidemenuComponent {
       this.gotoMenu(this.menuFromParent);
     }
   }
+  logout(){
+     this.router.navigate(['/']);
+  }
 
   gotoMenu(route: string) {
     this.menu = route;
