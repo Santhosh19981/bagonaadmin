@@ -277,14 +277,14 @@ footer p a:hover{
   --paragraph: hsl(0, 0%, 83%);
   --line:#e9ecef;
   --primary: #e4c815;
-
+margin-bottom: 25px;
   position: relative;
 
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 1rem;
-
-  padding: 1rem;
+align-items: center;
+  padding: 0;
   width: 100%;
   background-color: hsla(240, 15%, 9%, 1);
   background-image: radial-gradient(
@@ -354,16 +354,17 @@ footer p a:hover{
   }
 }
 
-.Event-View-Card .Event-View-Card_title__container .Event-View-Card_title {
-  font-size: 1.2rem;
-  color: var(--white);
+.Event-View-Card  .Event-View-Card_title {
+  font-size: 18px;
+  color: #fff;
   font-weight: bold;
+  text-align: left;
+  margin-bottom: 10px;
 }
 .Event-View-Card .Event-View-Card_title__container img{
     width: 100%;
     height: auto;
-    border-radius: 10px;
-    margin-top: 10px;
+    border-radius:10px 0 0 10px;
 }
 .Event-View-Card .Event-View-Card_title__container .Event-View-Card_paragraph {
   margin-top: 0.25rem;
@@ -417,44 +418,110 @@ padding: 0;
 
 .Event-View-Card .Event-View-Card__list .Event-View-Card__list_item .list_text {
   font-size: 13px;
-  color: var(--white);
+  color: #fff;
   text-align: left;
   width: 100%;
   line-height: normal;
 }
 
-.Event-View-Card .Accept {
+.Accept {
   cursor: pointer;
 
   padding: 0.5rem;
   width: 100%;
   background-image: linear-gradient(0deg, #198754, #28a745 100%);
-
-  font-size: 13px;
-  color: var(--white);
-
+font-weight: 600;
+  font-size: 15px;
+  color: #fff;
+float: right;
   border: 0;
   border-radius: 9999px;
-  box-shadow: inset 0 -2px 25px -4px var(--white);
+  box-shadow: inset 0 -2px 25px -4px #fff;
 }
 
-.Event-View-Card .Decline {
+.Decline {
   cursor: pointer;
-
+font-weight: 600;
   padding: 0.5rem;
   width: 100%;
   background-image:linear-gradient(0deg, #ec0e23, #dc3545 100%);
 
-  font-size: 13px;
-  color: var(--white);
+  font-size: 15px;
+  color: #fff;
 
   border: 0;
   border-radius: 9999px;
-  box-shadow: inset 0 -2px 25px -4px var(--white);
+  box-shadow: inset 0 -2px 25px -4px #fff;
 }
 
 .buttonContainer {
   display: flex;
   gap: 20px;
   flex-direction: row;
+  width: 100%;
+  margin: 20px;
+  justify-content: end;
+}
+
+.w-20{
+    width: 15%;
+    margin:0 20px;
+    box-shadow: inset 0 -2px 25px -4px #0c5263;
+}
+.image-content{
+    width: 200px;
+}
+
+/** 
+Vertical Tabs **/
+
+
+
+.nbt-page-tabs svg{
+  width: 18px;
+}
+
+.nbt-page-tabs .split-arrows-icon svg path{
+  fill: #aaa;
+}
+
+.nbt-page-tabs .nav-pills-custom .nav-link {
+    color: #aaa;
+    background: #fff;
+    position: relative;
+}
+
+.nbt-page-tabs .nav-pills-custom .nav-link.active{
+    color: #ef8b22;
+    background: #fff;
+}
+
+/* Add indicator arrow for the active tab */
+@media (min-width: 992px) {
+    .nbt-page-tabs .nav-pills-custom .nav-link::before {
+        content: '';
+        display: block;
+        border-top: 8px solid transparent;
+        border-left: 10px solid #fff;
+        border-bottom: 8px solid transparent;
+        position: absolute;
+        top: 50%;
+        right: -10px;
+        transform: translateY(-50%);
+        opacity: 0;
+    }
+}
+
+.nbt-page-tabs .nav-pills-custom .nav-link.active::before {
+    opacity: 1;
+}
+
+
+
+.nbt-page-tabs  {
+    background-image: linear-gradient(45deg, #0c5263, #ffffff00) !important;
+    background-color: rgba(250, 132, 47, .03) !important;
+    border: 1.5px solid #ffffff26 !important;
+  padding: 35px;
+  border-radius: 22px;
 }
