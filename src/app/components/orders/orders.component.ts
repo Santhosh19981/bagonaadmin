@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 export class OrdersComponent implements OnInit {
 
   orders: any[] = [];
+   showTemplate  = false
 
   ngOnInit(): void {
     
@@ -42,4 +43,7 @@ export class OrdersComponent implements OnInit {
       this.orders = initialOrders;
     }
   }
+   toggle  (){
+    this. showTemplate = !this.showTemplate
+   }
 }
