@@ -28,6 +28,19 @@ export class SidemenuComponent {
   gotoMenu(route: string) {
     this.menu = route;
     switch (route) {
+      
+      case 'events':
+        this.router.navigate(['/events']);
+        break;
+       case 'menuItems':
+        this.router.navigate(['/menu-items']);
+        break;
+      case 'services':
+        this.router.navigate(['/services']);
+        break;
+       case 'serviceItems':
+        this.router.navigate(['/service-items']);
+        break;
       case 'dashboard':
         this.router.navigate(['/dashboard']);
         break;

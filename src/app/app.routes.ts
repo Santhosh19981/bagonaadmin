@@ -7,9 +7,17 @@ import { PaymentHistoryComponent } from './components/payment-history/payment-hi
 import { UsersComponent } from './components/users/users.component';
 import { VendorsComponent } from './components/vendors/vendors.component';
 import { AuthGuard } from './auth.guard';
+import { EventsComponent } from './components/events/events.component';
+import { ServicesComponent } from './components/services/services.component';
+import { ServiceItemsComponent } from './components/service-items/service-items.component';
+import { MenuItemsComponent } from './components/menu-items/menu-items.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full',  },
+    { path: 'events', component: EventsComponent,canActivate:  [AuthGuard]  },
+      { path: 'services', component: ServicesComponent,canActivate:  [AuthGuard]  },
+             { path: 'menu-items', component: MenuItemsComponent,canActivate:  [AuthGuard]  },
+        { path: 'service-items', component: ServiceItemsComponent,canActivate:  [AuthGuard]  },
   { path: 'dashboard', component: DashboardComponent,canActivate:  [AuthGuard]  },
   { path: 'cheffs', component: CheffsComponent , canActivate:  [AuthGuard] },
   { path: 'login', component: LoginComponent },

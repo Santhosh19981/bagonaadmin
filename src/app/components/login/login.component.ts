@@ -1,23 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators, FormGroup ,ReactiveFormsModule} from '@angular/forms';
+import { FormBuilder, Validators, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ApiService } from '../../services/api.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  imports : [ReactiveFormsModule],
+   imports: [ CommonModule, ReactiveFormsModule, FormsModule ],
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-  loginForm!: FormGroup;  
+  loginForm!: FormGroup;
+  loading = false;
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private apiService: ApiService
   ) {}
 
   ngOnInit() {
-    // Initialize form inside ngOnInit or constructor
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -27,15 +30,30 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     if (this.loginForm.invalid) return;
 
-    const username = this.loginForm.value.username;
-    const password = this.loginForm.value.password;
+    this.loading = true;
 
-    if (username === '9160684944' && password === 'admin@123') {
-      debugger
-      localStorage.setItem('isLoggedIn', 'true');
-      this.router.navigate(['/dashboard']);
-    } else {
-      alert('Invalid username or password');
-    }
+    this.apiService.loginUser(this.loginForm.value).subscribe({
+      next: (res: any) => {
+        this.loading = false;
+
+        if (res && res.token && res.user) {
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('user', JSON.stringify(res.user));
+
+          // ✅ Backend already checks role_id === 4, but keeping double safety check
+          if (res.user.role_id === 4) {
+            this.router.navigate(['/dashboard']); // ✅ Navigate to dashboard
+          } else {
+            alert('Access denied. Invalid role.');
+          }
+        } else {
+          alert('Invalid response from server');
+        }
+      },
+      error: (err) => {
+        this.loading = false;
+        alert(err.error?.message || 'Invalid username or password');
+      }
+    });
   }
 }
