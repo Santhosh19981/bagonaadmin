@@ -1,26 +1,31 @@
 <div class="admin-dashboard">
   <!-- SIDEBAR -->
   <app-sidemenu [menuFromParent]="'menuitems'"></app-sidemenu>
-  <!-- SIDEBAR -->
 
   <!-- CONTENT -->
   <section id="content">
+
     <!-- NAVBAR -->
-    <nav>
-      <!-- ... Navbar content ... -->
-    </nav>
+    <nav></nav>
     <!-- NAVBAR -->
 
     <!-- MAIN -->
     <main>
-      <!-- Create/Edit Form -->
-      <div class="container">
-        <div class="row" *ngIf="showForm">
+
+      <!-- ====================== FORM SECTION ====================== -->
+      <div class="container" *ngIf="showForm">
+        <div class="row">
           <div class="col-sm-5">
             <div class="create-header">
+              <div class="d-flex justify-content-between align-items-center mb-3">
               <h3>{{ selectedMenuItem ? 'Edit Menu Item' : 'Create Menu Item' }}</h3>
+              <button type="button" class="admin-btn btn-soft-danger" (click)="toggleForm()">
+                  Back
+                </button>
+                </div>
 
               <form class="form-horizontal" (ngSubmit)="saveMenuItem()">
+
                 <!-- Image Upload -->
                 <div class="form-group">
                   <label>Item Image</label>
@@ -29,10 +34,12 @@
                     type="file"
                     accept="image/*"
                     (change)="onImageChange($event)"
-                    required
+                    [required]="!selectedMenuItem"
                   />
-                  <div *ngIf="newMenuItem.image" class="mt-2">
-                    <img [src]="newMenuItem.image" alt="Item Image" width="100" />
+
+                  <!-- IMAGE PREVIEW -->
+                  <div class="mt-2" *ngIf="imagePreview">
+                    <img [src]="imagePreview" width="120" height="120" class="rounded" />
                   </div>
                 </div>
 
@@ -49,7 +56,7 @@
                   />
                 </div>
 
-                <!-- Veg / Non-Veg Selection -->
+                <!-- Type -->
                 <div class="form-group">
                   <label>Type</label>
                   <select
@@ -58,37 +65,38 @@
                     name="type"
                     required
                   >
-                    <option value="" disabled selected>Select type</option>
+                    <option value="" disabled>Select type</option>
                     <option value="Veg">Veg</option>
                     <option value="Non-Veg">Non-Veg</option>
                   </select>
                 </div>
 
                 <!-- Buttons -->
-                <button
-                  class="custom-btn btn-7 mt-2 me-2"
-                  type="button"
-                  (click)="toggleForm()"
-                >
+                <button class="custom-btn btn-7 mt-2 me-2" type="button" (click)="toggleForm()">
                   <span>Back</span>
                 </button>
+
                 <button class="custom-btn btn-7 mt-2" type="submit">
                   <span>Save</span>
                 </button>
+
               </form>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Menu Items Table -->
-      <div class="table-data" *ngIf="!showForm && menuitems.length > 0">
+      <!-- ====================== TABLE SECTION ====================== -->
+      <div class="table-data" *ngIf="!showForm">
+
         <div class="order">
           <div class="head">
             <h3>Menu Items List</h3>
+
             <div>
               <a class="admin-btn btn-7 text-decoration-none" (click)="toggleForm()">Add</a>
             </div>
+
             <form>
               <div class="form-input">
                 <input type="search" placeholder="Search..." />
@@ -109,17 +117,23 @@
                   <th>Action</th>
                 </tr>
               </thead>
+
               <tbody>
                 <tr *ngFor="let item of menuitems">
+
+                  <!-- IMAGE WITH FALLBACK -->
                   <td>
                     <img
-                      [src]="item.image || 'https://via.placeholder.com/50'"
-                      alt="Menu Item Image"
+                      [src]="item.image"
+                      (error)="onImageError($event)"
                       width="50"
                       height="50"
+                      class="rounded"
                     />
                   </td>
+
                   <td>{{ item.name }}</td>
+
                   <td>
                     <span
                       class="status"
@@ -131,11 +145,13 @@
                       {{ item.type }}
                     </span>
                   </td>
+
                   <td>
                     <div class="inline-flex gap-2">
+                      <!-- EDIT -->
                       <a class="admin-btn btn-soft-primary" (click)="toggleForm(item)">
-                        <!-- Edit Icon -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                          viewBox="0 0 24 24">
                           <path
                             fill="none"
                             stroke="currentColor"
@@ -145,9 +161,11 @@
                           />
                         </svg>
                       </a>
+
+                      <!-- DELETE -->
                       <a class="admin-btn btn-soft-danger" (click)="deleteMenuItem(item.id!)">
-                        <!-- Delete Icon -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                          viewBox="0 0 24 24">
                           <path
                             fill="none"
                             stroke="currentColor"
@@ -159,12 +177,15 @@
                       </a>
                     </div>
                   </td>
+
                 </tr>
               </tbody>
             </table>
           </div>
+
         </div>
       </div>
+
     </main>
   </section>
 </div>

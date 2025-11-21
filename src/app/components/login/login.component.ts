@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   loading = false;
-
+  showPassword = false;
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -25,6 +25,10 @@ export class LoginComponent implements OnInit {
       username: ['', Validators.required],
       password: ['', Validators.required]
     });
+  }
+
+   togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 
   onSubmit() {
@@ -41,7 +45,7 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('user', JSON.stringify(res.user));
 
           // ✅ Backend already checks role_id === 4, but keeping double safety check
-          if (res.user.role_id === 4) {
+          if (res.user.role === 4) {
             this.router.navigate(['/dashboard']); // ✅ Navigate to dashboard
           } else {
             alert('Access denied. Invalid role.');

@@ -2,13 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SidemenuComponent } from '../sidemenu/sidemenu.component';
-
-interface MenuItem {
-  id?: number;
-  name: string;
-  type: 'Veg' | 'Non-Veg';
-  image: string;
-}
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-menu-items',
@@ -18,65 +12,116 @@ interface MenuItem {
   styleUrl: './menu-items.component.scss',
 })
 export class MenuItemsComponent {
-  menuitems: MenuItem[] = [
-    { id: 1, name: 'Paneer Butter Masala', type: 'Veg', image: '' },
-    { id: 2, name: 'Chicken Biryani', type: 'Non-Veg', image: '' },
-    { id: 3, name: 'Veg Pulao', type: 'Veg', image: '' },
-  ];
 
+  menuitems: any[] = [];
+  imagePreview: any = null;
   showForm = false;
-  selectedMenuItem: MenuItem | null = null;
-  newMenuItem: MenuItem = this.initMenuItem();
+  selectedMenuItem: any = null;
 
-  // Toggle form open/close, and set selected item if editing
-  toggleForm(item: MenuItem | null = null) {
-    this.selectedMenuItem = item;
-    this.newMenuItem = item ? { ...item } : this.initMenuItem();
-    this.showForm = !this.showForm;
+  newMenuItem: any = {
+    name: '',
+    type: '',
+    image: null
+  };
+
+  defaultItemImage = "https://img.icons8.com/?size=512&id=59815&format=png";   // default fallback image
+
+  constructor(private apiService: ApiService) {}
+
+  ngOnInit() {
+    this.loadMenuItems();
   }
 
-  // Save new or edited item
+  // LOAD MENU ITEMS
+  loadMenuItems() {
+    this.apiService.getMenuItems().subscribe({
+      next: (res: any) => {
+        this.menuitems = Array.isArray(res?.data) ? res.data : [];
+      },
+      error: (err) => {
+        console.error("Error loading menu items:", err);
+        this.menuitems = [];
+      }
+    });
+  }
+
+ onImageChange(e: any) {
+  const file = e.target.files[0];
+  this.newMenuItem.image = file;
+
+  if (file) {
+    this.imagePreview = URL.createObjectURL(file);
+  }
+}
+
+toggleForm(item?: any) {
+  this.showForm = !this.showForm;
+
+  if (item) {
+    this.selectedMenuItem = { ...item };
+    this.newMenuItem = { ...item };
+    this.imagePreview = item.image;        // existing image preview
+  } else {
+    this.selectedMenuItem = null;
+    this.newMenuItem = { name: '', type: '', image: null };
+    this.imagePreview = null;
+  }
+}
+
+  // IMAGE FALLBACK ERROR
+  onImageError(event: any) {
+    event.target.src = this.defaultItemImage;
+  }
+
+
+
+  // SAVE MENU ITEM (CREATE OR UPDATE)
   saveMenuItem() {
-    if (!this.newMenuItem.name || !this.newMenuItem.type || !this.newMenuItem.image) {
-      alert('Please fill all fields including image, name, and type.');
-      return;
+    const fd = new FormData();
+    fd.append('name', this.newMenuItem.name);
+    fd.append('type', this.newMenuItem.type);
+
+    if (this.newMenuItem.image instanceof File) {
+      fd.append('image', this.newMenuItem.image);
     }
 
     if (this.selectedMenuItem) {
-      const index = this.menuitems.findIndex(e => e.id === this.selectedMenuItem!.id);
-      this.menuitems[index] = { ...this.newMenuItem, id: this.selectedMenuItem!.id };
+      // editing → send old image path
+      fd.append('existingImage', this.selectedMenuItem.image);
+
+      this.apiService.updateMenuItem(this.selectedMenuItem.id, fd).subscribe({
+        next: (res: any) => {
+          alert(res.message);
+          this.showForm = false;
+          this.loadMenuItems();
+        },
+        error: (err) => {
+          alert("Update failed: " + err.message);
+        }
+      });
+
     } else {
-      this.menuitems.push({ ...this.newMenuItem, id: Date.now() });
+      // creating new
+      this.apiService.createMenuItem(fd).subscribe({
+        next: (res: any) => {
+          alert(res.message);
+          this.showForm = false;
+          this.loadMenuItems();
+        },
+        error: (err) => {
+          alert("Create failed: " + err.message);
+        }
+      });
     }
-
-    this.toggleForm();
   }
 
-  // Delete item by ID
+  // DELETE
   deleteMenuItem(id: number) {
-    this.menuitems = this.menuitems.filter(item => item.id !== id);
-    this.showForm = this.menuitems.length === 0;
-  }
-
-  // Handle image upload
-  onImageChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.newMenuItem.image = reader.result as string;
-      };
-      reader.readAsDataURL(file);
+    if (confirm("Delete this menu item?")) {
+      this.apiService.deleteMenuItem(id).subscribe({
+        next: () => this.loadMenuItems(),
+        error: (err) => alert("Delete failed: " + err.message)
+      });
     }
-  }
-
-  // Initialize a new empty menu item
-  private initMenuItem(): MenuItem {
-    return {
-      name: '',
-      type: 'Veg',
-      image: '',
-    };
   }
 }

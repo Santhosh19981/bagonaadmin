@@ -2,14 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SidemenuComponent } from '../sidemenu/sidemenu.component';
-
-interface Service {
-  id?: number;
-  servicename: string;
-  description: string;
-  Active: 'Active' | 'Inactive';
-  image: string;
-}
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-services',
@@ -19,71 +12,118 @@ interface Service {
   styleUrls: ['./services.component.scss']
 })
 export class ServicesComponent {
-  services: Service[] = [
-    { id: 1, servicename: 'FunctionHalls', description: '', Active: 'Active', image: '' },
-    { id: 2, servicename: 'Bhagona', description: '', Active: 'Inactive', image: '' },
-    { id: 3, servicename: 'Tents', description: '', Active: 'Active', image: '' }
-  ];
 
+  services: any[] = [];
   showForm = false;
-  selectedService: Service | null = null;
-  newService: Service = this.initService();
+  selectedService: any = null;
 
-  // Toggle form open/close, and set selected service if editing
-  toggleForm(service: Service | null = null) {
-    this.selectedService = service;
-    this.newService = service ? { ...service } : this.initService();
+  newService: any = {
+    name: '',
+    description: '',
+    status: 'inactive',
+    unit_id: '',
+    image: null
+  };
+
+  constructor(private apiService: ApiService) {}
+
+  ngOnInit() {
+    this.loadServices();
+  }
+
+  // ---------------------- LOAD SERVICES ----------------------
+  loadServices() {
+    this.apiService.getServices().subscribe({
+      next: (res: any) => {
+        this.services = Array.isArray(res?.data) ? res.data : [];
+      },
+      error: (err) => {
+        console.error("❌ Error loading services:", err);
+        this.services = [];
+      }
+    });
+  }
+
+  // ---------------------- TOGGLE FORM ----------------------
+  toggleForm(service?: any) {
     this.showForm = !this.showForm;
-  }
 
-  // Save new or edited service
-  saveService() {
-    if (this.selectedService) {
-      const index = this.services.findIndex(e => e.id === this.selectedService!.id);
-      this.services[index] = { ...this.newService, id: this.selectedService!.id };
-    } else {
-      this.services.push({ ...this.newService, id: Date.now() });
-    }
-    this.toggleForm();
-  }
-
-  // Delete service by ID
-  deleteService(id: number) {
-    this.services = this.services.filter(e => e.id !== id);
-    this.showForm = this.services.length === 0;
-  }
-
-  // Handle image file input change
-  onImageChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.newService.image = reader.result as string;
+    if (service) {
+      this.selectedService = { ...service };
+      this.newService = { 
+        ...service,
+        image: null
       };
-      reader.readAsDataURL(file);
+    } else {
+      this.selectedService = null;
+      this.newService = {
+        name: '',
+        description: '',
+        status: 'inactive',
+        unit_id: '',
+        image: null
+      };
     }
   }
 
-  // Handle toggle switch change for Active/Inactive status
-  onToggleChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.newService.Active = input.checked ? 'Active' : 'Inactive';
+  // ---------------------- IMAGE UPLOAD ----------------------
+  onImageChange(e: any) {
+    this.newService.image = e.target.files[0];
   }
 
-  // Toggle Active status directly on a service item (e.g., from list)
-  toggleActive(service: Service) {
-    service.Active = service.Active === 'Active' ? 'Inactive' : 'Active';
+  // ---------------------- SAVE (CREATE / UPDATE) ----------------------
+  saveService() {
+    const fd = new FormData();
+
+    fd.append('name', this.newService.name);
+    fd.append('description', this.newService.description);
+    fd.append('status', this.newService.status);
+    fd.append('unit_id', this.newService.unit_id);
+
+    if (this.newService.image instanceof File) {
+      fd.append('image', this.newService.image);
+    }
+
+    if (this.selectedService) {
+      fd.append('existingImage', this.selectedService.image_data);
+
+      this.apiService.updateService(this.selectedService.service_id, fd).subscribe({
+        next: (res: any) => {
+          alert(res.message);
+          this.showForm = false;
+          this.loadServices();
+        },
+        error: (err) => {
+          alert("Update failed: " + err.message);
+        }
+      });
+
+    } else {
+      this.apiService.createService(fd).subscribe({
+        next: (res: any) => {
+          alert(res.message);
+          this.showForm = false;
+          this.loadServices();
+        },
+        error: (err) => {
+          alert("Create failed: " + err.message);
+        }
+      });
+    }
   }
 
-  // Initialize a new empty service
-  private initService(): Service {
-    return {
-      servicename: '',
-      description: '',
-      Active: 'Inactive',
-      image: ''
-    };
+  // ---------------------- DELETE ----------------------
+  deleteService(id: number) {
+    if (confirm("Delete this service?")) {
+      this.apiService.deleteService(id).subscribe({
+        next: () => this.loadServices()
+      });
+    }
+  }
+
+  // ---------------------- TOGGLE ACTIVE/INACTIVE ----------------------
+  onToggleChange(event: any) {
+    const isChecked = event.target.checked;
+    this.newService.status = isChecked ? 'active' : 'inactive';
   }
 }
