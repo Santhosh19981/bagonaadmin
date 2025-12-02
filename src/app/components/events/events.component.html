@@ -110,16 +110,18 @@
               </thead>
 
               <tbody>
-                <div *ngIf="events.length > 0">
+                <ng-container *ngIf="events.length > 0; else noEvents">
                   <tr *ngFor="let event of events">
                     <td>
-                       <img [src]="event?.image_url || defaultEventImage" (error)="onImageError($event)" width="50"
-                        height="50" />
+                      <img [src]="event?.image_url || defaultEventImage" (error)="onImageError($event)" width="50"
+                        height="50" class="rounded" />
                     </td>
                     <td>{{ event.name }}</td>
-                    <td [title]="event.description" >{{ event.description.length > 30 ? (event.description | slice:0:20) + '...' : event.description }}</td>
+                    <td [title]="event.description">{{ event.description.length > 30 ? (event.description | slice:0:20)
+                      + '...' : event.description }}</td>
                     <td>
-                      <span class="status" [ngClass]="{'completed': event.status == 'active','pending': event.status !== 'active'}">
+                      <span class="status"
+                        [ngClass]="{'completed': event.status == 'active','pending': event.status !== 'active'}">
                         {{ event.status }}
                       </span>
                     </td>
@@ -130,15 +132,16 @@
                       </div>
                     </td>
                   </tr>
-                </div>
-                <div *ngIf="events.length === 0" class="text-center py-5">
-                  <h3>No Events Found</h3>
-                  <button class="admin-btn btn-7 mt-3" (click)="toggleForm()">Add Event</button>
-                </div>
-
-
+                </ng-container>
+                <ng-template #noEvents>
+                  <tr>
+                    <td colspan="5" class="text-center py-5">
+                      <h3>No Events Found</h3>
+                      <button class="admin-btn btn-7 mt-3" (click)="toggleForm()">Add Event</button>
+                    </td>
+                  </tr>
+                </ng-template>
               </tbody>
-
             </table>
           </div>
 

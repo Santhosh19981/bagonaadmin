@@ -1,1 +1,167 @@
-<p>service-items works!</p>
+<div class="admin-dashboard">
+  <!-- SIDEBAR -->
+  <app-sidemenu [menuFromParent]="'serviceitems'"></app-sidemenu>
+
+  <!-- CONTENT -->
+  <section id="content">
+
+    <nav></nav>
+
+    <main>
+
+      <!-- ================= FORM SECTION ================= -->
+      <div class="container" *ngIf="showForm">
+        <div class="row">
+          <div class="col-sm-5">
+            <div class="create-header">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3>{{ selectedItem ? 'Edit Service Item' : 'Create Service Item' }}</h3>
+
+                <button type="button" class="admin-btn btn-soft-danger" (click)="toggleForm()">
+                  Back
+                </button>
+              </div>
+
+              <form class="form-horizontal" (ngSubmit)="saveServiceItem()">
+
+                <!-- IMAGE UPLOAD -->
+                <div class="form-group">
+                  <label>Service Item Image</label>
+                  <input type="file" class="form-control user" accept="image/*"
+                    (change)="onImageChange($event)" [required]="!selectedItem" />
+
+                  <div class="mt-2" *ngIf="imagePreview">
+                    <img [src]="imagePreview || defaultImage" (error)="onImageError($event)" width="120" height="120"
+                      class="rounded" />
+                  </div>
+                </div>
+
+                <!-- SERVICE DROPDOWN -->
+                <div class="form-group">
+                  <label>Select Service</label>
+                  <select class="form-control" [(ngModel)]="formData.service_id" name="service_id" required>
+                    <option value="" disabled>Select service</option>
+                    <option *ngFor="let s of services" [value]="s.service_id">
+                      {{ s.name }}
+                    </option>
+                  </select>
+                </div>
+
+                <!-- NAME -->
+                <div class="form-group">
+                  <label>Item Name</label>
+                  <input class="form-control user" type="text" placeholder="Name"
+                    [(ngModel)]="formData.name" name="name" required />
+                </div>
+
+                <!-- DESCRIPTION -->
+                <div class="form-group">
+                  <label>Description</label>
+                  <input class="form-control user" type="text" placeholder="Description"
+                    [(ngModel)]="formData.description" name="description" />
+                </div>
+
+                <!-- QUANTITY TYPE -->
+                <div class="form-group">
+                  <label>Quantity Type</label>
+                  <input class="form-control user" type="text" placeholder="e.g., Plate, Kg, Pack"
+                    [(ngModel)]="formData.quantity_type" name="quantity_type" required />
+                </div>
+
+                <!-- PRICE -->
+                <div class="form-group">
+                  <label>Price</label>
+                  <input class="form-control user" type="number" placeholder="Price"
+                    [(ngModel)]="formData.price" name="price" required />
+                </div>
+
+                <!-- BUTTONS -->
+                <button class="custom-btn btn-7 mt-2 me-2" type="button" (click)="toggleForm()">
+                  <span>Back</span>
+                </button>
+
+                <button class="custom-btn btn-7 mt-2" type="submit">
+                  <span>Save</span>
+                </button>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TABLE SECTION ================= -->
+      <div class="table-data" *ngIf="!showForm">
+
+        <div class="order">
+          <div class="head">
+            <h3>Service Items List</h3>
+
+            <a class="admin-btn btn-7 text-decoration-none" (click)="toggleForm()">Add</a>
+
+            <form>
+              <div class="form-input">
+                <input type="search" placeholder="Search..." [(ngModel)]="searchText" name="search" />
+                <button type="button" class="search-btn">
+                  <i class="bx bx-search"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="overflow-auto pr-1 relative h-[calc(100dvh_-_375px)]">
+            <table>
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Name</th>
+                  <th>Service</th>
+                  <th>Quantity Type</th>
+                  <th>Price</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+
+                <tr *ngFor="let item of serviceItems">
+                  <td>
+                    <img [src]="item.image || defaultImage" (error)="onImageError($event)" width="50" height="50"
+                      class="rounded" />
+                  </td>
+
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.service_name }}</td>
+                  <td>{{ item.quantity_type }}</td>
+                  <td>{{ item.price }}</td>
+
+                  <td>
+                    <div class="inline-flex gap-2">
+
+                      <!-- EDIT -->
+                      <a class="admin-btn btn-soft-primary" (click)="toggleForm(item)">
+                        ✏️
+                      </a>
+
+                      <!-- DELETE -->
+                      <a class="admin-btn btn-soft-danger" (click)="deleteServiceItem(item.service_item_id)">
+                        🗑️
+                      </a>
+
+                    </div>
+                  </td>
+
+                </tr>
+
+              </tbody>
+
+            </table>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </section>
+</div>

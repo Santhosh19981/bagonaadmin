@@ -87,11 +87,11 @@ body {
 	width: 100%;
 	max-width: 375px;
 	background-image: linear-gradient(45deg, #0c5263, #ffffff00) !important;
-    background-color: rgba(250, 132, 47, .03) !important;
-    border: 1.5px solid #ffffff26 !important;
+	background-color: rgba(250, 132, 47, .03) !important;
+	border: 1.5px solid #ffffff26 !important;
 	border-radius: 58px;
 	padding: 50px 28px 50px;
-	
+
 }
 
 .form__title {
@@ -1378,74 +1378,80 @@ form .form-input button {
 }
 
 input[type="file"] {
-  
-  
-  border: 2px dashed grey;
-  background-color: #fff;
+
+
+	border: 2px dashed grey;
+	background-color: #fff;
 }
 
 input[type="file"]::file-selector-button {
-  padding:10px;  
-  background-color: dodgerblue;
-  color: #FFFFFF;
-  font-weight: bold;
-  transition: all .25s ease-in-out;
-  cursor: pointer;
-  z-index: 10;
-  
+	padding: 10px;
+	background-color: dodgerblue;
+	color: #FFFFFF;
+	font-weight: bold;
+	transition: all .25s ease-in-out;
+	cursor: pointer;
+	z-index: 10;
+
 }
-.create-header h3{
+
+.create-header h3 {
 	font-size: 20px;
 	font-weight: bold;
 	margin-bottom: 15px;
-	
+
 }
 
- 
+
 .key-feature {
-    -webkit-transition: all 0.2s ease;
-    transition: all 0.2s ease;
-border-radius: 8px !important;
-padding: 1rem;
-display: flex;
-align-items: center;
-justify-content: center;
-box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-    position: relative;
-    border: 1px solid #e0e0e0;
-background: #fff;
-margin-bottom: 15px;
+	-webkit-transition: all 0.2s ease;
+	transition: all 0.2s ease;
+	border-radius: 8px !important;
+	padding: 1rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+	position: relative;
+	border: 1px solid #e0e0e0;
+	background: #fff;
+	margin-bottom: 15px;
 }
+
 .flex-1 {
-    flex: 1 1 0%;
+	flex: 1 1 0%;
 }
-.key-feature h6{
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 50px;
-    text-transform: capitalize;
-    margin-bottom: 0px;
-    cursor: pointer;
+
+.key-feature h6 {
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 50px;
+	text-transform: capitalize;
+	margin-bottom: 0px;
+	cursor: pointer;
 }
-.key-feature .price{
-    color: #fc791a;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 50px;
-    text-transform: capitalize;
-    margin-bottom: 0px;
-    cursor: pointer;
+
+.key-feature .price {
+	color: #fc791a;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 50px;
+	text-transform: capitalize;
+	margin-bottom: 0px;
+	cursor: pointer;
 }
+
 .key-feature .icon {
-    height: 40px;
-    width: 40px;
-    line-height: 40px;
-    font-size: 24px;
-    background: -webkit-gradient(linear, left top, right top, from(transparent), to(rgba(239, 94, 43, 0.15)));
-    background: linear-gradient(90deg, transparent, rgba(239, 94, 43, 0.15));
+	height: 40px;
+	width: 40px;
+	line-height: 40px;
+	font-size: 24px;
+	background: -webkit-gradient(linear, left top, right top, from(transparent), to(rgba(239, 94, 43, 0.15)));
+	background: linear-gradient(90deg, transparent, rgba(239, 94, 43, 0.15));
 }
+
 .key-feature:hover {
-    box-shadow: 0 5px 13px rgba(60, 72, 88, 0.2) !important;
+	box-shadow: 0 5px 13px rgba(60, 72, 88, 0.2) !important;
 }

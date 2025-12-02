@@ -6,15 +6,15 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-private baseUrl = 'http://localhost:3000'; // change if deployed
+  private baseUrl = 'http://localhost:3000'; // change if deployed
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-   loginUser(credentials: any): Observable<any> {
+  loginUser(credentials: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/login`, credentials);
   }
 
-   getEvents() {
+  getEvents() {
     return this.http.get(`${this.baseUrl}/events`);
   }
 
@@ -30,7 +30,7 @@ private baseUrl = 'http://localhost:3000'; // change if deployed
     return this.http.delete(`${this.baseUrl}/events/delete/${id}`);
   }
 
-   getServices(): Observable<any> {
+  getServices(): Observable<any> {
     return this.http.get(`${this.baseUrl}/services`);
   }
 
@@ -49,7 +49,7 @@ private baseUrl = 'http://localhost:3000'; // change if deployed
     return this.http.delete(`${this.baseUrl}/services/delete/${id}`);
   }
 
-  
+
   /** Get all menu items */
   getMenuItems(): Observable<any> {
     return this.http.get(`${this.baseUrl}/menu-items`);
@@ -75,6 +75,23 @@ private baseUrl = 'http://localhost:3000'; // change if deployed
     return this.http.delete(`${this.baseUrl}/menu-items/delete/${id}`);
   }
 
+  getServiceItems():Observable<any> {
+    return this.http.get(`${this.baseUrl}/service-items`);
+  }
 
-  
+  createServiceItem(fd: FormData):Observable<any> {
+    return this.http.post(`${this.baseUrl}/service-items/create`, fd);
+  }
+
+  updateServiceItem(id: number, fd: FormData):Observable<any> {
+    return this.http.put(`${this.baseUrl}/service-items/update/${id}`, fd);
+  }
+
+  deleteServiceItem(id: number):Observable<any> {
+    return this.http.delete(`${this.baseUrl}/service-items/delete/${id}`);
+  }
+
+
+
+
 }

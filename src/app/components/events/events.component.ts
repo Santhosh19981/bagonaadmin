@@ -22,7 +22,7 @@ export class EventsComponent {
     status: 'inactive',
     image: null
   };
-  defaultEventImage = "https://img.icons8.com/?size=512&id=23264&format=png";
+  defaultEventImage = "https://img.icons8.com/fluency/512/calendar.png";
   constructor(private apiService: ApiService) { }
 
   ngOnInit() {
@@ -30,19 +30,19 @@ export class EventsComponent {
   }
 
   // Load events
-loadEvents() {
-  this.apiService.getEvents().subscribe({
-    next: (res: any) => {
-      this.events = Array.isArray(res?.data) ? res.data : [];
-     
-    },
-    error: (err) => {
-      console.error("❌ Error loading events:", err);
-      this.events = [];
-      
-    }
-  });
-}
+  loadEvents() {
+    this.apiService.getEvents().subscribe({
+      next: (res: any) => {
+        this.events = Array.isArray(res?.data) ? res.data : [];
+
+      },
+      error: (err) => {
+        console.error("❌ Error loading events:", err);
+        this.events = [];
+
+      }
+    });
+  }
 
   onToggleChange(event: any) {
     const isChecked = event.target.checked;
@@ -53,7 +53,7 @@ loadEvents() {
     this.showForm = !this.showForm;
 
     if (event) {
-      this.newEvent = this.selectedEvent =  { ...event }; // Editing existing event
+      this.newEvent = this.selectedEvent = { ...event }; // Editing existing event
     } else {
       this.newEvent = {
         name: '',
@@ -65,8 +65,8 @@ loadEvents() {
   }
 
   onImageError(event: any) {
-  event.target.src = this.defaultEventImage;
-}
+    event.target.src = this.defaultEventImage;
+  }
 
 
   // Image Upload
@@ -75,44 +75,44 @@ loadEvents() {
   }
 
   // Save Event (Create or Update)
- saveEvent() {
-  const fd = new FormData();
+  saveEvent() {
+    const fd = new FormData();
 
-  fd.append('name', this.newEvent.name);
-  fd.append('description', this.newEvent.description);
-  fd.append('status', this.newEvent.status);
+    fd.append('name', this.newEvent.name);
+    fd.append('description', this.newEvent.description);
+    fd.append('status', this.newEvent.status);
 
-  if (this.newEvent.image instanceof File) {
-    fd.append('image', this.newEvent.image);
+    if (this.newEvent.image instanceof File) {
+      fd.append('image', this.newEvent.image);
+    }
+
+    if (this.selectedEvent) {
+      fd.append('existingImage', this.selectedEvent.image_url);
+
+      this.apiService.updateEvent(this.selectedEvent.event_id, fd).subscribe({
+        next: (res: any) => {
+          alert(res.message);      // 🔥 show success message
+          this.showForm = false;
+          this.loadEvents();
+        },
+        error: (err) => {
+          alert("Update failed! " + err.message);   // ❌ show error message
+        }
+      });
+
+    } else {
+      this.apiService.createEvent(fd).subscribe({
+        next: (res: any) => {
+          alert(res.message);      // 🔥 show success message
+          this.showForm = false;
+          this.loadEvents();
+        },
+        error: (err) => {
+          alert("Create failed! " + err.message);   // ❌ show error message
+        }
+      });
+    }
   }
-
-  if (this.selectedEvent) {
-    fd.append('existingImage', this.selectedEvent.image_url);
-
-    this.apiService.updateEvent(this.selectedEvent.event_id, fd).subscribe({
-      next: (res: any) => {
-        alert(res.message);      // 🔥 show success message
-        this.showForm = false;
-        this.loadEvents();
-      },
-      error: (err) => {
-        alert("Update failed! " + err.message);   // ❌ show error message
-      }
-    });
-
-  } else {
-    this.apiService.createEvent(fd).subscribe({
-      next: (res: any) => {
-        alert(res.message);      // 🔥 show success message
-        this.showForm = false;
-        this.loadEvents();
-      },
-      error: (err) => {
-        alert("Create failed! " + err.message);   // ❌ show error message
-      }
-    });
-  }
-}
 
 
   // Delete Event
