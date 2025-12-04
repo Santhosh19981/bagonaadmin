@@ -28,6 +28,9 @@ export class SidemenuComponent {
   gotoMenu(route: string) {
     this.menu = route;
     switch (route) {
+      case 'approvals':
+        this.router.navigate(['/approvals']);
+        break;
       
       case 'events':
         this.router.navigate(['/events']);

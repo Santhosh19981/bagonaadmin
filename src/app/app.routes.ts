@@ -11,6 +11,7 @@ import { EventsComponent } from './components/events/events.component';
 import { ServicesComponent } from './components/services/services.component';
 import { ServiceItemsComponent } from './components/service-items/service-items.component';
 import { MenuItemsComponent } from './components/menu-items/menu-items.component';
+import { ApprovalsComponent } from './components/approvals/approvals.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full',  },
@@ -25,4 +26,6 @@ export const routes: Routes = [
   { path: 'payment-history', component: PaymentHistoryComponent,canActivate:  [AuthGuard]  },
   { path: 'users', component: UsersComponent,canActivate:  [AuthGuard]  },
    { path: 'vendors', component: VendorsComponent,canActivate:  [AuthGuard]  },
+   { path: 'approvals', component: ApprovalsComponent,canActivate:  [AuthGuard]  },
+   
 ];

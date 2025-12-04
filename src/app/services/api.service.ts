@@ -92,6 +92,32 @@ export class ApiService {
   }
 
 
+// USER APPROVALS API CALLS (Updated)
+getAllUsers(): Observable<any> {
+  return this.http.get(`${this.baseUrl}/approvals/all`);
+}
+
+getPendingUsers(): Observable<any> {
+  return this.http.get(`${this.baseUrl}/approvals/pending`);
+}
+
+getApprovedUsers(): Observable<any> {
+  return this.http.get(`${this.baseUrl}/approvals/approved`);
+}
+
+getRejectedUsers(): Observable<any> {
+  return this.http.get(`${this.baseUrl}/approvals/rejected`);
+}
+
+approveUser(id: number): Observable<any> {
+  return this.http.put(`${this.baseUrl}/approvals/approve/${id}`, {});
+}
+
+rejectUser(id: number): Observable<any> {
+  return this.http.put(`${this.baseUrl}/approvals/reject/${id}`, {});
+}
+
+
 
 
 }
