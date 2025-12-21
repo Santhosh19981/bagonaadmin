@@ -3,11 +3,12 @@ import { FormBuilder, Validators, FormGroup, FormsModule, ReactiveFormsModule } 
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-   imports: [ CommonModule, ReactiveFormsModule, FormsModule ],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
@@ -17,8 +18,9 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private apiService: ApiService
-  ) {}
+    private apiService: ApiService,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit() {
     this.loginForm = this.fb.group({
@@ -27,7 +29,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-   togglePassword() {
+  togglePassword() {
     this.showPassword = !this.showPassword;
   }
 
@@ -43,20 +45,22 @@ export class LoginComponent implements OnInit {
         if (res && res.token && res.user) {
           localStorage.setItem('token', res.token);
           localStorage.setItem('user', JSON.stringify(res.user));
+          localStorage.setItem('isLoggedIn', 'true');
 
           // ✅ Backend already checks role_id === 4, but keeping double safety check
           if (res.user.role === 4) {
+            this.toastr.success('Login Successful! Welcome back.', 'Success');
             this.router.navigate(['/dashboard']); // ✅ Navigate to dashboard
           } else {
-            alert('Access denied. Invalid role.');
+            this.toastr.error('Access denied. Invalid role.', 'Error');
           }
         } else {
-          alert('Invalid response from server');
+          this.toastr.error('Invalid response from server', 'Error');
         }
       },
       error: (err) => {
         this.loading = false;
-        alert(err.error?.message || 'Invalid username or password');
+        this.toastr.error(err.error?.message || 'Invalid username or password', 'Login Failed');
       }
     });
   }

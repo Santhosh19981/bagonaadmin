@@ -1,59 +1,95 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { SidemenuComponent } from '../sidemenu/sidemenu.component';
+import { HeaderComponent } from '../header/header.component';
+import { ApiService } from '../../services/api.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, SidemenuComponent],
+  imports: [CommonModule, SidemenuComponent, HeaderComponent],
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit {
 
-  users: any[] = [];
+  allUsers: any[] = [];
+  filteredUsers: any[] = [];
+  paginatedUsers: any[] = [];
 
-  // Default users data if none in localStorage
-  defaultUsers = [
-    {
-      name: 'Micheal John',
-      phone: '9876541230',
-      email: 'micheal.john@mail.com',
-      registerDate: '18-10-2021',
-      avatar: 'https://cdn-icons-png.flaticon.com/512/8792/8792047.png'
-    },
-    {
-      name: 'Anna Hines',
-      phone: '9123456789',
-      email: 'anna.hines@mail.com',
-      registerDate: '22-02-2022',
-      avatar: 'https://cdn-icons-png.flaticon.com/512/147/147144.png'
-    },
-    {
-      name: 'John Doe',
-      phone: '9988776655',
-      email: 'john.doe@mail.com',
-      registerDate: '05-12-2020',
-      avatar: 'https://cdn-icons-png.flaticon.com/512/147/147142.png'
-    }
-  ];
+  // Pagination
+  currentPage: number = 1;
+  itemsPerPage: number = 8;
+  totalPages: number = 1;
+
+  constructor(private api: ApiService, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.loadUsers();
   }
 
   loadUsers() {
-    const storedUsers = localStorage.getItem('users');
-    if (storedUsers) {
-      this.users = JSON.parse(storedUsers);
+    this.api.getCustomers().subscribe({
+      next: (res: any) => {
+        if (res.status) {
+          this.allUsers = res.data || [];
+          this.applyFilter('');
+        }
+      },
+      error: (err) => {
+        this.toastr.error("Failed to load customer base");
+        console.error(err);
+      }
+    });
+  }
+
+  onSearch(query: string) {
+    this.applyFilter(query);
+  }
+
+  applyFilter(query: string) {
+    const q = query.toLowerCase().trim();
+    if (!q) {
+      this.filteredUsers = [...this.allUsers];
     } else {
-      this.users = this.defaultUsers;
-      localStorage.setItem('users', JSON.stringify(this.defaultUsers));
+      this.filteredUsers = this.allUsers.filter(user =>
+        user.name.toLowerCase().includes(q) ||
+        (user.email && user.email.toLowerCase().includes(q)) ||
+        (user.mobile && user.mobile.includes(q))
+      );
+    }
+    this.currentPage = 1;
+    this.calculatePagination();
+  }
+
+  calculatePagination() {
+    this.totalPages = Math.ceil(this.filteredUsers.length / this.itemsPerPage);
+    if (this.totalPages === 0) this.totalPages = 1;
+    this.updatePaginatedItems();
+  }
+
+  updatePaginatedItems() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    this.paginatedUsers = this.filteredUsers.slice(start, end);
+  }
+
+  setPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePaginatedItems();
     }
   }
 
-  deleteUser(index: number) {
-    this.users.splice(index, 1);
-    localStorage.setItem('users', JSON.stringify(this.users));
+  updateStatus(id: number, status: number) {
+    const newStatus = status === 1 ? 0 : 1;
+    this.api.updateActiveStatus(id, newStatus).subscribe({
+      next: () => {
+        this.toastr.success(`User status updated to ${newStatus === 1 ? 'Active' : 'Inactive'} successfully`);
+        this.loadUsers();
+      },
+      error: () => this.toastr.error("Failed to update user status")
+    });
   }
 }

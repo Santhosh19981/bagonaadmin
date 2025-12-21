@@ -5,152 +5,255 @@
 
   <!-- CONTENT -->
   <section id="content">
-    <!-- NAVBAR -->
-    <nav>
-      <!-- ... Navbar code remains unchanged ... -->
-    </nav>
-    <!-- NAVBAR -->
+    <app-header (searchEvent)="onSearch($event)"></app-header>
 
     <!-- MAIN -->
-    <main>
-      <div class="container" *ngIf="showForm">
-        <div class="row">
-          <div class="col-sm-5">
+    <main class="p-6 bg-[#f8fafc]">
+      <!-- Page Header -->
+      <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4" data-aos="fade-down">
+        <div>
+          <h1 class="text-2xl font-black text-slate-800 tracking-tight">Events Management</h1>
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Manage event types and categories
+          </p>
+        </div>
 
-            <div class="create-header">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="m-0">Create Event</h3>
-
-                <button type="button" class="admin-btn btn-soft-danger" (click)="toggleForm()">
-                  Back
-                </button>
-              </div>
-
-              <form class="form-horizontal" (ngSubmit)="saveEvent()">
-
-                <!-- Event Image -->
-                <div class="form-group">
-                  <label>Event Image</label>
-                  <input class="form-control" type="file" accept="image/*" (change)="onImageChange($event)" />
-                </div>
-
-                <!-- Event Name -->
-                <div class="form-group">
-                  <label>Event Name</label>
-                  <input type="text" class="form-control" placeholder="Event Name" [(ngModel)]="newEvent.name"
-                    name="eventname" required />
-                </div>
-
-                <!-- Description -->
-                <div class="form-group">
-                  <label>Description</label>
-                  <input type="text" class="form-control" placeholder="Description" [(ngModel)]="newEvent.description"
-                    name="description" />
-                </div>
-
-                <!-- Active Switch -->
-                <div class="form-group form-check form-switch mt-3 d-flex align-items-center gap-3">
-                  <label class="form-check-label mb-1 me-3">Active / Inactive</label>
-
-                  <input type="checkbox" class="form-check-input" role="switch" [checked]="newEvent.status == 'active'"
-                    (change)="onToggleChange($event)" />
-
-                </div>
-
-
-                <!-- Buttons -->
-                <button type="button" class="custom-btn btn-7 mt-2 me-2" (click)="toggleForm()">
-                  <span>Cancel</span>
-                </button>
-
-                <button type="submit" class="custom-btn btn-7 mt-2">
-                  <span>Save</span>
-                </button>
-
-              </form>
-            </div>
-
-          </div>
+        <div class="flex items-center gap-3">
+          <button *ngIf="!showForm" (click)="toggleForm()"
+            class="flex items-center gap-2 px-6 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-[18px] text-[11px] font-black uppercase tracking-widest transition-all shadow-lg shadow-yellow-500/20 active:scale-95">
+            <i class="bi bi-plus-lg"></i>
+            <span>Add Event</span>
+          </button>
+          <button *ngIf="showForm" (click)="toggleForm()"
+            class="flex items-center gap-2 px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-[18px] text-[11px] font-black uppercase tracking-widest transition-all active:scale-95">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to List</span>
+          </button>
         </div>
       </div>
 
-      <!-- EVENT LIST TABLE -->
-      <!-- Event Table -->
-      <div class="table-data" *ngIf="!showForm">
-
-        <!-- When NO events -->
-
-        <!-- When events available -->
-        <div class="order">
-          <div class="head">
-            <h3>Events List</h3>
+      <!-- Event Form (Premium Design) -->
+      <div *ngIf="showForm"
+        class="max-w-xl mx-auto bg-white rounded-[40px] shadow-2xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-300">
+        <div class="px-8 py-6 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
+          <div class="flex items-center gap-4">
+            <div
+              class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-yellow-500 to-orange-400 flex items-center justify-center text-white font-black text-lg">
+              <i class="bi" [ngClass]="selectedEvent ? 'bi-pencil-square' : 'bi-calendar-plus'"></i>
+            </div>
             <div>
-              <a class="admin-btn btn-7 text-decoration-none" (click)="toggleForm()">Add</a>
+              <h2 class="text-xl font-black text-slate-800 tracking-tight">{{selectedEvent ? 'Edit Event Details' :
+                'Add New Event'}}</h2>
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Event branding and details</p>
             </div>
-            <form>
-              <div class="form-input">
-                <input type="search" placeholder="Search..." />
-                <button type="submit" class="search-btn">
-                  <i class="bx bx-search"></i>
-                </button>
-              </div>
-            </form>
           </div>
-
-          <div class="overflow-auto pr-1 relative h-[calc(100dvh_-_375px)]">
-            <table>
-              <thead>
-                <tr>
-                  <th>Image</th>
-                  <th>Event Name</th>
-                  <th>Description</th>
-                  <th>Active</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <ng-container *ngIf="events.length > 0; else noEvents">
-                  <tr *ngFor="let event of events">
-                    <td>
-                      <img [src]="event?.image_url || defaultEventImage" (error)="onImageError($event)" width="50"
-                        height="50" class="rounded" />
-                    </td>
-                    <td>{{ event.name }}</td>
-                    <td [title]="event.description">{{ event.description.length > 30 ? (event.description | slice:0:20)
-                      + '...' : event.description }}</td>
-                    <td>
-                      <span class="status"
-                        [ngClass]="{'completed': event.status == 'active','pending': event.status !== 'active'}">
-                        {{ event.status }}
-                      </span>
-                    </td>
-                    <td>
-                      <div class="inline-flex gap-2">
-                        <a class="admin-btn btn-soft-primary" (click)="toggleForm(event)">Edit</a>
-                        <a class="admin-btn btn-soft-danger" (click)="deleteEvent(event.id)">Delete</a>
-                      </div>
-                    </td>
-                  </tr>
-                </ng-container>
-                <ng-template #noEvents>
-                  <tr>
-                    <td colspan="5" class="text-center py-5">
-                      <h3>No Events Found</h3>
-                      <button class="admin-btn btn-7 mt-3" (click)="toggleForm()">Add Event</button>
-                    </td>
-                  </tr>
-                </ng-template>
-              </tbody>
-            </table>
-          </div>
-
         </div>
 
+        <form class="p-8 space-y-6" (ngSubmit)="saveEvent()">
+          <!-- Event Image Upload with Preview -->
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Event Image</label>
+            <div
+              class="flex items-center gap-4 p-5 bg-slate-50 rounded-[28px] border border-dashed border-slate-200 group hover:border-yellow-500/50 transition-colors">
+              <div
+                class="w-20 h-20 rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-sm relative group/preview">
+                <img [src]="imagePreviewUrl || defaultEventImage" (error)="onImageError($event)"
+                  class="w-full h-full object-cover" />
+                <div *ngIf="imagePreviewUrl"
+                  class="absolute inset-0 bg-black/40 opacity-0 group-hover/preview:opacity-100 flex items-center justify-center transition-opacity">
+                  <i class="bi bi-camera text-white"></i>
+                </div>
+              </div>
+              <div class="flex-1">
+                <input type="file" (change)="onImageChange($event)" class="hidden" #fileInput accept="image/*" />
+                <button type="button" (click)="fileInput.click()"
+                  class="text-xs font-black text-yellow-600 hover:text-yellow-700 flex items-center gap-2 px-4 py-2 bg-yellow-50 rounded-xl transition-all">
+                  <i class="bi bi-upload"></i>
+                  <span>Select Event Image</span>
+                </button>
+                <p class="text-[9px] text-slate-400 mt-2 font-medium">Recommended: 800x800px. JPG or PNG.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-6">
+            <div class="space-y-2">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Event Name</label>
+              <input type="text" [(ngModel)]="newEvent.name" name="name"
+                class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-4 focus:ring-yellow-500/10 focus:border-yellow-500/30 transition-all outline-none text-slate-700 font-bold"
+                placeholder="e.g. Traditional Wedding Ceremony" required />
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Description</label>
+              <textarea [(ngModel)]="newEvent.description" name="description" rows="3"
+                class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-4 focus:ring-yellow-500/10 focus:border-yellow-500/30 transition-all outline-none text-slate-700 font-medium"
+                placeholder="Describe what makes this event type special..."></textarea>
+            </div>
+
+            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-[24px] border border-slate-100/50">
+              <div>
+                <p class="text-xs font-black text-slate-700">Status</p>
+                <p class="text-[10px] text-slate-400">Visibility of this event to users</p>
+              </div>
+              <div class="form-check form-switch p-0 m-0">
+                <input class="form-check-input w-10 h-5" type="checkbox" role="switch"
+                  [checked]="newEvent.status == 'active'" (change)="onToggleChange($event)">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-50">
+            <button type="button" (click)="toggleForm()"
+              class="px-6 py-3 text-xs font-bold text-slate-400 hover:text-slate-800 transition-colors">Discard
+              Changes</button>
+            <button type="submit"
+              class="px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-yellow-500/20 active:scale-95">
+              {{selectedEvent ? 'Save Changes' : 'Add Event'}}
+            </button>
+          </div>
+        </form>
       </div>
 
+      <!-- Elevated Event Table Container -->
+      <div *ngIf="!showForm"
+        class="bg-white rounded-[32px] border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden"
+        data-aos="fade-up">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50/50 border-b border-slate-100">
+                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Icon</th>
+                <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Event Name</th>
+                <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Description</th>
+                <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Status</th>
+                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] text-right">
+                  Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+              <tr *ngFor="let event of paginatedEvents" class="group hover:bg-slate-50/50 transition-all duration-300">
+                <td class="px-6 py-3">
+                  <div
+                    class="w-10 h-10 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 group-hover:border-yellow-500/30 transition-all flex items-center justify-center">
+                    <img *ngIf="event.image_url; else defaultEventIcon" [src]="event.image_url"
+                      (error)="onImageError($event)" class="w-full h-full object-cover" />
+                    <ng-template #defaultEventIcon>
+                      <div
+                        class="w-full h-full bg-gradient-to-tr from-yellow-500/10 to-orange-400/10 flex items-center justify-center">
+                        <i class="bi bi-calendar4-event text-yellow-600/60 text-lg"></i>
+                      </div>
+                    </ng-template>
+                  </div>
+                </td>
+                <td class="px-4 py-3">
+                  <p class="text-sm font-bold text-slate-800 leading-tight">{{event.name}}</p>
+                  <p class="text-[9px] font-medium text-slate-400 uppercase tracking-tighter">Event Category</p>
+                </td>
+                <td class="px-4 py-3">
+                  <span class="text-xs font-medium text-slate-500 truncate max-w-[240px] inline-block"
+                    [title]="event.description">
+                    {{event.description || 'No description provided'}}
+                  </span>
+                </td>
+                <td class="px-4 py-3">
+                  <span [ngClass]="{
+                                        'bg-green-50 text-green-600': event.status == 'active',
+                                        'bg-slate-100 text-slate-500': event.status !== 'active'
+                                    }"
+                    class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider inline-flex items-center gap-1.5 transition-all">
+                    <span class="w-1 h-1 rounded-full" [ngClass]="{
+                                            'bg-green-500': event.status == 'active',
+                                            'bg-slate-400': event.status !== 'active'
+                                        }"></span>
+                    {{event.status == 'active' ? 'Active' : 'Inactive'}}
+                  </span>
+                </td>
+                <td class="px-6 py-3 text-right">
+                  <div
+                    class="flex items-center justify-end gap-2 translate-x-4 group-hover:translate-x-0 transition-all duration-300">
+                    <button (click)="toggleForm(event)"
+                      class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-800 text-slate-600 hover:text-white rounded-lg text-[9px] font-black uppercase tracking-wider transition-all">
+                      <i class="bi bi-pencil-square"></i>
+                      <span>Edit</span>
+                    </button>
+                    <button (click)="deleteEvent(event.id)"
+                      class="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-500 text-red-600 hover:text-white rounded-lg text-[9px] font-black uppercase tracking-wider transition-all">
+                      <i class="bi bi-trash3"></i>
+                      <span>Remove</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="paginatedEvents.length === 0" class="py-20 text-center">
+          <div
+            class="w-20 h-20 bg-slate-50 rounded-[32px] flex items-center justify-center mx-auto mb-4 border border-slate-100">
+            <i class="bi bi-calendar2-x text-4xl text-slate-200"></i>
+          </div>
+          <h3 class="text-slate-800 font-bold">No Records Found</h3>
+          <p class="text-xs text-slate-400 mt-1">There are no events match your current view or search.</p>
+        </div>
+
+        <!-- Professional Pagination -->
+        <div *ngIf="filteredEvents.length > 0"
+          class="px-8 py-5 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
+          <p class="text-xs font-bold text-slate-400 tracking-wide">
+            Showing <span class="text-slate-700">{{(currentPage-1) * itemsPerPage + 1}}</span> to
+            <span class="text-slate-700">{{currentPage * itemsPerPage > filteredEvents.length ? filteredEvents.length :
+              currentPage * itemsPerPage}}</span>
+            of <span class="text-slate-700">{{filteredEvents.length}}</span> entries
+          </p>
+
+          <div class="flex items-center gap-1">
+            <button (click)="setPage(currentPage - 1)" [disabled]="currentPage === 1"
+              class="p-2 rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-yellow-600 hover:border-yellow-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+              <i class="bi bi-chevron-left text-sm"></i>
+            </button>
+
+            <div class="flex items-center gap-1 mx-2">
+              <button *ngFor="let p of [].constructor(totalPages); let i = index" (click)="setPage(i + 1)"
+                [class.active-page]="currentPage === (i + 1)"
+                class="w-9 h-9 flex items-center justify-center rounded-xl border border-transparent text-xs font-black transition-all hover:bg-slate-100 text-slate-500">
+                {{i + 1}}
+              </button>
+            </div>
+
+            <button (click)="setPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+              class="p-2 rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-yellow-600 hover:border-yellow-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+              <i class="bi bi-chevron-right text-sm"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     </main>
-    <!-- MAIN -->
   </section>
-  <!-- CONTENT -->
+
+  <!-- Custom Delete Confirmation Modal -->
+  <div *ngIf="showDeleteConfirm" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300"
+      (click)="cancelDelete()"></div>
+    <div
+      class="relative w-full max-w-sm bg-white rounded-[32px] shadow-2xl border border-slate-100 p-8 text-center animate-in zoom-in-95 duration-300">
+      <div class="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+        <i class="bi bi-trash3 text-2xl"></i>
+      </div>
+      <h3 class="text-lg font-black text-slate-800 tracking-tight mb-2">Are you sure?</h3>
+      <p class="text-xs text-slate-400 leading-relaxed mb-8">This action will permanently delete the event. You cannot
+        undo this process.</p>
+      <div class="flex items-center gap-3 mt-4">
+        <button (click)="cancelDelete()"
+          class="flex-1 px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">
+          Keep Event
+        </button>
+        <button (click)="confirmDelete()"
+          class="flex-1 px-6 py-3.5 bg-red-500 hover:bg-red-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-red-500/20">
+          Yes, Delete
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

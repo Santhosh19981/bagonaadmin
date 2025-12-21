@@ -1,34 +1,49 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SidemenuComponent } from '../sidemenu/sidemenu.component';
+import { HeaderComponent } from '../header/header.component';
 import { ApiService } from '../../services/api.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-menu-items',
   standalone: true,
-  imports: [CommonModule, FormsModule, SidemenuComponent],
+  imports: [CommonModule, FormsModule, SidemenuComponent, HeaderComponent],
   templateUrl: './menu-items.component.html',
   styleUrl: './menu-items.component.scss',
 })
-export class MenuItemsComponent {
+export class MenuItemsComponent implements OnInit {
 
-  menuitems: any[] = [];
-  imagePreview: any = null;
+  allMenuItems: any[] = [];
+  filteredMenuItems: any[] = [];
+  paginatedMenuItems: any[] = [];
+
+  // Pagination
+  currentPage: number = 1;
+  itemsPerPage: number = 8;
+  totalPages: number = 1;
+
+  // State
   showForm = false;
   selectedMenuItem: any = null;
+  imagePreviewUrl: string | null = null;
+
+  // Delete Modal
+  showDeleteConfirm: boolean = false;
+  itemIdToDelete: number | null = null;
 
   newMenuItem: any = {
     name: '',
     description: '',
     price: '',
-    type: '',
+    type: 'Veg',
     image: null
   };
 
-  defaultItemImage = "https://img.icons8.com/fluency/512/restaurant.png";   // default fallback image
+  defaultItemImage = "https://cdn-icons-png.flaticon.com/512/3565/3565407.png";
 
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService, private toastr: ToastrService) { }
 
   ngOnInit() {
     this.loadMenuItems();
@@ -38,37 +53,84 @@ export class MenuItemsComponent {
   loadMenuItems() {
     this.apiService.getMenuItems().subscribe({
       next: (res: any) => {
-        this.menuitems = Array.isArray(res?.data) ? res.data.map((item: any) => ({
+        this.allMenuItems = Array.isArray(res?.data) ? res.data.map((item: any) => ({
           ...item,
           image: item.image_url || item.image // Map image_url to image
         })) : [];
+        this.applyFilter('');
       },
       error: (err) => {
         console.error("Error loading menu items:", err);
-        this.menuitems = [];
+        this.allMenuItems = [];
+        this.applyFilter('');
       }
     });
   }
 
+  onSearch(query: string) {
+    this.applyFilter(query);
+  }
+
+  applyFilter(query: string) {
+    const q = query.toLowerCase().trim();
+    if (!q) {
+      this.filteredMenuItems = [...this.allMenuItems];
+    } else {
+      this.filteredMenuItems = this.allMenuItems.filter(item =>
+        item.name.toLowerCase().includes(q) ||
+        (item.description && item.description.toLowerCase().includes(q))
+      );
+    }
+    this.currentPage = 1;
+    this.calculatePagination();
+  }
+
+  calculatePagination() {
+    this.totalPages = Math.ceil(this.filteredMenuItems.length / this.itemsPerPage);
+    if (this.totalPages === 0) this.totalPages = 1;
+    this.updatePaginatedItems();
+  }
+
+  updatePaginatedItems() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    this.paginatedMenuItems = this.filteredMenuItems.slice(start, end);
+  }
+
+  setPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePaginatedItems();
+    }
+  }
+
   onImageChange(e: any) {
     const file = e.target.files[0];
-    this.newMenuItem.image = file;
-
     if (file) {
-      this.imagePreview = URL.createObjectURL(file);
+      this.newMenuItem.image = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreviewUrl = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
+  }
+
+  onImageError(event: any) {
+    event.target.src = this.defaultItemImage;
   }
 
   toggleForm(item?: any) {
     this.showForm = !this.showForm;
+    this.imagePreviewUrl = null;
 
     if (item) {
-      console.log('toggleForm - EDIT MODE - item:', item);
       this.selectedMenuItem = { ...item };
       this.newMenuItem = {
         ...item,
         description: item.description || '',
-        price: item.price || ''
+        price: item.price || '',
+        image: null
       };
 
       // Map veg/nonveg to type for the dropdown
@@ -78,29 +140,15 @@ export class MenuItemsComponent {
         this.newMenuItem.type = 'Non-Veg';
       }
 
-      this.imagePreview = item.image;        // existing image preview
-      console.log('selectedMenuItem after setting:', this.selectedMenuItem);
-      console.log('newMenuItem after setting:', this.newMenuItem);
+      this.imagePreviewUrl = item.image;
     } else {
-      console.log('toggleForm - CREATE MODE');
       this.selectedMenuItem = null;
-      this.newMenuItem = { name: '', description: '', price: '', type: '', image: null };
-      this.imagePreview = null;
+      this.newMenuItem = { name: '', description: '', price: '', type: 'Veg', image: null };
     }
   }
 
-  // IMAGE FALLBACK ERROR
-  onImageError(event: any) {
-    event.target.src = this.defaultItemImage;
-  }
-
-
-
   // SAVE MENU ITEM (CREATE OR UPDATE)
   saveMenuItem() {
-    console.log('selectedMenuItem:', this.selectedMenuItem);
-    console.log('selectedMenuItem.id:', this.selectedMenuItem?.menu_item_id);
-
     const fd = new FormData();
     fd.append('name', this.newMenuItem.name);
     fd.append('description', this.newMenuItem.description || '');
@@ -114,50 +162,60 @@ export class MenuItemsComponent {
       fd.append('image', this.newMenuItem.image);
     }
 
-    // Check if we're editing (selectedMenuItem exists and has an id)
-    const isEditing = this.selectedMenuItem && this.selectedMenuItem.menu_item_id !== undefined && this.selectedMenuItem.menu_item_id !== null;
-
-    if (isEditing) {
-      console.log('UPDATE MODE - ID:', this.selectedMenuItem.menu_item_id);
-      // editing → send old image path only if it exists
+    if (this.selectedMenuItem) {
       if (this.selectedMenuItem.image) {
         fd.append('existingImage', this.selectedMenuItem.image);
       }
 
       this.apiService.updateMenuItem(this.selectedMenuItem.menu_item_id, fd).subscribe({
         next: (res: any) => {
-          alert(res.message);
+          this.toastr.success(res.message || "Menu item updated!");
           this.showForm = false;
           this.loadMenuItems();
         },
         error: (err) => {
-          alert("Update failed: " + err.message);
+          this.toastr.error(err.message || "Update failed!");
         }
       });
 
     } else {
-      console.log('CREATE MODE');
-      // creating new
       this.apiService.createMenuItem(fd).subscribe({
         next: (res: any) => {
-          alert(res.message);
+          this.toastr.success(res.message || "Menu item created!");
           this.showForm = false;
           this.loadMenuItems();
         },
         error: (err) => {
-          alert("Create failed: " + err.message);
+          this.toastr.error(err.message || "Creation failed!");
         }
       });
     }
   }
 
   // DELETE
-  deleteMenuItem(menu_item_id: number) {
-    if (confirm("Delete this menu item?")) {
-      this.apiService.deleteMenuItem(menu_item_id).subscribe({
-        next: () => this.loadMenuItems(),
-        error: (err) => alert("Delete failed: " + err.message)
+  deleteMenuItem(id: number) {
+    this.itemIdToDelete = id;
+    this.showDeleteConfirm = true;
+  }
+
+  confirmDelete() {
+    if (this.itemIdToDelete) {
+      this.apiService.deleteMenuItem(this.itemIdToDelete).subscribe({
+        next: () => {
+          this.toastr.success("Menu item deleted");
+          this.loadMenuItems();
+          this.cancelDelete();
+        },
+        error: (err) => {
+          this.toastr.error("Failed to delete item");
+          this.cancelDelete();
+        }
       });
     }
+  }
+
+  cancelDelete() {
+    this.showDeleteConfirm = false;
+    this.itemIdToDelete = null;
   }
 }

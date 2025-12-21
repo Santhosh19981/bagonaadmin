@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:3000'; // change if deployed
+  private baseUrl = 'https://bhagona-backend-v2.vercel.app';
 
   constructor(private http: HttpClient) { }
 
@@ -75,47 +75,67 @@ export class ApiService {
     return this.http.delete(`${this.baseUrl}/menu-items/delete/${id}`);
   }
 
-  getServiceItems():Observable<any> {
+  getServiceItems(): Observable<any> {
     return this.http.get(`${this.baseUrl}/service-items`);
   }
 
-  createServiceItem(fd: FormData):Observable<any> {
+  createServiceItem(fd: FormData): Observable<any> {
     return this.http.post(`${this.baseUrl}/service-items/create`, fd);
   }
 
-  updateServiceItem(id: number, fd: FormData):Observable<any> {
+  updateServiceItem(id: number, fd: FormData): Observable<any> {
     return this.http.put(`${this.baseUrl}/service-items/update/${id}`, fd);
   }
 
-  deleteServiceItem(id: number):Observable<any> {
+  deleteServiceItem(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/service-items/delete/${id}`);
   }
 
 
-// USER APPROVALS API CALLS (Updated)
-getAllUsers(): Observable<any> {
-  return this.http.get(`${this.baseUrl}/approvals/all`);
-}
+  // USER APPROVALS API CALLS (Updated)
+  getAllUsers(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/approvals/all`);
+  }
 
-getPendingUsers(): Observable<any> {
-  return this.http.get(`${this.baseUrl}/approvals/pending`);
-}
+  getPendingUsers(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/approvals/pending`);
+  }
 
-getApprovedUsers(): Observable<any> {
-  return this.http.get(`${this.baseUrl}/approvals/approved`);
-}
+  getApprovedUsers(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/approvals/approved`);
+  }
 
-getRejectedUsers(): Observable<any> {
-  return this.http.get(`${this.baseUrl}/approvals/rejected`);
-}
+  getRejectedUsers(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/approvals/rejected`);
+  }
 
-approveUser(id: number): Observable<any> {
-  return this.http.put(`${this.baseUrl}/approvals/approve/${id}`, {});
-}
+  approveUser(id: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/approvals/approve/${id}`, {});
+  }
 
-rejectUser(id: number): Observable<any> {
-  return this.http.put(`${this.baseUrl}/approvals/reject/${id}`, {});
-}
+  rejectUser(id: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/approvals/reject/${id}`, {});
+  }
+
+  getCustomers(): Observable<any> {
+    return this.http.get(this.baseUrl + "/profiles/customers");
+  }
+
+  getChefs(): Observable<any> {
+    return this.http.get(this.baseUrl + "/profiles/chefs");
+  }
+
+  getVendors(): Observable<any> {
+    return this.http.get(this.baseUrl + "/profiles/vendors");
+  }
+
+  updateActiveStatus(id: number, isactive: number): Observable<any> {
+    return this.http.put(this.baseUrl + `/profiles/status/${id}`, { isactive });
+  }
+
+  getPaymentHistory(userId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/payment/history/${userId}`);
+  }
 
 
 

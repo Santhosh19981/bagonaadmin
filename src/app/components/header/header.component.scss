@@ -1,0 +1,23 @@
+:host {
+    display: block;
+}
+
+nav {
+    /* Added specific styling if needed beyond Tailwind */
+}
+
+.animate-in {
+    animation: slideIn 0.3s cubic-bezier(0, 0, 0.2, 1);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

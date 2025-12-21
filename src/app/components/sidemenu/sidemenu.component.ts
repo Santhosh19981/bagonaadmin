@@ -1,69 +1,63 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NavigationService, MenuItem } from '../../services/navigation.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-sidemenu',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './sidemenu.component.html',
   styleUrl: './sidemenu.component.scss'
 })
-export class SidemenuComponent {
-   @Input() menuFromParent: string = '';
-  menu:string = "dashboard";
+export class SidemenuComponent implements OnInit {
+  @Input() menuFromParent: string = '';
+  menu: string = "dashboard";
+  menuItems: MenuItem[] = [];
+  userName: string = '';
+  userRole: number | null = null;
 
-  constructor(private router: Router){
-
-  }
-
+  constructor(
+    private router: Router,
+    private navigationService: NavigationService
+  ) { }
 
   ngOnInit(): void {
+    // Get user info
+    this.userRole = this.navigationService.getCurrentUserRole();
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        this.userName = user.name || 'User';
+      } catch (e) {
+        this.userName = 'User';
+      }
+    }
+
+    // Load menu items based on user role
+    if (this.userRole) {
+      this.menuItems = this.navigationService.getMenuByRole(this.userRole);
+    }
+
+    // Set initial menu from parent input
     if (this.menuFromParent) {
       this.gotoMenu(this.menuFromParent);
     }
   }
-  logout(){
-     this.router.navigate(['/']);
+
+  logout() {
+    // Clear all authentication data
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('isLoggedIn');
+    this.router.navigate(['/login']);
   }
 
-  gotoMenu(route: string) {
-    this.menu = route;
-    switch (route) {
-      case 'approvals':
-        this.router.navigate(['/approvals']);
-        break;
-      
-      case 'events':
-        this.router.navigate(['/events']);
-        break;
-       case 'menuItems':
-        this.router.navigate(['/menu-items']);
-        break;
-      case 'services':
-        this.router.navigate(['/services']);
-        break;
-       case 'serviceItems':
-        this.router.navigate(['/service-items']);
-        break;
-      case 'dashboard':
-        this.router.navigate(['/dashboard']);
-        break;
-      case 'cheffs':
-        this.router.navigate(['/cheffs']);
-        break;
-      case 'orders':
-        this.router.navigate(['/orders']);
-        break;
-      case 'payment-history':
-        this.router.navigate(['/payment-history']);
-        break;
-      case 'users':
-        this.router.navigate(['/users']);
-        break;
-      case 'vendors':
-        this.router.navigate(['/vendors']);
-        break;
-      default:
-        break;
+  gotoMenu(menuId: string) {
+    this.menu = menuId;
+    const menuItem = this.menuItems.find(item => item.id === menuId);
+    if (menuItem) {
+      this.router.navigate([menuItem.route]);
     }
   }
 }

@@ -1,17 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { SidemenuComponent } from '../sidemenu/sidemenu.component';
+import { HeaderComponent } from '../header/header.component';
 
 @Component({
   selector: 'app-payment-history',
   standalone: true,
-  imports: [CommonModule, SidemenuComponent],
+  imports: [CommonModule, SidemenuComponent, HeaderComponent],
   templateUrl: './payment-history.component.html',
-  styleUrls: ['./payment-history.component.scss'] // fixed typo
+  styleUrl: './payment-history.component.scss'
 })
 export class PaymentHistoryComponent implements OnInit {
   transactions: any[] = [];
   activeTab: string = 'All';
+  searchQuery: string = '';
 
   ngOnInit() {
     const storedData = localStorage.getItem('paymentTransactions');
@@ -28,11 +30,28 @@ export class PaymentHistoryComponent implements OnInit {
     }
   }
 
+  onSearch(query: string) {
+    this.searchQuery = query.toLowerCase();
+  }
+
   get filteredTransactions() {
-    if (this.activeTab === 'All') {
-      return this.transactions;
+    let filtered = this.transactions;
+
+    // Tab filter
+    if (this.activeTab !== 'All') {
+      filtered = filtered.filter(tx => tx.type === this.activeTab);
     }
-    return this.transactions.filter(tx => tx.type === this.activeTab);
+
+    // Search filter
+    if (this.searchQuery) {
+      filtered = filtered.filter(tx =>
+        tx.location.toLowerCase().includes(this.searchQuery) ||
+        tx.date.includes(this.searchQuery) ||
+        tx.amount.toString().includes(this.searchQuery)
+      );
+    }
+
+    return filtered;
   }
 
   setTab(tab: string) {
