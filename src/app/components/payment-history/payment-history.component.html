@@ -1,18 +1,18 @@
 <div class="admin-dashboard">
-    <app-sidemenu [menuFromParent]="'payment'"></app-sidemenu>
+    <app-sidemenu [menuFromParent]="'payment-history'" #sidebarComponent></app-sidemenu>
     <section id="content">
-        <app-header (searchEvent)="onSearch($event)"></app-header>
+        <app-header (mobileMenuToggle)="sidebarComponent.toggleSidebar()" (searchEvent)="onSearch($event)"></app-header>
         <main>
             <!-- Premium Header Section -->
-            <div class="px-8 py-8 bg-slate-50/30">
-                <h1 class="text-3xl font-black text-slate-800 tracking-tight">Payment History</h1>
-                <p class="text-slate-500 text-sm font-medium mt-1">Monitor and track all financial transactions across
+            <div class="px-4 sm:px-8 py-4 sm:py-8 bg-slate-50/30">
+                <h1 class="text-xl sm:text-3xl font-black text-slate-800 tracking-tight">Payment History</h1>
+                <p class="text-slate-500 text-xs sm:text-sm font-medium mt-1">Monitor and track all financial
+                    transactions across
                     the platform</p>
             </div>
 
-            <!-- Prominent Command Bar with Tabs -->
-            <div class="command-bar">
-                <div class="tabs-navigation">
+            <div class="command-bar overflow-x-auto">
+                <div class="tabs-navigation min-w-max">
                     <button (click)="setTab('All')" [class.active-tab]="activeTab === 'All'" class="tab-item">
                         <i class="bi bi-collection"></i>
                         <span>All Transactions</span>
@@ -27,17 +27,17 @@
                     </button>
                 </div>
 
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-4 flex-shrink-0">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Showing:</span>
                     <span
                         class="px-3 py-1 bg-yellow-50 text-yellow-700 text-[10px] font-black rounded-lg border border-yellow-100 uppercase">{{activeTab}}</span>
                 </div>
             </div>
 
-            <div class="p-8">
+            <div class="p-2 sm:p-8">
                 <!-- Enhanced Table UI -->
                 <div class="table-container">
-                    <table class="w-full">
+                    <table class="w-full hidden sm:table">
                         <thead>
                             <tr>
                                 <th>Transaction Date</th>
@@ -85,6 +85,57 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Mobile Card Layout (visible only on mobile) -->
+                <div class="sm:hidden">
+                    <div class="space-y-3 px-2">
+                        <div *ngFor="let tx of filteredTransactions"
+                            class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
+                            <div class="flex items-start gap-2.5 mb-2.5 pb-2.5 border-b border-slate-100">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
+                                    <i class="bi bi-calendar3 text-slate-400 text-base"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-sm font-bold text-slate-800">{{tx.date}}</div>
+                                    <div class="text-[9px] font-medium text-slate-400 uppercase tracking-wider mt-0.5">
+                                        Transaction</div>
+                                </div>
+                                <span class="type-badge flex-shrink-0 text-[9px] px-2 py-1" [ngClass]="{
+                                    'badge-credit': tx.type === 'Credit',
+                                    'badge-debit': tx.type === 'Debit'
+                                }">{{tx.type}}</span>
+                            </div>
+                            <div class="space-y-2">
+                                <div>
+                                    <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                                        Amount</div>
+                                    <div class="text-base font-black text-slate-800">₹{{tx.amount | number:'1.2-2'}}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                                        Location</div>
+                                    <div class="flex items-center gap-2 text-slate-500 font-medium">
+                                        <i class="bi bi-geo-alt text-xs"></i>
+                                        <span class="text-xs">{{tx.location}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Empty State -->
+                    <div *ngIf="filteredTransactions.length === 0"
+                        class="text-center py-16 bg-white rounded-xl border border-slate-200 mx-2">
+                        <div
+                            class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                            <i class="bi bi-receipt-cutoff text-4xl text-slate-300"></i>
+                        </div>
+                        <h3 class="text-slate-800 font-bold text-sm">No transactions found</h3>
+                        <p class="text-xs text-slate-400 mt-1">No transactions for this period.</p>
+                    </div>
                 </div>
             </div>
         </main>Section

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationService } from '../../services/navigation.service';
 
@@ -11,6 +11,8 @@ import { NavigationService } from '../../services/navigation.service';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
     @Output() searchEvent = new EventEmitter<string>();
+    @Output() mobileMenuToggle = new EventEmitter<void>();
+
     userName: string = 'Admin';
     userRole: string = 'Administrator';
     currentTime: string = '';
@@ -20,6 +22,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private timeInterval: any;
 
     constructor(private navigationService: NavigationService) { }
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        // Close dropdowns when clicking outside
+        const target = event.target as HTMLElement;
+        if (!target.closest('.notification-dropdown') && !target.closest('.notification-button')) {
+            this.showNotifications = false;
+        }
+        if (!target.closest('.profile-dropdown') && !target.closest('.profile-button')) {
+            this.showProfile = false;
+        }
+    }
 
     ngOnInit(): void {
         const userStr = localStorage.getItem('user');
@@ -69,5 +83,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     onSearch(event: any): void {
         this.searchQuery = event.target.value;
         this.searchEvent.emit(this.searchQuery);
+    }
+
+    toggleMobileMenu(): void {
+        this.mobileMenuToggle.emit();
     }
 }

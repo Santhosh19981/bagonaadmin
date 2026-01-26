@@ -1,23 +1,25 @@
 <nav
-    class="flex items-center justify-between px-8 py-4 bg-white/80 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-200/60 shadow-sm">
+    class="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 sm:py-4 bg-white/80 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-200/60 shadow-sm">
 
-    <!-- Left: Dynamic Greeting & Time -->
-    <div class="flex items-center gap-6">
-        <button class="p-2 hover:bg-slate-100 rounded-lg transition-colors lg:hidden">
+    <!-- Left: Hamburger Menu (Mobile) + Dynamic Greeting & Time -->
+    <div class="flex items-center gap-3 sm:gap-6">
+        <button (click)="toggleMobileMenu()" class="p-2 hover:bg-slate-100 rounded-lg transition-colors lg:hidden">
             <i class="bi bi-list text-2xl text-slate-600"></i>
         </button>
         <div>
-            <h1 class="text-xl font-black text-slate-800 tracking-tight">
-                Good Day, <span
-                    class="bg-gradient-to-r from-yellow-600 to-yellow-500 bg-clip-text text-transparent">{{userName}}</span>
-                👋
-            </h1>
-            <div class="flex items-center gap-2 mt-0.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{userRole}}</span>
-                <span class="text-slate-300 mx-1">•</span>
+            <h1 class="text-base sm:text-xl font-black text-slate-800 tracking-tight">
+                <span class="hidden sm:inline">Good Day, </span>
                 <span
-                    class="text-[10px] font-bold text-slate-500 uppercase tracking-wider italic opacity-80 flex items-center gap-1">
+                    class="bg-gradient-to-r from-yellow-600 to-yellow-500 bg-clip-text text-transparent">{{userName}}</span>
+                <span class="hidden sm:inline"> 👋</span>
+            </h1>
+            <div class="flex items-center gap-1.5 sm:gap-2 mt-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                <span
+                    class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{userRole}}</span>
+                <span class="text-slate-300 mx-0.5 sm:mx-1 hidden sm:inline">•</span>
+                <span
+                    class="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-wider italic opacity-80 items-center gap-1 hidden sm:flex">
                     <i class="bi bi-clock-fill text-[8px]"></i>
                     {{currentTime}}
                 </span>
@@ -26,34 +28,35 @@
     </div>
 
     <!-- Right: Actions & Profile -->
-    <div class="flex items-center gap-4">
-        <!-- Search Bar -->
+    <div class="flex items-center gap-2 sm:gap-4">
+        <!-- Search Bar - Hidden on mobile -->
         <div class="hidden md:flex items-center relative group">
             <i
-                class="bi bi-search absolute left-4 text-slate-400 group-focus-within:text-yellow-500 transition-colors text-sm"></i>
-            <input type="text" placeholder="Global search..." (input)="onSearch($event)"
-                class="pl-11 pr-4 py-2.5 bg-slate-100/50 border-none rounded-2xl w-64 text-xs font-semibold focus:ring-2 focus:ring-yellow-500/20 focus:bg-white transition-all outline-none text-slate-700 placeholder:text-slate-400">
+                class="bi bi-search absolute left-3 sm:left-4 text-slate-400 group-focus-within:text-yellow-500 transition-colors text-sm"></i>
+            <input type="text" placeholder="Search..." (input)="onSearch($event)"
+                class="pl-9 sm:pl-11 pr-3 sm:pr-4 py-2 sm:py-2.5 bg-slate-100/50 border-none rounded-xl sm:rounded-2xl w-40 sm:w-64 text-xs font-semibold focus:ring-2 focus:ring-yellow-500/20 focus:bg-white transition-all outline-none text-slate-700 placeholder:text-slate-400">
         </div>
 
         <!-- Notification Bell -->
-        <div class="relative">
+        <div class="relative notification-dropdown">
             <button (click)="toggleNotifications()"
-                class="p-2.5 bg-slate-100/50 hover:bg-yellow-50 rounded-2xl transition-all group relative">
-                <i class="bi bi-bell text-slate-600 group-hover:text-yellow-600"></i>
-                <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                class="notification-button p-2 sm:p-2.5 bg-slate-100/50 hover:bg-yellow-50 rounded-xl sm:rounded-2xl transition-all group relative">
+                <i class="bi bi-bell text-sm sm:text-base text-slate-600 group-hover:text-yellow-600"></i>
+                <span
+                    class="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
 
             <!-- Notification Dropdown -->
             <div *ngIf="showNotifications"
-                class="absolute right-0 mt-4 w-80 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-4 duration-300">
-                <div class="p-4 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+                class="absolute right-0 mt-3 sm:mt-4 w-[calc(100vw-2rem)] sm:w-80 max-w-sm bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+                <div class="p-3 sm:p-4 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
                     <span class="text-xs font-black text-slate-800 uppercase tracking-widest">Notifications</span>
                     <span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-[10px] font-bold rounded-lg">4
                         New</span>
                 </div>
-                <div class="max-height-[350px] overflow-y-auto">
+                <div class="max-h-[350px] overflow-y-auto">
                     <div
-                        class="p-4 hover:bg-slate-50 transition-colors cursor-pointer border-b border-slate-50 flex gap-3">
+                        class="p-3 sm:p-4 hover:bg-slate-50 transition-colors cursor-pointer border-b border-slate-50 flex gap-3">
                         <div class="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center flex-shrink-0">
                             <i class="bi bi-person-plus text-blue-600"></i>
                         </div>
@@ -74,11 +77,11 @@
         </div>
 
         <!-- User Profile Dropdown -->
-        <div class="relative">
+        <div class="relative profile-dropdown">
             <button (click)="toggleProfile()"
-                class="flex items-center gap-3 p-1.5 pr-4 bg-slate-100/50 hover:bg-white rounded-2xl transition-all border border-transparent hover:border-slate-200">
+                class="profile-button flex items-center gap-2 sm:gap-3 p-1 sm:p-1.5 pr-2 sm:pr-4 bg-slate-100/50 hover:bg-white rounded-xl sm:rounded-2xl transition-all border border-transparent hover:border-slate-200">
                 <div
-                    class="w-8 h-8 rounded-xl bg-gradient-to-tr from-yellow-500 to-yellow-300 flex items-center justify-center text-white font-black text-xs shadow-lg shadow-yellow-500/20">
+                    class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-gradient-to-tr from-yellow-500 to-yellow-300 flex items-center justify-center text-white font-black text-xs shadow-lg shadow-yellow-500/20">
                     {{userName.charAt(0)}}
                 </div>
                 <div class="hidden sm:block text-left">
@@ -86,26 +89,26 @@
                     <p class="text-[9px] font-bold text-slate-400 leading-tight uppercase tracking-widest">Master Admin
                     </p>
                 </div>
-                <i class="bi bi-chevron-down text-[10px] text-slate-400"></i>
+                <i class="bi bi-chevron-down text-[10px] text-slate-400 hidden sm:inline"></i>
             </button>
 
             <!-- Profile Dropdown -->
             <div *ngIf="showProfile"
-                class="absolute right-0 mt-4 w-56 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+                class="absolute right-0 mt-3 sm:mt-4 w-48 sm:w-56 bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-4 duration-300">
                 <div class="p-2">
                     <button
-                        class="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 rounded-2xl transition-colors text-left group">
+                        class="w-full flex items-center gap-3 px-3 sm:px-4 py-2.5 sm:py-3 hover:bg-slate-50 rounded-xl sm:rounded-2xl transition-colors text-left group">
                         <i class="bi bi-person text-slate-400 group-hover:text-yellow-600 transition-colors"></i>
                         <span class="text-xs font-bold text-slate-700">My Profile</span>
                     </button>
                     <button
-                        class="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 rounded-2xl transition-colors text-left group">
+                        class="w-full flex items-center gap-3 px-3 sm:px-4 py-2.5 sm:py-3 hover:bg-slate-50 rounded-xl sm:rounded-2xl transition-colors text-left group">
                         <i class="bi bi-gear text-slate-400 group-hover:text-yellow-600 transition-colors"></i>
                         <span class="text-xs font-bold text-slate-700">Settings</span>
                     </button>
                     <div class="h-px bg-slate-50 my-1 mx-2"></div>
                     <button
-                        class="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 rounded-2xl transition-colors text-left group">
+                        class="w-full flex items-center gap-3 px-3 sm:px-4 py-2.5 sm:py-3 hover:bg-red-50 rounded-xl sm:rounded-2xl transition-colors text-left group">
                         <i class="bi bi-box-arrow-right text-red-400 group-hover:text-red-600 transition-colors"></i>
                         <span class="text-xs font-bold text-red-600">Sign Out</span>
                     </button>

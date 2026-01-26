@@ -18,6 +18,9 @@ export class EventsComponent implements OnInit {
   filteredEvents: any[] = [];
   paginatedEvents: any[] = [];
 
+  // API Base URL - update this to your production URL when deploying
+  apiBaseUrl: string = "https://bhagona-backend-v2.vercel.app";
+
   // Pagination
   currentPage: number = 1;
   itemsPerPage: number = 8;
@@ -27,6 +30,7 @@ export class EventsComponent implements OnInit {
   showForm = false;
   selectedEvent: any = null;
   imagePreviewUrl: string | null = null;
+  isNewImageSelected: boolean = false;
 
   // Delete Modal
   showDeleteConfirm: boolean = false;
@@ -35,18 +39,19 @@ export class EventsComponent implements OnInit {
   newEvent: any = {
     name: '',
     description: '',
-    status: 'active',
+    status: 'active', // default
     image: null,
     image_url: ''
   };
+
   defaultEventImage = "https://cdn-icons-png.flaticon.com/512/3652/3652191.png";
+
   constructor(private apiService: ApiService, private toastr: ToastrService) { }
 
   ngOnInit() {
     this.loadEvents();
   }
 
-  // Load events
   loadEvents() {
     this.apiService.getEvents().subscribe({
       next: (res: any) => {
@@ -55,8 +60,7 @@ export class EventsComponent implements OnInit {
       },
       error: (err) => {
         console.error("❌ Error loading events:", err);
-        this.allEvents = [];
-        this.applyFilter('');
+        this.toastr.error("Failed to load events");
       }
     });
   }
@@ -99,25 +103,25 @@ export class EventsComponent implements OnInit {
   }
 
   onToggleChange(event: any) {
-    const isChecked = event.target.checked;
-    this.newEvent.status = isChecked ? 'active' : 'inactive';
+    this.newEvent.status = event.target.checked ? 'active' : 'inactive';
   }
 
-  // Toggle Form
   toggleForm(event?: any) {
     this.showForm = !this.showForm;
     this.imagePreviewUrl = null;
+    this.isNewImageSelected = false;
 
     if (event) {
       this.selectedEvent = { ...event };
-      this.newEvent = { ...event, image: null }; // Initialize form with event data
+      this.newEvent = { ...event, image: null };
       this.imagePreviewUrl = event.image_url;
     } else {
       this.selectedEvent = null;
       this.newEvent = {
         name: '',
         description: '',
-        status: 'active',  // active by default for new events
+        status: 'active',
+        image: null,
         image_url: ''
       };
     }
@@ -127,60 +131,72 @@ export class EventsComponent implements OnInit {
     event.target.src = this.defaultEventImage;
   }
 
-  // Image Upload with Preview
+  // Handle file selection from input
   onImageChange(e: any) {
     const file = e.target.files[0];
     if (file) {
       this.newEvent.image = file;
+      this.isNewImageSelected = true;
       const reader = new FileReader();
       reader.onload = () => {
-        this.imagePreviewUrl = reader.result as string;
+        this.imagePreviewUrl = reader.result as string; // Set base64 preview
       };
       reader.readAsDataURL(file);
     }
   }
 
-  // Save Event (Create or Update)
+  // Determine the correct image source for display
+  getImageSrc(imageUrl: string | null): string {
+    if (!imageUrl) return this.defaultEventImage;
+    if (imageUrl.startsWith('data:')) return imageUrl; // Return base64 preview as is
+    if (imageUrl.startsWith('http')) return imageUrl; // Original full URL
+
+    // Check if it's a local file path (e.g., from an old DB entry or misconfiguration)
+    if (imageUrl.includes(':/') || imageUrl.includes(':\\')) {
+      return this.defaultEventImage;
+    }
+
+    return this.apiBaseUrl + imageUrl; // Prefix relative server path with API URL
+  }
+
   saveEvent() {
     const fd = new FormData();
-
     fd.append('name', this.newEvent.name);
-    fd.append('description', this.newEvent.description);
+    fd.append('description', this.newEvent.description || '');
     fd.append('status', this.newEvent.status);
 
+    // If there's a new file selected, upload it
     if (this.newEvent.image instanceof File) {
       fd.append('image', this.newEvent.image);
     }
 
     if (this.selectedEvent) {
-      fd.append('existingImage', this.selectedEvent.image_url);
+      // If we are updating and NO new image was selected, 
+      // tell the backend to keep the existing one.
+      if (!this.isNewImageSelected) {
+        fd.append('existingImage', this.selectedEvent.image_url);
+      }
 
       this.apiService.updateEvent(this.selectedEvent.event_id, fd).subscribe({
         next: (res: any) => {
-          this.toastr.success(res.message || "Event updated successfully!");
+          this.toastr.success(res.message || "Event updated!");
           this.showForm = false;
           this.loadEvents();
         },
-        error: (err) => {
-          this.toastr.error(err.message || "Update failed!");
-        }
+        error: (err) => this.toastr.error(err.message || "Update failed")
       });
-
     } else {
       this.apiService.createEvent(fd).subscribe({
         next: (res: any) => {
-          this.toastr.success(res.message || "Event created successfully!");
+          this.toastr.success(res.message || "Event created!");
           this.showForm = false;
           this.loadEvents();
         },
-        error: (err) => {
-          this.toastr.error(err.message || "Creation failed!");
-        }
+        error: (err) => this.toastr.error(err.message || "Creation failed")
       });
     }
   }
 
-  // Custom Delete Flow
   deleteEvent(id: number) {
     this.eventIdToDelete = id;
     this.showDeleteConfirm = true;
@@ -190,14 +206,11 @@ export class EventsComponent implements OnInit {
     if (this.eventIdToDelete) {
       this.apiService.deleteEvent(this.eventIdToDelete).subscribe({
         next: () => {
-          this.toastr.success("Event deleted successfully");
+          this.toastr.success("Event deleted");
           this.loadEvents();
           this.cancelDelete();
         },
-        error: () => {
-          this.toastr.error("Failed to delete event");
-          this.cancelDelete();
-        }
+        error: () => this.toastr.error("Delete failed")
       });
     }
   }

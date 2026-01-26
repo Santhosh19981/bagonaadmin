@@ -1,11 +1,37 @@
-.charts-container h2,.chart-header h3{
-    font-size: 20px;
+.charts-container h2,
+.chart-header h3 {
+    font-size: 16px;
     font-weight: 700;
 }
-.revenue-header,.chart-header {
-    display: flex
-;
+
+@media (min-width: 640px) {
+
+    .charts-container h2,
+    .chart-header h3 {
+        font-size: 18px;
+    }
+}
+
+@media (min-width: 1024px) {
+
+    .charts-container h2,
+    .chart-header h3 {
+        font-size: 20px;
+    }
+}
+
+.revenue-header,
+.chart-header {
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+
+    .revenue-header,
+    .chart-header {
+        margin-bottom: 1.5rem;
+    }
 }

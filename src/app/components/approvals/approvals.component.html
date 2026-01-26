@@ -1,129 +1,190 @@
 <div class="admin-dashboard">
-    <app-sidemenu [menuFromParent]="'approvals'"></app-sidemenu>
+    <app-sidemenu [menuFromParent]="'approvals'" #sidebarComponent></app-sidemenu>
     <section id="content">
-        <app-header (searchEvent)="onSearch($event)"></app-header>
+        <app-header (mobileMenuToggle)="sidebarComponent.toggleSidebar()" (searchEvent)="onSearch($event)"></app-header>
         <main>
             <!-- Premium Header Section -->
-            <div class="px-8 py-8 bg-slate-50/30">
-                <h1 class="text-3xl font-black text-slate-800 tracking-tight">Registration Requests</h1>
-                <p class="text-slate-500 text-sm font-medium mt-1">Review and manage registration applications for chefs
+            <div
+                class="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 bg-slate-50/30 rounded-none sm:rounded-2xl lg:rounded-3xl">
+                <h1 class="text-xl sm:text-2xl lg:text-3xl font-black text-slate-800 tracking-tight">Registration
+                    Requests</h1>
+                <p class="text-slate-500 text-xs sm:text-sm font-medium mt-1">Review and manage registration
+                    applications for chefs
                     and vendors</p>
             </div>
 
             <!-- Prominent Command Bar with Tabs -->
             <div class="command-bar">
-                <div class="tabs-navigation">
-                    <button (click)="fetchUsers('pending')" [class.active-tab]="activeTab === 'pending'"
-                        class="tab-item">
-                        <i class="bi bi-hourglass-split"></i>
-                        <span>Pending</span>
-                    </button>
-                    <button (click)="fetchUsers('approved')" [class.active-tab]="activeTab === 'approved'"
-                        class="tab-item">
-                        <i class="bi bi-check2-circle"></i>
-                        <span>Approved</span>
-                    </button>
-                    <button (click)="fetchUsers('rejected')" [class.active-tab]="activeTab === 'rejected'"
-                        class="tab-item">
-                        <i class="bi bi-dash-circle"></i>
-                        <span>Rejected</span>
-                    </button>
-                    <button (click)="fetchUsers('all')" [class.active-tab]="activeTab === 'all'" class="tab-item">
-                        <i class="bi bi-people"></i>
-                        <span>All Users</span>
-                    </button>
+                <!-- Scrollable tabs container for mobile -->
+                <div class="tabs-navigation-wrapper">
+                    <div class="tabs-navigation">
+                        <button (click)="fetchUsers('pending')" [class.active-tab]="activeTab === 'pending'"
+                            class="tab-item">
+                            <i class="bi bi-hourglass-split"></i>
+                            <span>Pending</span>
+                        </button>
+                        <button (click)="fetchUsers('approved')" [class.active-tab]="activeTab === 'approved'"
+                            class="tab-item">
+                            <i class="bi bi-check2-circle"></i>
+                            <span>Approved</span>
+                        </button>
+                        <button (click)="fetchUsers('rejected')" [class.active-tab]="activeTab === 'rejected'"
+                            class="tab-item">
+                            <i class="bi bi-dash-circle"></i>
+                            <span>Rejected</span>
+                        </button>
+                        <button (click)="fetchUsers('all')" [class.active-tab]="activeTab === 'all'" class="tab-item">
+                            <i class="bi bi-people"></i>
+                            <span>All Users</span>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active State:</span>
+                <div class="active-state-indicator">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">Active
+                        State:</span>
                     <span
-                        class="px-3 py-1 bg-yellow-50 text-yellow-700 text-[10px] font-black rounded-lg border border-yellow-100 uppercase">{{activeTab}}</span>
+                        class="px-2 sm:px-3 py-1 bg-yellow-50 text-yellow-700 text-[10px] font-black rounded-lg border border-yellow-100 uppercase">{{activeTab}}</span>
                 </div>
             </div>
 
-            <div class="p-8">
+            <div class="p-2 sm:p-6 lg:p-8">
                 <!-- Enhanced Table UI -->
-                <div class="table-container">
-                    <table class="w-full">
-                        <thead>
-                            <tr>
-                                <th>User Details</th>
-                                <th>Business Type</th>
-                                <th>Current Status</th>
-                                <th class="text-right">Manage Access</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let user of paginatedUsers">
-                                <td>
-                                    <div class="flex items-center gap-4">
-                                        <div
-                                            class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-sm border border-slate-200 shadow-sm">
-                                            {{user.name.charAt(0).toUpperCase()}}
-                                        </div>
-                                        <div>
-                                            <div class="text-sm font-bold text-slate-800">{{user.name}}</div>
-                                            <div class="text-[11px] font-medium text-slate-400 mt-0.5">{{user.mobile}}
+                <div class="table-container overflow-x-auto -mx-4 sm:mx-0">
+                    <div class="inline-block min-w-full align-middle px-4 sm:px-0">
+                        <table class="w-full hidden sm:table">
+                            <thead>
+                                <tr>
+                                    <th>User Details</th>
+                                    <th>Business Type</th>
+                                    <th>Current Status</th>
+                                    <th class="text-right">Manage Access</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let user of paginatedUsers">
+                                    <td>
+                                        <div class="flex items-center gap-4">
+                                            <div
+                                                class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-sm border border-slate-200 shadow-sm">
+                                                {{user.name.charAt(0).toUpperCase()}}
+                                            </div>
+                                            <div>
+                                                <div class="text-sm font-bold text-slate-800">{{user.name}}</div>
+                                                <div class="text-[11px] font-medium text-slate-400 mt-0.5">
+                                                    {{user.mobile}}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <ng-container *ngIf="user.role === 3; else otherRole">
-                                        <div class="text-xs font-bold text-slate-800">{{user.businessname ||
-                                            'Independent Vendor'}}</div>
-                                    </ng-container>
-                                    <ng-template #otherRole>
-                                        <div
-                                            class="px-2 py-0.5 bg-yellow-50 text-yellow-700 text-[10px] font-black uppercase tracking-wider rounded inline-block border border-yellow-100">
-                                            {{user.role === 2 ? 'Chef' : 'User'}}
-                                        </div>
-                                        <div class="text-xs font-bold text-slate-500 mt-1.5">{{user.businessname ||
-                                            'Independent'}}</div>
-                                    </ng-template>
-                                </td>
-                                <td>
-                                    <span class="badge" [ngClass]="{
+                                    </td>
+                                    <td>
+                                        <ng-container *ngIf="user.role === 3; else otherRole">
+                                            <div class="text-xs font-bold text-slate-800">{{user.businessname ||
+                                                'Independent Vendor'}}</div>
+                                        </ng-container>
+                                        <ng-template #otherRole>
+                                            <div
+                                                class="px-2 py-0.5 bg-yellow-50 text-yellow-700 text-[10px] font-black uppercase tracking-wider rounded inline-block border border-yellow-100">
+                                                {{user.role === 2 ? 'Chef' : 'User'}}
+                                            </div>
+                                            <div class="text-xs font-bold text-slate-500 mt-1.5">{{user.businessname ||
+                                                'Independent'}}</div>
+                                        </ng-template>
+                                    </td>
+                                    <td>
+                                        <span class="badge" [ngClass]="{
                                     'badge-pending': activeTab === 'pending',
                                     'badge-approved': activeTab === 'approved',
                                     'badge-rejected': activeTab === 'rejected'
                                 }">
-                                        {{activeTab === 'all' ? 'Registered' : activeTab | uppercase}}
-                                    </span>
-                                </td>
-                                <td class="text-right">
-                                    <div class="flex justify-end gap-2">
-                                        <button (click)="openDetails(user)" class="btn-inspect">
-                                            <i class="bi bi-eye mr-1.5"></i>Check Profile
-                                        </button>
-                                        <button *ngIf="activeTab === 'pending'" (click)="approve(user.id)"
-                                            class="btn-verify">
-                                            <i class="bi bi-check2-circle mr-1.5"></i>Approve
-                                        </button>
-                                        <button *ngIf="activeTab === 'pending'" (click)="reject(user.id)"
-                                            class="btn-deny">
-                                            <i class="bi bi-x-circle mr-1.5"></i>Reject
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr *ngIf="paginatedUsers.length === 0">
-                                <td colspan="4" class="text-center py-20">
-                                    <div class="flex flex-col items-center">
-                                        <i class="bi bi-person-dash text-4xl text-slate-200"></i>
-                                        <p class="text-slate-400 font-bold mt-4">No registration records found in this
-                                            category</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                            {{activeTab === 'all' ? 'Registered' : activeTab | uppercase}}
+                                        </span>
+                                    </td>
+                                    <td class="text-right">
+                                        <div class="flex justify-end gap-2">
+                                            <button (click)="openDetails(user)" class="btn-inspect">
+                                                <i class="bi bi-eye mr-1.5"></i>Check Profile
+                                            </button>
+                                            <button *ngIf="activeTab === 'pending'" (click)="approve(user.id)"
+                                                class="btn-verify">
+                                                <i class="bi bi-check2-circle mr-1.5"></i>Approve
+                                            </button>
+                                            <button *ngIf="activeTab === 'pending'" (click)="reject(user.id)"
+                                                class="btn-deny">
+                                                <i class="bi bi-x-circle mr-1.5"></i>Reject
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="paginatedUsers.length === 0">
+                                    <td colspan="4" class="text-center py-20">
+                                        <div class="flex flex-col items-center">
+                                            <i class="bi bi-person-dash text-4xl text-slate-200"></i>
+                                            <p class="text-slate-400 font-bold mt-4">No registration records found in
+                                                this
+                                                category</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                    <!-- Premium Pagination -->
-                    <div class="pagination-container border-t border-slate-50" *ngIf="totalPages > 1">
-                        <button *ngFor="let p of [].constructor(totalPages); let i = index" (click)="setPage(i+1)"
-                            [class.active]="currentPage === i+1" class="page-btn">{{i+1}}</button>
+                        <!-- Premium Pagination -->
+                        <div class="pagination-container border-t border-slate-50" *ngIf="totalPages > 1">
+                            <button *ngFor="let p of [].constructor(totalPages); let i = index" (click)="setPage(i+1)"
+                                [class.active]="currentPage === i+1" class="page-btn">{{i+1}}</button>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Mobile Card Layout (visible only on mobile) -->
+                <div class="sm:hidden space-y-2 p-2">
+                    <div *ngFor="let user of paginatedUsers" class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                        <div class="flex items-start gap-2.5 mb-2.5 pb-2.5 border-b border-slate-200">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-slate-700 font-bold text-base border-2 border-slate-200 shadow-sm flex-shrink-0">
+                                {{user.name.charAt(0).toUpperCase()}}</div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-sm font-bold text-slate-800">{{user.name}}</div>
+                                <div class="text-xs font-medium text-slate-500 mt-0.5">{{user.mobile}}</div>
+                            </div>
+                            <span class="badge flex-shrink-0 text-[9px] px-2 py-1"
+                                [ngClass]="{'badge-pending': activeTab === 'pending','badge-approved': activeTab === 'approved','badge-rejected': activeTab === 'rejected'}">{{activeTab
+                                === 'all' ? 'REG' : (activeTab | uppercase)}}</span>
+                        </div>
+                        <div class="mb-2.5">
+                            <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Business
+                                Type</div>
+                            <ng-container *ngIf="user.role === 3; else mobileOtherRole">
+                                <div class="text-xs font-bold text-slate-800">{{user.businessname || 'Independent
+                                    Vendor'}}</div>
+                            </ng-container>
+                            <ng-template #mobileOtherRole>
+                                <div class="flex items-center gap-2 flex-wrap"><span
+                                        class="px-2 py-1 bg-yellow-50 text-yellow-700 text-[9px] font-black uppercase tracking-wider rounded border border-yellow-200">{{user.role
+                                        === 2 ? 'Chef' : 'User'}}</span><span
+                                        class="text-xs font-bold text-slate-600">{{user.businessname ||
+                                        'Independent'}}</span></div>
+                            </ng-template>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <button (click)="openDetails(user)" class="btn-inspect w-full justify-center"><i
+                                    class="bi bi-eye mr-2"></i>View Profile</button>
+                            <div *ngIf="activeTab === 'pending'" class="flex gap-2">
+                                <button (click)="approve(user.id)" class="btn-verify flex-1 justify-center"><i
+                                        class="bi bi-check2-circle mr-2"></i>Approve</button>
+                                <button (click)="reject(user.id)" class="btn-deny flex-1 justify-center"><i
+                                        class="bi bi-x-circle mr-2"></i>Reject</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="paginatedUsers.length === 0" class="text-center py-16 bg-slate-50 rounded-2xl"><i
+                            class="bi bi-person-dash text-5xl text-slate-300"></i>
+                        <p class="text-slate-400 font-bold mt-4 text-sm">No records found</p>
+                    </div>
+                    <div class="flex justify-center gap-2 pt-4" *ngIf="totalPages > 1"><button
+                            *ngFor="let p of [].constructor(totalPages); let i = index" (click)="setPage(i+1)"
+                            [class.active]="currentPage === i+1" class="page-btn">{{i+1}}</button></div>
                 </div>
             </div>
         </main>
@@ -133,17 +194,17 @@
     <div *ngIf="showDetailModal"
         class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 modal-backdrop p-4">
         <div
-            class="bg-white rounded-[32px] shadow-2xl max-w-lg w-full overflow-hidden modal-content border border-white/20">
-            <div class="p-8 bg-slate-50/50 border-b border-slate-100 flex justify-between items-center">
-                <h2 class="text-xl font-black text-slate-800">User Profile Review</h2>
+            class="bg-white rounded-2xl sm:rounded-3xl lg:rounded-[32px] shadow-2xl max-w-sm sm:max-w-md lg:max-w-lg w-full overflow-hidden modal-content border border-white/20">
+            <div class="p-4 sm:p-6 lg:p-8 bg-slate-50/50 border-b border-slate-100 flex justify-between items-center">
+                <h2 class="text-lg sm:text-xl font-black text-slate-800">User Profile Review</h2>
                 <button (click)="closeDetails()"
                     class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center transition-colors">
                     <i class="bi bi-x-lg text-slate-500"></i>
                 </button>
             </div>
 
-            <div class="p-8 space-y-6">
-                <div class="grid grid-cols-2 gap-6">
+            <div class="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div>
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Full Name</label>
                         <p class="text-sm font-bold text-slate-800 mt-1">{{selectedUser?.name}}</p>
@@ -153,7 +214,7 @@
                             Number</label>
                         <p class="text-sm font-bold text-slate-800 mt-1">{{selectedUser?.mobile}}</p>
                     </div>
-                    <div>
+                    <div class="sm:col-span-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Business
                             Name</label>
                         <p class="text-sm font-bold text-slate-800 mt-1">{{selectedUser?.businessname || 'Independent'}}
@@ -162,15 +223,15 @@
                 </div>
             </div>
 
-            <div class="p-6 bg-slate-50/50 flex justify-end gap-3 px-8">
+            <div class="p-4 sm:p-6 bg-slate-50/50 flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
                 <button (click)="closeDetails()"
-                    class="px-6 py-2.5 text-slate-500 font-bold text-sm hover:text-slate-800 transition-colors">Close</button>
+                    class="px-6 py-2.5 text-slate-500 font-bold text-sm hover:text-slate-800 transition-colors order-2 sm:order-1">Close</button>
                 <ng-container *ngIf="activeTab === 'pending'">
                     <button (click)="approve(selectedUser.id)"
-                        class="px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 transition-all active:scale-95">Accept
+                        class="px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 transition-all active:scale-95 order-1 sm:order-2">Accept
                         Application</button>
                     <button (click)="reject(selectedUser.id)"
-                        class="px-6 py-2.5 bg-red-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-red-500/20 hover:bg-red-700 transition-all active:scale-95">Deny
+                        class="px-6 py-2.5 bg-red-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-red-500/20 hover:bg-red-700 transition-all active:scale-95 order-1 sm:order-3">Deny
                         Request</button>
                 </ng-container>
             </div>

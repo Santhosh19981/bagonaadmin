@@ -1,7 +1,7 @@
 <div class="admin-dashboard">
 
   <!-- SIDEBAR -->
-  <app-sidemenu [menuFromParent]="'dashboard'"></app-sidemenu>
+  <app-sidemenu [menuFromParent]="'dashboard'" #sidebarComponent></app-sidemenu>
 
 
   <!-- SIDEBAR -->
@@ -10,7 +10,7 @@
 
   <!-- CONTENT -->
   <section id="content">
-    <app-header></app-header>
+    <app-header (mobileMenuToggle)="sidebarComponent.toggleSidebar()" (searchEvent)="onSearch($event)"></app-header>
     <!-- NAVBAR -->
 
 

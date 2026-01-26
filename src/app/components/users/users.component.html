@@ -1,14 +1,14 @@
 <div class="admin-dashboard">
   <!-- SIDEBAR -->
-  <app-sidemenu [menuFromParent]="'users'"></app-sidemenu>
+  <app-sidemenu [menuFromParent]="'users'" #sidebarComponent></app-sidemenu>
   <!-- SIDEBAR -->
 
   <!-- CONTENT -->
   <section id="content">
-    <app-header (searchEvent)="onSearch($event)"></app-header>
+    <app-header (mobileMenuToggle)="sidebarComponent.toggleSidebar()" (searchEvent)="onSearch($event)"></app-header>
 
     <!-- MAIN -->
-    <main class="p-6 bg-[#f8fafc]">
+    <main class="p-2 sm:p-6 bg-[#f8fafc]">
       <!-- Page Header -->
       <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4" data-aos="fade-down">
         <div>
@@ -36,7 +36,7 @@
       <div class="bg-white rounded-[32px] border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden"
         data-aos="fade-up">
         <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
+          <table class="w-full text-left border-collapse hidden sm:table">
             <thead>
               <tr class="bg-slate-50/50 border-b border-slate-100">
                 <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Customer Name
@@ -103,6 +103,82 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Mobile Card Layout (visible only on mobile) -->
+        <div class="sm:hidden pt-3 px-3 pb-3">
+          <div class="space-y-2">
+            <div *ngFor="let user of paginatedUsers" class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
+              <div class="flex items-start gap-2.5 mb-2.5 pb-2.5 border-b border-slate-100">
+                <div class="w-12 h-12 rounded-xl overflow-hidden bg-slate-50 border border-slate-200 flex-shrink-0">
+                  <img [src]="user.avatar || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"
+                    class="w-full h-full object-cover" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-bold text-slate-800">{{user.name}}</div>
+                  <div class="text-[9px] font-medium text-slate-400 uppercase tracking-wider mt-0.5">Valued Member</div>
+                </div>
+                <span [ngClass]="user.isactive == 1 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'"
+                  class="px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-wider inline-flex items-center gap-1 flex-shrink-0">
+                  <span class="w-1 h-1 rounded-full"
+                    [ngClass]="user.isactive == 1 ? 'bg-green-500' : 'bg-red-500'"></span>
+                  {{user.isactive == 1 ? 'Active' : 'Inactive'}}
+                </span>
+              </div>
+              <div class="space-y-2 mb-2.5">
+                <div>
+                  <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Contact Info</div>
+                  <div class="text-xs font-bold text-slate-700">{{user.mobile}}</div>
+                  <div class="text-[10px] text-slate-400 font-medium truncate">{{user.email}}</div>
+                </div>
+                <div>
+                  <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Onboarding Date</div>
+                  <div class="text-xs font-bold text-slate-600">{{user.createdAt | date: 'dd MMM yyyy'}}</div>
+                  <div class="text-[9px] text-slate-400 uppercase font-black tracking-widest">{{user.createdAt | date:
+                    'hh:mm a'}}</div>
+                </div>
+                <div>
+                  <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Location</div>
+                  <div class="text-xs font-medium text-slate-500 truncate">{{user.address || 'Global/Undefined'}}</div>
+                </div>
+              </div>
+              <button (click)="updateStatus(user.id, user.isactive)"
+                [ngClass]="user.isactive == 1 ? 'bg-slate-100 hover:bg-red-500 text-slate-500 hover:text-white border-slate-200' : 'bg-indigo-50 hover:bg-indigo-500 text-indigo-600 hover:text-white border-indigo-100'"
+                class="w-full flex items-center justify-center gap-1.5 px-3 py-2 border rounded-lg text-[9px] font-black uppercase tracking-wider transition-all">
+                <i class="bi" [ngClass]="user.isactive == 1 ? 'bi-shield-slash' : 'bi-shield-check'"></i>
+                <span>{{user.isactive == 1 ? 'Deactivate' : 'Activate'}}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Mobile Empty State -->
+          <div *ngIf="paginatedUsers.length === 0"
+            class="text-center py-16 bg-white rounded-xl border border-slate-200">
+            <div
+              class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100">
+              <i class="bi bi-person-x text-4xl text-slate-300"></i>
+            </div>
+            <h3 class="text-slate-800 font-bold text-sm">No Client Profile Match</h3>
+            <p class="text-xs text-slate-400 mt-1">Refine your search parameters.</p>
+          </div>
+
+          <!-- Mobile Pagination -->
+          <div *ngIf="filteredUsers.length > 0" class="flex justify-center gap-2 pt-4">
+            <button (click)="setPage(currentPage - 1)" [disabled]="currentPage === 1"
+              class="p-2 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-indigo-600 hover:border-indigo-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+              <i class="bi bi-chevron-left text-sm"></i>
+            </button>
+            <button *ngFor="let p of [].constructor(totalPages); let i = index" (click)="setPage(i + 1)"
+              [class.bg-indigo-500]="currentPage === (i + 1)" [class.text-white]="currentPage === (i + 1)"
+              [class.text-slate-500]="currentPage !== (i + 1)"
+              class="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 text-xs font-black transition-all hover:bg-slate-100">
+              {{i + 1}}
+            </button>
+            <button (click)="setPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+              class="p-2 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-indigo-600 hover:border-indigo-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+              <i class="bi bi-chevron-right text-sm"></i>
+            </button>
+          </div>
         </div>
 
         <!-- Empty State -->

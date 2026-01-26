@@ -1,14 +1,14 @@
 <div class="admin-dashboard">
   <!-- SIDEBAR -->
-  <app-sidemenu [menuFromParent]="'serviceitems'"></app-sidemenu>
+  <app-sidemenu [menuFromParent]="'service-items'" #sidebarComponent></app-sidemenu>
   <!-- SIDEBAR -->
 
   <!-- CONTENT -->
   <section id="content">
-    <app-header (searchEvent)="onSearch($event)"></app-header>
+    <app-header (mobileMenuToggle)="sidebarComponent.toggleSidebar()" (searchEvent)="onSearch($event)"></app-header>
 
     <!-- MAIN -->
-    <main class="p-6 bg-[#f8fafc]">
+    <main class="p-2 sm:p-6 bg-[#f8fafc]">
       <!-- Page Header -->
       <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4" data-aos="fade-down">
         <div>
@@ -57,7 +57,7 @@
               class="flex items-center gap-4 p-5 bg-slate-50 rounded-[28px] border border-dashed border-slate-200 group hover:border-yellow-500/50 transition-colors">
               <div
                 class="w-20 h-20 rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-sm relative group/preview flex items-center justify-center">
-                <img *ngIf="imagePreviewUrl; else defaultFormIcon" [src]="imagePreviewUrl"
+                <img *ngIf="imagePreviewUrl; else defaultFormIcon" [src]="getImageSrc(imagePreviewUrl)"
                   (error)="onImageError($event)" class="w-full h-full object-cover" />
                 <ng-template #defaultFormIcon>
                   <div
@@ -172,7 +172,7 @@
         class="bg-white rounded-[32px] border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden"
         data-aos="fade-up">
         <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
+          <table class="w-full text-left border-collapse hidden sm:table">
             <thead>
               <tr class="bg-slate-50/50 border-b border-slate-100">
                 <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Icon</th>
@@ -190,8 +190,8 @@
                 <td class="px-6 py-3">
                   <div
                     class="w-10 h-10 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 group-hover:border-yellow-500/30 transition-all flex items-center justify-center">
-                    <img *ngIf="item.image; else defaultItemIcon" [src]="item.image" (error)="onImageError($event)"
-                      class="w-full h-full object-cover" />
+                    <img *ngIf="item.image; else defaultItemIcon" [src]="getImageSrc(item.image)"
+                      (error)="onImageError($event)" class="w-full h-full object-cover" />
                     <ng-template #defaultItemIcon>
                       <div
                         class="w-full h-full bg-gradient-to-tr from-yellow-500/10 to-orange-400/10 flex items-center justify-center">
@@ -234,6 +234,84 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Mobile Card Layout (visible only on mobile) -->
+        <div class="sm:hidden pt-3 px-3 pb-3">
+          <div class="space-y-2">
+            <div *ngFor="let item of paginatedServiceItems"
+              class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
+              <div class="flex items-start gap-2.5 mb-2.5 pb-2.5 border-b border-slate-100">
+                <div
+                  class="w-12 h-12 rounded-xl overflow-hidden bg-slate-50 border border-slate-200 flex-shrink-0 flex items-center justify-center">
+                  <img *ngIf="item.image; else mobileDefaultIcon" [src]="getImageSrc(item.image)"
+                    (error)="onImageError($event)" class="w-full h-full object-cover" />
+                  <ng-template #mobileDefaultIcon>
+                    <div
+                      class="w-full h-full bg-gradient-to-tr from-yellow-500/10 to-orange-400/10 flex items-center justify-center">
+                      <i class="bi bi-box-seam text-yellow-600/60 text-xl"></i>
+                    </div>
+                  </ng-template>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-bold text-slate-800">{{item.name}}</div>
+                  <div class="text-[9px] font-medium text-slate-400 uppercase tracking-wider mt-0.5">Inventory SKU</div>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <div class="text-sm font-black text-slate-700">₹{{item.price}}</div>
+                  <div class="text-[9px] font-medium text-slate-400 mt-0.5">{{item.quantity_type}}</div>
+                </div>
+              </div>
+              <div class="mb-2.5">
+                <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Category</div>
+                <span
+                  class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-[9px] font-black uppercase tracking-wider inline-block">
+                  {{item.service_name || 'N/A'}}
+                </span>
+              </div>
+              <div class="flex gap-2">
+                <button (click)="toggleForm(item)"
+                  class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-800 text-slate-600 hover:text-white rounded-lg text-[9px] font-black uppercase tracking-wider transition-all">
+                  <i class="bi bi-pencil-square"></i>
+                  <span>Edit</span>
+                </button>
+                <button (click)="deleteServiceItem(item.service_item_id)"
+                  class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-red-50 hover:bg-red-500 text-red-600 hover:text-white rounded-lg text-[9px] font-black uppercase tracking-wider transition-all">
+                  <i class="bi bi-trash3"></i>
+                  <span>Kill</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Empty State -->
+          <div *ngIf="paginatedServiceItems.length === 0"
+            class="text-center py-16 bg-white rounded-xl border border-slate-200">
+            <div
+              class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100">
+              <i class="bi bi-box2 text-4xl text-slate-300"></i>
+            </div>
+            <h3 class="text-slate-800 font-bold text-sm">No Inventory Data Found</h3>
+            <p class="text-xs text-slate-400 mt-1">There are no items to display.</p>
+          </div>
+
+          <!-- Mobile Pagination -->
+          <div *ngIf="filteredServiceItems.length > 0" class="flex justify-center gap-2 pt-4">
+            <button (click)="setPage(currentPage - 1)" [disabled]="currentPage === 1"
+              class="p-2 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-yellow-600 hover:border-yellow-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+              <i class="bi bi-chevron-left text-sm"></i>
+            </button>
+            <button *ngFor="let p of [].constructor(totalPages); let i = index" (click)="setPage(i + 1)"
+              [class.bg-yellow-500]="currentPage === (i + 1)" [class.text-white]="currentPage === (i + 1)"
+              [class.text-slate-500]="currentPage !== (i + 1)"
+              class="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 text-xs font-black transition-all hover:bg-slate-100">
+              {{i + 1}}
+            </button>
+            <button (click)="setPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+              class="p-2 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-yellow-600 hover:border-yellow-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+              <i class="bi bi-chevron-right text-sm"></i>
+            </button>
+          </div>
         </div>
 
         <!-- Empty State -->

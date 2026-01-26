@@ -20,6 +20,9 @@ export class ServiceItemsComponent implements OnInit {
   paginatedServiceItems: any[] = [];
   services: any[] = [];
 
+  // API Base URL - update this to your production URL when deploying
+  apiBaseUrl: string = "https://bhagona-backend-v2.vercel.app";
+
   // Pagination
   currentPage: number = 1;
   itemsPerPage: number = 8;
@@ -192,6 +195,20 @@ export class ServiceItemsComponent implements OnInit {
 
   onImageError(e: any) {
     e.target.src = this.defaultImage;
+  }
+
+  // Determine the correct image source for display
+  getImageSrc(imageUrl: string | null): string {
+    if (!imageUrl) return this.defaultImage;
+    if (imageUrl.startsWith('data:')) return imageUrl; // Return base64 preview as is
+    if (imageUrl.startsWith('http')) return imageUrl; // Original full URL
+
+    // Check if it's a local file path (e.g., from an old DB entry or misconfiguration)
+    if (imageUrl.includes(':/') || imageUrl.includes(':\\')) {
+      return this.defaultImage;
+    }
+
+    return this.apiBaseUrl + imageUrl; // Prefix relative server path with API URL
   }
 
   // SAVE SERVICE ITEM (CREATE / UPDATE)
