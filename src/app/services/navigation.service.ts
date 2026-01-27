@@ -56,6 +56,20 @@ export class NavigationService {
             roles: [4] // Admin only
         },
         {
+            id: 'menu-categories',
+            label: 'Menu Categories',
+            route: '/menu-categories',
+            icon: 'menu-categories',
+            roles: [4] // Admin only
+        },
+        {
+            id: 'menu-subcategories',
+            label: 'Menu Subcategories',
+            route: '/menu-subcategories',
+            icon: 'menu-categories',
+            roles: [4] // Admin only
+        },
+        {
             id: 'menuItems',
             label: 'Menu Items',
             route: '/menu-items',

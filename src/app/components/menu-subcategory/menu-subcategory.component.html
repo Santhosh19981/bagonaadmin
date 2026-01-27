@@ -1,0 +1,325 @@
+<div class="admin-dashboard">
+    <!-- SIDEBAR -->
+    <app-sidemenu [menuFromParent]="'menu-subcategories'" #sidebarComponent></app-sidemenu>
+
+    <!-- CONTENT -->
+    <section id="content">
+        <app-header (mobileMenuToggle)="sidebarComponent.toggleSidebar()" (searchEvent)="onSearch($event)"></app-header>
+
+        <main class="p-2 sm:p-6 bg-[#f8fafc]">
+            <!-- Page Header -->
+            <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4" data-aos="fade-down">
+                <div>
+                    <h1 class="text-2xl font-black text-slate-800 tracking-tight">Menu Subcategories</h1>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Manage nested categories
+                        and their items
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button *ngIf="!showForm" (click)="toggleForm()"
+                        class="flex items-center gap-2 px-6 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-[18px] text-[11px] font-black uppercase tracking-widest transition-all shadow-lg shadow-yellow-500/20 active:scale-95">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>Add Subcategory</span>
+                    </button>
+                    <button *ngIf="showForm" (click)="toggleForm()"
+                        class="flex items-center gap-2 px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-[18px] text-[11px] font-black uppercase tracking-widest transition-all active:scale-95">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>Back to List</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Add/Edit Form Card -->
+            <div *ngIf="showForm"
+                class="max-w-4xl mx-auto bg-white rounded-[32px] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden"
+                data-aos="zoom-in">
+                <div class="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-yellow-500 to-orange-400 flex items-center justify-center text-white font-black text-lg">
+                            <i class="bi"
+                                [ngClass]="selectedSubcategory ? 'bi-pencil-square' : 'bi-collection-play'"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-black text-slate-800 tracking-tight">{{selectedSubcategory ? 'Edit
+                                Subcategory' : 'Add New Subcategory'}}</h2>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Subcategory
+                                Details</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form class="p-8 space-y-6" (ngSubmit)="saveSubcategory()">
+                    <!-- Subcategory Image Upload -->
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Subcategory
+                            Image</label>
+                        <div
+                            class="flex items-center gap-4 p-5 bg-slate-50 rounded-[28px] border border-dashed border-slate-200 group hover:border-yellow-500/50 transition-colors">
+                            <div
+                                class="w-24 h-24 rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm flex-shrink-0">
+                                <img [src]="imagePreviewUrl || defaultSubcategoryImage"
+                                    class="w-full h-full object-cover" />
+                            </div>
+                            <div class="flex-1">
+                                <input type="file" #fileInput (change)="onImageChange($event)" hidden
+                                    accept="image/*" />
+                                <button type="button" (click)="fileInput.click()"
+                                    class="text-xs font-black text-yellow-600 hover:text-yellow-700 flex items-center gap-2 px-4 py-2 bg-yellow-50 rounded-xl transition-all">
+                                    <i class="bi bi-upload"></i>
+                                    <span>Select Image</span>
+                                </button>
+                                <p class="text-[9px] text-slate-400 mt-2 font-medium">Recommended: 800x800px. JPG or
+                                    PNG.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Fields -->
+                    <div class="grid grid-cols-1 gap-6">
+                        <div class="space-y-2">
+                            <label
+                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Subcategory
+                                Name</label>
+                            <input type="text" [(ngModel)]="newSubcategory.name" name="name"
+                                class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-4 focus:ring-yellow-500/10 focus:border-yellow-500/30 transition-all outline-none text-slate-700 font-bold"
+                                placeholder="e.g. Traditional Starters" required />
+                        </div>
+
+                        <!-- Multi-select for Parent Categories -->
+                        <div class="space-y-3">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Select
+                                Parent Categories (Multi-select)</label>
+                            <div
+                                class="grid grid-cols-2 md:grid-cols-4 gap-3 p-5 bg-slate-50 rounded-[28px] border border-slate-100 max-h-[200px] overflow-y-auto custom-scrollbar">
+                                <div *ngFor="let cat of categories"
+                                    class="flex items-center gap-2 p-2 rounded-xl hover:bg-white hover:shadow-sm transition-all cursor-pointer group">
+                                    <input type="checkbox" [id]="'cat-'+cat.id" [checked]="isCategorySelected(cat.id)"
+                                        (change)="onCategorySelect(cat.id, $event)"
+                                        class="form-check-input w-4 h-4 rounded border-slate-200 text-yellow-500 focus:ring-yellow-500/20" />
+                                    <label [for]="'cat-'+cat.id"
+                                        class="text-xs font-bold text-slate-600 cursor-pointer group-hover:text-slate-900 transition-colors">
+                                        {{cat.name}}
+                                    </label>
+                                </div>
+                                <div *ngIf="categories.length === 0" class="col-span-full py-4 text-center">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">No Categories Available
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="flex items-center justify-between p-4 bg-slate-50 rounded-[24px] border border-slate-100/50">
+                        <div>
+                            <p class="text-xs font-black text-slate-700">Status</p>
+                            <p class="text-[10px] text-slate-400">Visibility of this subcategory</p>
+                        </div>
+                        <div class="form-check form-switch p-0 m-0">
+                            <input class="form-check-input w-10 h-5" type="checkbox" role="switch"
+                                [checked]="newSubcategory.status == 'active'" (change)="onToggleChange($event)">
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-50">
+                        <button type="button" (click)="toggleForm()"
+                            class="px-6 py-3 text-xs font-bold text-slate-400 hover:text-slate-800 transition-colors">Discard</button>
+                        <button type="submit"
+                            class="px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-yellow-500/20 active:scale-95">
+                            {{selectedSubcategory ? 'Save Changes' : 'Add Subcategory'}}
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Subcategory Table (Desktop) -->
+            <div *ngIf="!showForm"
+                class="bg-white rounded-[32px] border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden"
+                data-aos="fade-up">
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/50 border-b border-slate-100">
+                                <th
+                                    class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] text-left">
+                                    Icon</th>
+                                <th
+                                    class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] text-left">
+                                    Subcategory Name</th>
+                                <th
+                                    class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] text-left">
+                                    Parent Categories</th>
+                                <th
+                                    class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] text-left">
+                                    Status</th>
+                                <th
+                                    class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] text-right">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            <tr *ngFor="let sub of paginatedSubcategories"
+                                class="group hover:bg-slate-50/50 transition-all duration-300">
+                                <td class="px-6 py-3">
+                                    <div
+                                        class="w-10 h-10 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 group-hover:border-yellow-500/30 transition-all flex items-center justify-center">
+                                        <img [src]="getImageSrc(sub.display_url || sub.image)"
+                                            (error)="onImageError($event)" class="w-full h-full object-cover" />
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <p class="text-sm font-bold text-slate-800 leading-tight">{{sub.name}}</p>
+                                    <p class="text-[9px] font-medium text-slate-400 uppercase tracking-tighter">Menu
+                                        Subcategory</p>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex flex-wrap gap-1.5 max-w-[300px]">
+                                        <span *ngFor="let cat of sub.categories"
+                                            class="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-50 border border-yellow-100 rounded-lg text-[10px] font-black text-yellow-600 uppercase tracking-tight">
+                                            <span class="w-1 h-1 rounded-full bg-yellow-400"></span>
+                                            {{cat.name}}
+                                        </span>
+                                        <span *ngIf="!sub.categories || sub.categories.length === 0"
+                                            class="text-[10px] font-bold text-slate-300 italic uppercase">No
+                                            Categories</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span
+                                        [ngClass]="sub.status == 'active' ? 'bg-green-50 text-green-600' : 'bg-slate-100 text-slate-500'"
+                                        class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider inline-flex items-center gap-1.5 transition-all">
+                                        <span class="w-1 h-1 rounded-full"
+                                            [ngClass]="sub.status == 'active' ? 'bg-green-500' : 'bg-slate-400'"></span>
+                                        {{sub.status == 'active' ? 'Active' : 'Inactive'}}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-3 text-right">
+                                    <div
+                                        class="flex items-center justify-end gap-2 translate-x-4 group-hover:translate-x-0 transition-all duration-300">
+                                        <button (click)="toggleForm(sub)"
+                                            class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-800 text-slate-600 hover:text-white rounded-lg text-[9px] font-black uppercase tracking-wider transition-all">
+                                            <i class="bi bi-pencil-square"></i>
+                                            <span>Edit</span>
+                                        </button>
+                                        <button (click)="deleteSubcategory(sub.id)"
+                                            class="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-500 text-red-600 hover:text-white rounded-lg text-[9px] font-black uppercase tracking-wider transition-all">
+                                            <i class="bi bi-trash3"></i>
+                                            <span>Remove</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Mobile Card View -->
+                    <div class="sm:hidden grid grid-cols-1 gap-4 p-4">
+                        <div *ngFor="let sub of paginatedSubcategories"
+                            class="bg-white rounded-[32px] border border-slate-100 p-6 shadow-sm hover:shadow-md transition-all">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-16 h-16 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0">
+                                        <img [src]="getImageSrc(sub.display_url || sub.image)"
+                                            (error)="onImageError($event)" class="w-full h-full object-cover" />
+                                    </div>
+                                    <div>
+                                        <h3 class="text-base font-black text-slate-800 leading-tight">{{sub.name}}</h3>
+                                        <div class="flex flex-wrap gap-1 mt-1">
+                                            <span *ngFor="let cat of sub.categories"
+                                                class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">
+                                                {{cat.name}}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1.5 px-2 py-1 bg-green-50 rounded-full">
+                                    <span class="w-1.5 h-1.5 rounded-full"
+                                        [ngClass]="sub.status == 'active' ? 'bg-green-500' : 'bg-slate-400'"></span>
+                                    <span
+                                        class="text-[9px] font-black text-green-600 uppercase tracking-wider">{{sub.status
+                                        == 'active' ? 'Active' : 'Inactive'}}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 pt-4 border-t border-slate-50">
+                                <button (click)="toggleForm(sub)"
+                                    class="flex-1 flex items-center justify-center gap-2 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
+                                    <i class="bi bi-pencil-square"></i>
+                                    <span>Edit</span>
+                                </button>
+                                <button (click)="deleteSubcategory(sub.id)"
+                                    class="flex-1 flex items-center justify-center gap-2 py-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
+                                    <i class="bi bi-trash3"></i>
+                                    <span>Remove</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div *ngIf="paginatedSubcategories.length === 0" class="text-center py-12">
+                            <div
+                                class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i class="bi bi-collection text-slate-300 text-2xl"></i>
+                            </div>
+                            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">No Subcategories Found
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div *ngIf="filteredSubcategories.length > 0"
+                    class="px-8 py-5 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
+                    <p class="text-xs font-bold text-slate-400 tracking-wide">
+                        Showing <span class="text-slate-700">{{(currentPage-1) * itemsPerPage + 1}}</span> to
+                        <span class="text-slate-700">{{currentPage * itemsPerPage > filteredSubcategories.length ?
+                            filteredSubcategories.length : currentPage * itemsPerPage}}</span>
+                        of <span class="text-slate-700">{{filteredSubcategories.length}}</span> entries
+                    </p>
+                    <div class="flex items-center gap-1">
+                        <button (click)="setPage(currentPage - 1)" [disabled]="currentPage === 1"
+                            class="w-10 h-10 flex items-center justify-center rounded-xl transition-all"
+                            [ngClass]="currentPage === 1 ? 'text-slate-300' : 'hover:bg-white hover:shadow-md text-slate-600'">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <div class="flex items-center gap-1 mx-2">
+                            <button *ngFor="let p of [].constructor(totalPages); let i = index" (click)="setPage(i + 1)"
+                                [ngClass]="currentPage === (i + 1) ? 'bg-yellow-500 text-white shadow-lg shadow-yellow-500/30' : 'hover:bg-white text-slate-400'"
+                                class="w-10 h-10 rounded-xl text-xs font-black transition-all">
+                                {{i + 1}}
+                            </button>
+                        </div>
+                        <button (click)="setPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+                            class="w-10 h-10 flex items-center justify-center rounded-xl transition-all"
+                            [ngClass]="currentPage === totalPages ? 'text-slate-300' : 'hover:bg-white hover:shadow-md text-slate-600'">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <!-- Delete Confirmation Modal -->
+    <div *ngIf="showDeleteConfirm"
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm"
+        data-aos="fade">
+        <div class="bg-white rounded-[40px] p-10 max-w-sm w-full shadow-2xl text-center" data-aos="zoom-in"
+            data-aos-duration="300">
+            <div class="w-20 h-20 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <i class="bi bi-trash3 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-black text-slate-800 tracking-tight mb-2">Are you sure?</h3>
+            <p class="text-xs text-slate-400 mb-8">This action permanently deletes the subcategory.</p>
+            <div class="flex items-center gap-3 mt-4">
+                <button (click)="cancelDelete()"
+                    class="flex-1 px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">Keep</button>
+                <button (click)="confirmDelete()"
+                    class="flex-1 px-6 py-3.5 bg-red-500 hover:bg-red-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-red-500/20">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -137,7 +137,42 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/payment/history/${userId}`);
   }
 
+  // MENU CATEGORY API
+  getMenuCategories(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/menu-categories`);
+  }
 
+  createMenuCategory(formData: FormData): Observable<any> {
+    return this.http.post(`${this.baseUrl}/menu-categories/create`, formData);
+  }
 
+  updateMenuCategory(id: any, formData: FormData): Observable<any> {
+    return this.http.put(`${this.baseUrl}/menu-categories/update/${id}`, formData);
+  }
+
+  deleteMenuCategory(id: any): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/menu-categories/delete/${id}`);
+  }
+
+  // MENU SUBCATEGORY API
+  getMenuSubcategories(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/menu-subcategories`);
+  }
+
+  getMenuSubcategoriesByCategory(categoryId: any): Observable<any> {
+    return this.http.get(`${this.baseUrl}/menu-subcategories/category/${categoryId}`);
+  }
+
+  createMenuSubcategory(formData: FormData): Observable<any> {
+    return this.http.post(`${this.baseUrl}/menu-subcategories/create`, formData);
+  }
+
+  updateMenuSubcategory(id: any, formData: FormData): Observable<any> {
+    return this.http.put(`${this.baseUrl}/menu-subcategories/update/${id}`, formData);
+  }
+
+  deleteMenuSubcategory(id: any): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/menu-subcategories/delete/${id}`);
+  }
 
 }

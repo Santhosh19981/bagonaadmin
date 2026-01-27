@@ -1,3 +1,4 @@
+// Menu Category implementation
 import { Routes } from '@angular/router';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { CheffsComponent } from './components/cheffs/cheffs.component';
@@ -11,21 +12,25 @@ import { EventsComponent } from './components/events/events.component';
 import { ServicesComponent } from './components/services/services.component';
 import { ServiceItemsComponent } from './components/service-items/service-items.component';
 import { MenuItemsComponent } from './components/menu-items/menu-items.component';
+import { MenuCategoryComponent } from './components/menu-category/menu-category.component';
 import { ApprovalsComponent } from './components/approvals/approvals.component';
+import { MenuSubcategoryComponent } from './components/menu-subcategory/menu-subcategory.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full',  },
-    { path: 'events', component: EventsComponent,canActivate:  [AuthGuard]  },
-      { path: 'services', component: ServicesComponent,canActivate:  [AuthGuard]  },
-             { path: 'menu-items', component: MenuItemsComponent,canActivate:  [AuthGuard]  },
-        { path: 'service-items', component: ServiceItemsComponent,canActivate:  [AuthGuard]  },
-  { path: 'dashboard', component: DashboardComponent,canActivate:  [AuthGuard]  },
-  { path: 'cheffs', component: CheffsComponent , canActivate:  [AuthGuard] },
+  { path: '', redirectTo: 'login', pathMatch: 'full', },
+  { path: 'events', component: EventsComponent, canActivate: [AuthGuard] },
+  { path: 'services', component: ServicesComponent, canActivate: [AuthGuard] },
+  { path: 'menu-categories', component: MenuCategoryComponent, canActivate: [AuthGuard] },
+  { path: 'menu-subcategories', component: MenuSubcategoryComponent, canActivate: [AuthGuard] },
+  { path: 'menu-items', component: MenuItemsComponent, canActivate: [AuthGuard] },
+  { path: 'service-items', component: ServiceItemsComponent, canActivate: [AuthGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'cheffs', component: CheffsComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
-  { path: 'orders', component: OrdersComponent,canActivate:  [AuthGuard]  },
-  { path: 'payment-history', component: PaymentHistoryComponent,canActivate:  [AuthGuard]  },
-  { path: 'users', component: UsersComponent,canActivate:  [AuthGuard]  },
-   { path: 'vendors', component: VendorsComponent,canActivate:  [AuthGuard]  },
-   { path: 'approvals', component: ApprovalsComponent,canActivate:  [AuthGuard]  },
-   
+  { path: 'orders', component: OrdersComponent, canActivate: [AuthGuard] },
+  { path: 'payment-history', component: PaymentHistoryComponent, canActivate: [AuthGuard] },
+  { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
+  { path: 'vendors', component: VendorsComponent, canActivate: [AuthGuard] },
+  { path: 'approvals', component: ApprovalsComponent, canActivate: [AuthGuard] },
+
 ];
