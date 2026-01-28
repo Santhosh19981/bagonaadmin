@@ -97,12 +97,22 @@
                 placeholder="0.00" required />
             </div>
 
-            <div class="space-y-2">
-              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Dietary Type</label>
-              <select [(ngModel)]="newMenuItem.type" name="type" required
+            <div class="space-y-2 md:col-span-2">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Category</label>
+              <select [(ngModel)]="newMenuItem.menu_category_id" name="menu_category_id"
+                (ngModelChange)="onCategoryChange()"
                 class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-4 focus:ring-yellow-500/10 focus:border-yellow-500/30 transition-all outline-none text-slate-700 font-bold appearance-none">
-                <option value="Veg">Veg (Pure Vegetarian)</option>
-                <option value="Non-Veg">Non-Veg (Poultry/Meat)</option>
+                <option value="">Select Category</option>
+                <option *ngFor="let cat of categories" [value]="cat.id">{{cat.name}}</option>
+              </select>
+            </div>
+
+            <div class="space-y-2 md:col-span-2">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Subcategory</label>
+              <select [(ngModel)]="newMenuItem.menu_subcategory_id" name="menu_subcategory_id"
+                class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:ring-4 focus:ring-yellow-500/10 focus:border-yellow-500/30 transition-all outline-none text-slate-700 font-bold appearance-none">
+                <option value="">Select Subcategory</option>
+                <option *ngFor="let sub of subcategories" [value]="sub.id">{{sub.name}}</option>
               </select>
             </div>
 
@@ -119,7 +129,7 @@
               class="px-6 py-3 text-xs font-bold text-slate-400 hover:text-slate-800 transition-colors">Discard</button>
             <button type="submit"
               class="px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-yellow-500/20 active:scale-95">
-              {{selectedMenuItem ? 'Save Changes' : 'Add Item'}}
+              SAVE CHANGES
             </button>
           </div>
         </form>
@@ -135,9 +145,9 @@
               <tr class="bg-slate-50/50 border-b border-slate-100">
                 <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Icon</th>
                 <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Item Name</th>
-                <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Description</th>
+                <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Category</th>
+                <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Subcategory</th>
                 <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Price</th>
-                <th class="px-4 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Type</th>
                 <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] text-right">
                   Actions</th>
               </tr>
@@ -148,8 +158,9 @@
                 <td class="px-6 py-3">
                   <div
                     class="w-10 h-10 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 group-hover:border-yellow-500/30 transition-all flex items-center justify-center">
-                    <img *ngIf="item.image; else defaultDishIcon" [src]="getImageSrc(item.image)"
-                      (error)="onImageError($event)" class="w-full h-full object-cover" />
+                    <img *ngIf="item.display_url || item.image_url; else defaultDishIcon"
+                      [src]="getImageSrc(item.display_url || item.image_url)" (error)="onImageError($event)"
+                      class="w-full h-full object-cover" />
                     <ng-template #defaultDishIcon>
                       <div
                         class="w-full h-full bg-gradient-to-tr from-yellow-500/10 to-orange-400/10 flex items-center justify-center">
@@ -163,24 +174,13 @@
                   <p class="text-[9px] font-medium text-slate-400 uppercase tracking-tighter">Chef's Special</p>
                 </td>
                 <td class="px-4 py-3">
-                  <span class="text-xs font-medium text-slate-500 truncate max-w-[200px] inline-block"
-                    [title]="item.description">
-                    {{item.description || 'No description available'}}
-                  </span>
+                  <p class="text-xs font-bold text-slate-600 leading-tight">{{item.category_name || 'N/A'}}</p>
+                </td>
+                <td class="px-4 py-3">
+                  <p class="text-xs font-bold text-slate-600 leading-tight">{{item.subcategory_name || 'N/A'}}</p>
                 </td>
                 <td class="px-4 py-3">
                   <span class="text-sm font-black text-slate-700">₹{{item.price}}</span>
-                </td>
-                <td class="px-4 py-3">
-                  <span [ngClass]="{
-                                        'bg-green-50 text-green-600': item.veg == '1',
-                                        'bg-red-50 text-red-600': item.nonveg == '1'
-                                    }"
-                    class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider inline-flex items-center gap-1.5 transition-all">
-                    <span class="w-1.5 h-1.5 rounded-full"
-                      [ngClass]="item.veg == '1' ? 'bg-green-500' : 'bg-red-500'"></span>
-                    {{item.veg == '1' ? 'Veg' : 'Non-Veg'}}
-                  </span>
                 </td>
                 <td class="px-6 py-3 text-right">
                   <div
@@ -210,8 +210,9 @@
               <div class="flex items-start gap-2.5 mb-2.5 pb-2.5 border-b border-slate-100">
                 <div
                   class="w-12 h-12 rounded-xl overflow-hidden bg-slate-50 border border-slate-200 flex-shrink-0 flex items-center justify-center">
-                  <img *ngIf="item.image; else mobileDefaultIcon" [src]="getImageSrc(item.image)"
-                    (error)="onImageError($event)" class="w-full h-full object-cover" />
+                  <img *ngIf="item.display_url || item.image_url; else mobileDefaultIcon"
+                    [src]="getImageSrc(item.display_url || item.image_url)" (error)="onImageError($event)"
+                    class="w-full h-full object-cover" />
                   <ng-template #mobileDefaultIcon>
                     <div
                       class="w-full h-full bg-gradient-to-tr from-yellow-500/10 to-orange-400/10 flex items-center justify-center">
@@ -221,20 +222,12 @@
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="text-sm font-bold text-slate-800">{{item.name}}</div>
-                  <div class="text-[9px] font-medium text-slate-400 uppercase tracking-wider mt-0.5">Chef's Special
+                  <div class="text-[9px] font-medium text-slate-400 uppercase tracking-wider mt-0.5">
+                    {{item.category_name || 'N/A'}} • {{item.subcategory_name || 'N/A'}}
                   </div>
                 </div>
                 <div class="flex flex-col items-end gap-1 flex-shrink-0">
                   <div class="text-sm font-black text-slate-700">₹{{item.price}}</div>
-                  <span [ngClass]="{
-                    'bg-green-50 text-green-600': item.veg == '1',
-                    'bg-red-50 text-red-600': item.nonveg == '1'
-                  }"
-                    class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider inline-flex items-center gap-1">
-                    <span class="w-1 h-1 rounded-full"
-                      [ngClass]="item.veg == '1' ? 'bg-green-500' : 'bg-red-500'"></span>
-                    {{item.veg == '1' ? 'Veg' : 'Non-Veg'}}
-                  </span>
                 </div>
               </div>
               <div class="mb-2.5" *ngIf="item.description">

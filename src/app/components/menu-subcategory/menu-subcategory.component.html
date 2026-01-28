@@ -177,11 +177,14 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex flex-wrap gap-1.5 max-w-[300px]">
-                                        <span *ngFor="let cat of sub.categories"
-                                            class="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-50 border border-yellow-100 rounded-lg text-[10px] font-black text-yellow-600 uppercase tracking-tight">
-                                            <span class="w-1 h-1 rounded-full bg-yellow-400"></span>
-                                            {{cat.name}}
-                                        </span>
+                                        <ng-container *ngIf="sub.categories && sub.categories.length > 0">
+                                            <span [title]="getCategoryNames(sub.categories)"
+                                                class="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-50 border border-yellow-100 rounded-lg text-[10px] font-black text-yellow-600 uppercase tracking-tight cursor-help">
+                                                <span class="w-1 h-1 rounded-full bg-yellow-400"></span>
+                                                {{sub.categories[0].name}}
+                                                <span *ngIf="sub.categories.length > 1">..</span>
+                                            </span>
+                                        </ng-container>
                                         <span *ngIf="!sub.categories || sub.categories.length === 0"
                                             class="text-[10px] font-bold text-slate-300 italic uppercase">No
                                             Categories</span>
@@ -229,10 +232,13 @@
                                     <div>
                                         <h3 class="text-base font-black text-slate-800 leading-tight">{{sub.name}}</h3>
                                         <div class="flex flex-wrap gap-1 mt-1">
-                                            <span *ngFor="let cat of sub.categories"
-                                                class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">
-                                                {{cat.name}}
-                                            </span>
+                                            <ng-container *ngIf="sub.categories && sub.categories.length > 0">
+                                                <span [title]="getCategoryNames(sub.categories)"
+                                                    class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100 cursor-help">
+                                                    {{sub.categories[0].name}}
+                                                    <span *ngIf="sub.categories.length > 1">..</span>
+                                                </span>
+                                            </ng-container>
                                         </div>
                                     </div>
                                 </div>

@@ -18,6 +18,9 @@ export class MenuItemsComponent implements OnInit {
   allMenuItems: any[] = [];
   filteredMenuItems: any[] = [];
   paginatedMenuItems: any[] = [];
+  categories: any[] = [];
+  allSubcategories: any[] = [];
+  subcategories: any[] = [];
 
   // API Base URL - update this to your production URL when deploying
   apiBaseUrl: string = "https://bhagona-backend-v2.vercel.app";
@@ -40,7 +43,8 @@ export class MenuItemsComponent implements OnInit {
     name: '',
     description: '',
     price: '',
-    type: 'Veg',
+    menu_category_id: '',
+    menu_subcategory_id: '',
     image: null
   };
 
@@ -50,16 +54,66 @@ export class MenuItemsComponent implements OnInit {
 
   ngOnInit() {
     this.loadMenuItems();
+    this.loadCategories();
+    this.loadAllSubcategories();
+  }
+
+  loadAllSubcategories() {
+    this.apiService.getMenuSubcategories().subscribe({
+      next: (res: any) => {
+        this.allSubcategories = Array.isArray(res?.data) ? res.data : [];
+        // If we're already editing an item, filter subcategories now
+        if (this.newMenuItem && this.newMenuItem.menu_category_id) {
+          this.onCategoryChange();
+        }
+      }
+    });
+  }
+
+  loadCategories() {
+    this.apiService.getMenuCategories().subscribe({
+      next: (res: any) => {
+        this.categories = Array.isArray(res?.data) ? res.data : [];
+      }
+    });
+  }
+
+  onCategoryChange() {
+    if (this.newMenuItem.menu_category_id) {
+      // Find selected category to infer dietary type
+      const selectedCat = this.categories.find(c => c.id == this.newMenuItem.menu_category_id);
+      if (selectedCat) {
+        const catName = selectedCat.name.toLowerCase();
+        if (catName.includes('non') || catName.includes('meat') || catName.includes('chicken') || catName.includes('mutton') || catName.includes('egg')) {
+          this.newMenuItem.veg = 0;
+          this.newMenuItem.nonveg = 1;
+        } else {
+          this.newMenuItem.veg = 1;
+          this.newMenuItem.nonveg = 0;
+        }
+      }
+
+      // Filter subcategories that belong to the selected category
+      this.subcategories = this.allSubcategories.filter(sub =>
+        sub.categories && sub.categories.some((c: any) => c.id == this.newMenuItem.menu_category_id)
+      );
+    } else {
+      this.subcategories = [];
+      this.newMenuItem.veg = 0;
+      this.newMenuItem.nonveg = 0;
+    }
+
+    // Reset subcategory if not in the new list (using loose equality for safety)
+    if (this.newMenuItem.menu_subcategory_id && !this.subcategories.find(s => s.id == this.newMenuItem.menu_subcategory_id)) {
+      this.newMenuItem.menu_subcategory_id = '';
+    }
   }
 
   // LOAD MENU ITEMS
   loadMenuItems() {
     this.apiService.getMenuItems().subscribe({
       next: (res: any) => {
-        this.allMenuItems = Array.isArray(res?.data) ? res.data.map((item: any) => ({
-          ...item,
-          image: item.image_url || item.image // Map image_url to image
-        })) : [];
+        this.allMenuItems = Array.isArray(res?.data) ? res.data : [];
         this.applyFilter('');
       },
       error: (err) => {
@@ -126,15 +180,11 @@ export class MenuItemsComponent implements OnInit {
   // Determine the correct image source for display
   getImageSrc(imageUrl: string | null): string {
     if (!imageUrl) return this.defaultItemImage;
-    if (imageUrl.startsWith('data:')) return imageUrl; // Return base64 preview as is
-    if (imageUrl.startsWith('http')) return imageUrl; // Original full URL
+    if (imageUrl.startsWith('data:')) return imageUrl;
+    if (imageUrl.startsWith('http')) return imageUrl;
+    if (imageUrl.startsWith('/menu-items/image')) return this.apiBaseUrl + imageUrl;
 
-    // Check if it's a local file path (e.g., from an old DB entry or misconfiguration)
-    if (imageUrl.includes(':/') || imageUrl.includes(':\\')) {
-      return this.defaultItemImage;
-    }
-
-    return this.apiBaseUrl + imageUrl; // Prefix relative server path with API URL
+    return this.apiBaseUrl + imageUrl;
   }
 
   toggleForm(item?: any) {
@@ -147,20 +197,20 @@ export class MenuItemsComponent implements OnInit {
         ...item,
         description: item.description || '',
         price: item.price || '',
+        menu_category_id: item.menu_category_id || '',
+        menu_subcategory_id: item.menu_subcategory_id || '',
         image: null
       };
 
-      // Map veg/nonveg to type for the dropdown
-      if (item.veg === 1 || item.veg === '1') {
-        this.newMenuItem.type = 'Veg';
-      } else if (item.nonveg === 1 || item.nonveg === '1') {
-        this.newMenuItem.type = 'Non-Veg';
+      if (this.newMenuItem.menu_category_id) {
+        this.onCategoryChange();
       }
 
-      this.imagePreviewUrl = item.image;
+      this.imagePreviewUrl = item.display_url || item.image_url;
     } else {
       this.selectedMenuItem = null;
-      this.newMenuItem = { name: '', description: '', price: '', type: 'Veg', image: null };
+      this.newMenuItem = { name: '', description: '', price: '', menu_category_id: '', menu_subcategory_id: '', image: null };
+      this.subcategories = [];
     }
   }
 
@@ -170,18 +220,16 @@ export class MenuItemsComponent implements OnInit {
     fd.append('name', this.newMenuItem.name);
     fd.append('description', this.newMenuItem.description || '');
     fd.append('price', this.newMenuItem.price);
-
-    // Map type back to veg/nonveg
-    fd.append('veg', this.newMenuItem.type === 'Veg' ? '1' : '0');
-    fd.append('nonveg', this.newMenuItem.type === 'Non-Veg' ? '1' : '0');
+    fd.append('menu_category_id', this.newMenuItem.menu_category_id || '');
+    fd.append('menu_subcategory_id', this.newMenuItem.menu_subcategory_id || '');
 
     if (this.newMenuItem.image instanceof File) {
       fd.append('image', this.newMenuItem.image);
     }
 
     if (this.selectedMenuItem) {
-      if (this.selectedMenuItem.image) {
-        fd.append('existingImage', this.selectedMenuItem.image);
+      if (!this.newMenuItem.image) {
+        fd.append('existingImage', this.selectedMenuItem.image_url || '');
       }
 
       this.apiService.updateMenuItem(this.selectedMenuItem.menu_item_id, fd).subscribe({

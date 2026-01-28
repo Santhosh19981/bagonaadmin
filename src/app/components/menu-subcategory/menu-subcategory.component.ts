@@ -182,6 +182,11 @@ export class MenuSubcategoryComponent implements OnInit {
         return this.apiBaseUrl + imageUrl;
     }
 
+    getCategoryNames(categories: any[]): string {
+        if (!categories || !Array.isArray(categories)) return '';
+        return categories.map(c => c.name).join(', ');
+    }
+
     saveSubcategory() {
         if (this.newSubcategory.category_ids.length === 0) {
             this.toastr.warning("Please select at least one parent category");
