@@ -89,23 +89,75 @@
 
                         <!-- Multi-select for Parent Categories -->
                         <div class="space-y-3">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Select
-                                Parent Categories (Multi-select)</label>
-                            <div
-                                class="grid grid-cols-2 md:grid-cols-4 gap-3 p-5 bg-slate-50 rounded-[28px] border border-slate-100 max-h-[200px] overflow-y-auto custom-scrollbar">
-                                <div *ngFor="let cat of categories"
-                                    class="flex items-center gap-2 p-2 rounded-xl hover:bg-white hover:shadow-sm transition-all cursor-pointer group">
-                                    <input type="checkbox" [id]="'cat-'+cat.id" [checked]="isCategorySelected(cat.id)"
-                                        (change)="onCategorySelect(cat.id, $event)"
-                                        class="form-check-input w-4 h-4 rounded border-slate-200 text-yellow-500 focus:ring-yellow-500/20" />
-                                    <label [for]="'cat-'+cat.id"
-                                        class="text-xs font-bold text-slate-600 cursor-pointer group-hover:text-slate-900 transition-colors">
-                                        {{cat.name}}
+                            <div class="flex items-center justify-between px-1">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Select
+                                    Parent Categories</label>
+                                <div class="flex items-center gap-3">
+                                    <label class="flex items-center gap-2 cursor-pointer group">
+                                        <input type="checkbox" (change)="toggleAllCategories($event)"
+                                            [checked]="newSubcategory.category_ids.length === categories.length && categories.length > 0"
+                                            class="w-3.5 h-3.5 rounded border-slate-400 text-yellow-500 focus:ring-yellow-500/20">
+                                        <span
+                                            class="text-[9px] font-black text-slate-400 uppercase tracking-wider group-hover:text-slate-600 transition-colors">Select
+                                            All</span>
                                     </label>
                                 </div>
-                                <div *ngIf="categories.length === 0" class="col-span-full py-4 text-center">
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase">No Categories Available
-                                    </p>
+                            </div>
+
+                            <div
+                                class="bg-slate-50 rounded-[28px] border border-slate-100 overflow-hidden flex flex-col">
+                                <!-- Search Bar -->
+                                <div
+                                    class="px-5 py-3 border-b border-slate-100 bg-white/50 backdrop-blur-sm sticky top-0 z-10">
+                                    <div class="relative">
+                                        <i
+                                            class="bi bi-search absolute left-0 top-1/2 -translate-y-1/2 text-slate-300 text-xs"></i>
+                                        <input type="text" [(ngModel)]="categorySearchQuery" name="categorySearch"
+                                            class="w-full pl-6 pr-4 py-1.5 bg-transparent text-[11px] font-bold text-slate-600 outline-none placeholder:text-slate-300 placeholder:font-medium"
+                                            placeholder="Search categories...">
+                                    </div>
+                                </div>
+
+                                <!-- Scrollable List -->
+                                <div class="p-2 max-h-[240px] overflow-y-auto custom-category-scrollbar">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                        <div *ngFor="let cat of filteredCategories" (click)="onCategoryToggle(cat.id)"
+                                            [class.bg-yellow-50]="isCategorySelected(cat.id)"
+                                            [class.border-yellow-100]="isCategorySelected(cat.id)"
+                                            class="flex items-center gap-3 p-3.5 rounded-2xl border border-transparent hover:bg-white hover:shadow-sm hover:border-slate-200 transition-all cursor-pointer group select-none">
+                                            <div class="relative flex items-center flex-shrink-0">
+                                                <div [class.border-yellow-500]="isCategorySelected(cat.id)"
+                                                    [class.bg-yellow-500]="isCategorySelected(cat.id)"
+                                                    [class.border-slate-400]="!isCategorySelected(cat.id)"
+                                                    [class.bg-white]="!isCategorySelected(cat.id)"
+                                                    class="w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all">
+                                                    <i class="bi bi-check-lg text-white text-[10px] transition-transform"
+                                                        [class.scale-100]="isCategorySelected(cat.id)"
+                                                        [class.scale-0]="!isCategorySelected(cat.id)"></i>
+                                                </div>
+                                            </div>
+                                            <span class="flex-1 text-xs font-bold transition-colors"
+                                                [class.text-yellow-700]="isCategorySelected(cat.id)"
+                                                [class.text-slate-600]="!isCategorySelected(cat.id)"
+                                                [class.group-hover:text-slate-900]="!isCategorySelected(cat.id)">
+                                                {{cat.name}}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Empty Search State -->
+                                    <div *ngIf="filteredCategories.length === 0 && categories.length > 0"
+                                        class="py-8 text-center">
+                                        <i class="bi bi-search text-slate-200 text-xl mb-2 block"></i>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase">No results for
+                                            "{{categorySearchQuery}}"</p>
+                                    </div>
+
+                                    <!-- Empty Categories State -->
+                                    <div *ngIf="categories.length === 0" class="py-10 text-center">
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase">No Categories
+                                            Available</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -45,6 +45,8 @@ export class MenuSubcategoryComponent implements OnInit {
         image_url: ''
     };
 
+    categorySearchQuery: string = '';
+
     defaultSubcategoryImage = "https://cdn-icons-png.flaticon.com/512/3565/3565407.png";
 
     constructor(private apiService: ApiService, private toastr: ToastrService) { }
@@ -60,6 +62,20 @@ export class MenuSubcategoryComponent implements OnInit {
                 this.categories = Array.isArray(res?.data) ? res.data : [];
             }
         });
+    }
+
+    get filteredCategories() {
+        if (!this.categorySearchQuery) return this.categories;
+        const query = this.categorySearchQuery.toLowerCase();
+        return this.categories.filter(cat => cat.name.toLowerCase().includes(query));
+    }
+
+    toggleAllCategories(event: any) {
+        if (event.target.checked) {
+            this.newSubcategory.category_ids = this.categories.map(cat => cat.id);
+        } else {
+            this.newSubcategory.category_ids = [];
+        }
     }
 
     loadSubcategories() {
@@ -124,6 +140,14 @@ export class MenuSubcategoryComponent implements OnInit {
             }
         } else {
             this.newSubcategory.category_ids = this.newSubcategory.category_ids.filter((id: any) => id !== catId);
+        }
+    }
+
+    onCategoryToggle(catId: any) {
+        if (this.newSubcategory.category_ids.includes(catId)) {
+            this.newSubcategory.category_ids = this.newSubcategory.category_ids.filter((id: any) => id !== catId);
+        } else {
+            this.newSubcategory.category_ids.push(catId);
         }
     }
 

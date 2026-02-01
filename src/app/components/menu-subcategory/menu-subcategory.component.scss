@@ -1,0 +1,25 @@
+.custom-category-scrollbar {
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: #cbd5e1;
+    }
+}
+
+// Smooth transitions for hover states
+.group:hover {
+    .bi-search {
+        color: #eab308;
+    }
+}
