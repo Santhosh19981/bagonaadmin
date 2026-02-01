@@ -58,7 +58,7 @@ export class SidemenuComponent implements OnInit {
     }
 
     // Get menu items based on user role
-    if (this.userRole) {
+    if (this.userRole !== null) {
       this.menuItems = this.navigationService.getMenuByRole(this.userRole);
     }
 
@@ -97,7 +97,11 @@ export class SidemenuComponent implements OnInit {
 
   gotoMenu(menuId: string): void {
     this.menu = menuId;
-    const menuItem = this.menuItems.find(item => item.id === menuId);
+    // Handle both cases (camelCase or kebab-case) just in case
+    const menuItem = this.menuItems.find(item =>
+      item.id.toLowerCase() === menuId.toLowerCase() ||
+      item.id.toLowerCase() === menuId.replace(/-/g, '').toLowerCase()
+    );
     if (menuItem) {
       this.router.navigate([menuItem.route]);
 

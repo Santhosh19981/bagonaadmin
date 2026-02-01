@@ -120,8 +120,13 @@ export class NavigationService {
      * @param userRole - The role ID of the current user
      * @returns Array of menu items accessible by the role
      */
-    getMenuByRole(userRole: number): MenuItem[] {
-        return this.menuItems.filter(item => item.roles.includes(userRole));
+    getMenuByRole(userRole: any): MenuItem[] {
+        if (userRole === null || userRole === undefined) return [];
+        const roleInt = Number(userRole);
+        return this.menuItems.filter(item => {
+            // Use loose equality or find to handle potential string/number mix
+            return item.roles.some(r => Number(r) === roleInt);
+        });
     }
 
     /**
@@ -133,7 +138,7 @@ export class NavigationService {
         if (userStr) {
             try {
                 const user = JSON.parse(userStr);
-                return user.role || null;
+                return user.role ? Number(user.role) : null;
             } catch (e) {
                 return null;
             }
@@ -153,6 +158,7 @@ export class NavigationService {
         const menuItem = this.menuItems.find(item => item.route === route);
         if (!menuItem) return false;
 
-        return menuItem.roles.includes(userRole);
+        const roleInt = Number(userRole);
+        return menuItem.roles.some(r => Number(r) === roleInt);
     }
 }

@@ -45,6 +45,7 @@ export class MenuItemsComponent implements OnInit {
     price: '',
     menu_category_id: '',
     menu_subcategory_id: '',
+    status: 'active',
     image: null
   };
 
@@ -161,6 +162,10 @@ export class MenuItemsComponent implements OnInit {
     }
   }
 
+  onStatusToggle(event: any) {
+    this.newMenuItem.status = event.target.checked ? 'active' : 'inactive';
+  }
+
   onImageChange(e: any) {
     const file = e.target.files[0];
     if (file) {
@@ -199,6 +204,7 @@ export class MenuItemsComponent implements OnInit {
         price: item.price || '',
         menu_category_id: item.menu_category_id || '',
         menu_subcategory_id: item.menu_subcategory_id || '',
+        status: item.status || 'active',
         image: null
       };
 
@@ -209,7 +215,15 @@ export class MenuItemsComponent implements OnInit {
       this.imagePreviewUrl = item.display_url || item.image_url;
     } else {
       this.selectedMenuItem = null;
-      this.newMenuItem = { name: '', description: '', price: '', menu_category_id: '', menu_subcategory_id: '', image: null };
+      this.newMenuItem = {
+        name: '',
+        description: '',
+        price: '',
+        menu_category_id: '',
+        menu_subcategory_id: '',
+        status: 'active',
+        image: null
+      };
       this.subcategories = [];
     }
   }
@@ -222,6 +236,7 @@ export class MenuItemsComponent implements OnInit {
     fd.append('price', this.newMenuItem.price);
     fd.append('menu_category_id', this.newMenuItem.menu_category_id || '');
     fd.append('menu_subcategory_id', this.newMenuItem.menu_subcategory_id || '');
+    fd.append('status', this.newMenuItem.status);
 
     if (this.newMenuItem.image instanceof File) {
       fd.append('image', this.newMenuItem.image);

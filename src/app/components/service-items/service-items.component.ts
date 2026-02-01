@@ -49,6 +49,7 @@ export class ServiceItemsComponent implements OnInit {
     description: '',
     quantity_type: '',
     price: '',
+    status: 'active',
     image: null
   };
 
@@ -149,6 +150,10 @@ export class ServiceItemsComponent implements OnInit {
     }
   }
 
+  onStatusToggle(event: any) {
+    this.formData.status = event.target.checked ? 'active' : 'inactive';
+  }
+
   toggleForm(item?: any) {
     this.showForm = !this.showForm;
     this.imagePreviewUrl = null;
@@ -161,6 +166,7 @@ export class ServiceItemsComponent implements OnInit {
         description: item.description || '',
         quantity_type: item.quantity_type || '',
         price: item.price || '',
+        status: item.status || 'active',
         image: null,
       };
       this.imagePreviewUrl = item.image;
@@ -176,6 +182,7 @@ export class ServiceItemsComponent implements OnInit {
         description: '',
         quantity_type: '',
         price: '',
+        status: 'active',
         image: null
       };
     }
@@ -219,6 +226,7 @@ export class ServiceItemsComponent implements OnInit {
     fd.append('description', this.formData.description);
     fd.append('quantity_type', this.formData.quantity_type);
     fd.append('price', this.formData.price);
+    fd.append('status', this.formData.status);
 
     if (this.formData.image instanceof File) {
       fd.append('image', this.formData.image);
