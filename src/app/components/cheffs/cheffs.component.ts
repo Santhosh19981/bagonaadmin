@@ -27,6 +27,9 @@ export class CheffsComponent implements OnInit {
   // State
   showForm = false;
   selectedCheff: any = null;
+  selectedFile: File | null = null;
+  imagePreview: string | null = null;
+  showPassword = false;
 
   newCheff = this.initCheff();
 
@@ -40,7 +43,7 @@ export class CheffsComponent implements OnInit {
     this.api.getChefs().subscribe({
       next: (res: any) => {
         if (res.status) {
-          // Filter to only include chefs with isapproved > 0 as per user requirement
+          // Display only approved chefs
           this.allCheffs = (res.data || []).filter((chef: any) => chef.isapproved > 0);
           this.applyFilter('');
         }
@@ -92,21 +95,110 @@ export class CheffsComponent implements OnInit {
 
   toggleForm(cheff: any = null) {
     this.selectedCheff = cheff;
-    this.newCheff = cheff ? { ...cheff } : this.initCheff();
+    this.showPassword = false;
+    if (cheff) {
+      this.newCheff = {
+        fullName: cheff.name,
+        email: cheff.email,
+        mobile: cheff.mobile,
+        password: '',
+        age: cheff.age,
+        experience: cheff.experience,
+        address: cheff.address,
+        declaration: cheff.describe,
+        rating: cheff.rating || 0,
+        role: 2
+      };
+      this.imagePreview = cheff.image || null;
+    } else {
+      this.newCheff = this.initCheff();
+      this.imagePreview = null;
+    }
+    this.selectedFile = null;
     this.showForm = !this.showForm;
   }
 
+  get totalPagesArray(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imagePreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   saveCheff() {
-    // Current API doesn't seem to have a create/update for chefs in api.service.ts 
-    // but we'll implement the logic for when it's ready or just show a success message for UI completeness
-    this.toastr.info("Chef details processing functionality coming soon.");
-    this.toggleForm();
+    if (!this.newCheff.fullName || !this.newCheff.email || !this.newCheff.mobile || (!this.selectedCheff && !this.newCheff.password)) {
+      this.toastr.warning("Please fill required fields");
+      return;
+    }
+
+    // Mobile Validation: 10 digits, numbers only
+    const mobileRegex = /^[0-9]{10}$/;
+    if (!mobileRegex.test(this.newCheff.mobile)) {
+      this.toastr.error("Mobile number must be exactly 10 digits");
+      return;
+    }
+
+    const formData = new FormData();
+    Object.entries(this.newCheff).forEach(([key, value]) => {
+      formData.append(key, value as any);
+    });
+
+    if (this.selectedFile) {
+      formData.append('image', this.selectedFile);
+    }
+
+    if (this.selectedCheff) {
+      this.api.updateChefProfile(this.selectedCheff.id, formData).subscribe({
+        next: (res: any) => {
+          this.toastr.success("Chef updated successfully");
+          this.loadCheffs();
+          this.toggleForm();
+        },
+        error: (err) => {
+          this.toastr.error(err.error?.message || "Failed to update chef");
+        }
+      });
+    } else {
+      this.api.registerChef(formData).subscribe({
+        next: (res: any) => {
+          this.toastr.success("Chef registered successfully");
+          this.loadCheffs();
+          this.toggleForm();
+        },
+        error: (err) => {
+          this.toastr.error(err.error?.message || "Failed to register chef");
+        }
+      });
+    }
+  }
+
+  deleteCheff(id: number) {
+    if (confirm("Are you sure you want to delete this chef?")) {
+      this.api.deleteChef(id).subscribe({
+        next: () => {
+          this.toastr.success("Chef deleted successfully");
+          this.loadCheffs();
+        },
+        error: () => {
+          this.toastr.error("Failed to delete chef");
+        }
+      });
+    }
   }
 
   updateStatus(id: number, status: number) {
     this.api.updateActiveStatus(id, status).subscribe({
       next: () => {
-        this.toastr.success(`Chef status updated to ${status === 1 ? 'Active' : 'Inactive'} successfully`);
+        this.toastr.success(`Chef status updated to ${status === 1 ? 'Run' : 'Stop'} successfully`);
         this.loadCheffs();
       },
       error: () => {
@@ -116,6 +208,17 @@ export class CheffsComponent implements OnInit {
   }
 
   private initCheff() {
-    return { name: '', mobile: '', email: '', experience: '', address: '', cookingstyle: '', describe: '' };
+    return {
+      fullName: '',
+      email: '',
+      mobile: '',
+      password: '',
+      age: '',
+      experience: '',
+      address: '',
+      declaration: '',
+      rating: 0,
+      role: 2
+    };
   }
 }

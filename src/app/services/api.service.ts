@@ -133,6 +133,19 @@ export class ApiService {
     return this.http.put(this.baseUrl + `/profiles/status/${id}`, { isactive });
   }
 
+  registerChef(formData: any): Observable<any> {
+    // Assuming /addUser handles registration as provided in the backend snippet
+    return this.http.post(`${this.baseUrl}/addUser`, formData);
+  }
+
+  updateChefProfile(id: number, chefData: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/profiles/update-chef/${id}`, chefData);
+  }
+
+  deleteChef(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/profiles/delete-chef/${id}`);
+  }
+
   getPaymentHistory(userId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/payment/history/${userId}`);
   }
