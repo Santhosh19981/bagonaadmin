@@ -47,8 +47,8 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('user', JSON.stringify(res.user));
           localStorage.setItem('isLoggedIn', 'true');
 
-          // ✅ Backend already checks role_id === 4, but keeping double safety check
-          if (res.user.role === 4) {
+          // ✅ Allowing Vendor (3) and Admin (4) to access the portal
+          if (res.user.role === 3 || res.user.role === 4) {
             this.toastr.success('Login Successful! Welcome back.', 'Success');
             this.router.navigate(['/dashboard']); // ✅ Navigate to dashboard
           } else {

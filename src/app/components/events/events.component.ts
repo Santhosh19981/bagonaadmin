@@ -19,7 +19,7 @@ export class EventsComponent implements OnInit {
   paginatedEvents: any[] = [];
 
   // API Base URL - update this to your production URL when deploying
-  apiBaseUrl: string = "https://bhagona-backend-v2.vercel.app";
+  apiBaseUrl: string = "http://localhost:3000";
 
   // Pagination
   currentPage: number = 1;

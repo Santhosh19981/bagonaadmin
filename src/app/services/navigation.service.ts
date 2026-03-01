@@ -110,6 +110,13 @@ export class NavigationService {
             route: '/payment-history',
             icon: 'payments',
             roles: [2, 3, 4] // Chef, Vendor, Admin
+        },
+        {
+            id: 'my-services',
+            label: 'My Services',
+            route: '/my-services',
+            icon: 'my-services',
+            roles: [3] // Vendor only
         }
     ];
 

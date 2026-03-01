@@ -15,6 +15,7 @@ import { MenuItemsComponent } from './components/menu-items/menu-items.component
 import { MenuCategoryComponent } from './components/menu-category/menu-category.component';
 import { ApprovalsComponent } from './components/approvals/approvals.component';
 import { MenuSubcategoryComponent } from './components/menu-subcategory/menu-subcategory.component';
+import { MyServicesComponent } from './components/my-services/my-services.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full', },
@@ -32,5 +33,6 @@ export const routes: Routes = [
   { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
   { path: 'vendors', component: VendorsComponent, canActivate: [AuthGuard] },
   { path: 'approvals', component: ApprovalsComponent, canActivate: [AuthGuard] },
+  { path: 'my-services', component: MyServicesComponent, canActivate: [AuthGuard] },
 
 ];

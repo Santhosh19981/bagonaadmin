@@ -27,21 +27,38 @@ export class VendorsComponent implements OnInit {
   // State
   showForm = false;
   selectedVendor: any = null;
+  servicesList: any[] = [];
+  selectedServices: any[] = [];
+  dropdownOpen = false;
 
   newVendor: any = {
     name: '',
     phone: '',
+    mobile: '',
     email: '',
     experience: '',
     address: '',
     businessname: '',
-    describe: ''
+    describe: '',
+    services: ''
   };
 
   constructor(private api: ApiService, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.loadVendors();
+    this.loadAllServices();
+  }
+
+  loadAllServices() {
+    this.api.getServices().subscribe({
+      next: (res: any) => {
+        if (res.status === 'success' || res.status === true) {
+          this.servicesList = res.data || [];
+        }
+      },
+      error: (err) => console.error('Error loading services:', err)
+    });
   }
 
   loadVendors() {
@@ -69,7 +86,7 @@ export class VendorsComponent implements OnInit {
       this.filteredVendors = [...this.allVendors];
     } else {
       this.filteredVendors = this.allVendors.filter(v =>
-        v.name.toLowerCase().includes(q) ||
+        (v.name && v.name.toLowerCase().includes(q)) ||
         (v.businessname && v.businessname.toLowerCase().includes(q)) ||
         (v.email && v.email.toLowerCase().includes(q)) ||
         (v.mobile && v.mobile.includes(q))
@@ -100,20 +117,73 @@ export class VendorsComponent implements OnInit {
 
   toggleForm(vendor?: any) {
     this.selectedVendor = vendor || null;
+    this.dropdownOpen = false;
     if (vendor) {
       this.newVendor = { ...vendor };
+      // Handle services - they come as comma separated IDs in this.newVendor.services
+      if (typeof this.newVendor.services === 'string' && this.newVendor.services) {
+        const serviceIds = this.newVendor.services.split(',').map((id: string) => parseInt(id.trim())).filter((id: number) => !isNaN(id));
+        this.selectedServices = this.servicesList.filter(s => serviceIds.includes(s.service_id));
+      } else {
+        this.selectedServices = [];
+      }
     } else {
       this.newVendor = {
         name: '',
-        phone: '',
+        mobile: '',
         email: '',
         experience: '',
         address: '',
         businessname: '',
-        describe: ''
+        describe: '',
+        services: ''
       };
+      this.selectedServices = [];
     }
     this.showForm = !this.showForm;
+  }
+
+  toggleDropdown() {
+    this.dropdownOpen = !this.dropdownOpen;
+  }
+
+  toggleService(service: any) {
+    const index = this.selectedServices.findIndex(s => s.service_id === service.service_id);
+    if (index > -1) {
+      this.selectedServices.splice(index, 1);
+    } else {
+      this.selectedServices.push(service);
+    }
+  }
+
+  removeService(service: any) {
+    this.selectedServices = this.selectedServices.filter(s => s.service_id !== service.service_id);
+  }
+
+  isServiceSelected(service: any): boolean {
+    return this.selectedServices.some(s => s.service_id === service.service_id);
+  }
+
+  getSelectedServiceNames(): string {
+    return this.selectedServices.map(s => s.name).join(', ');
+  }
+
+  getServiceNamesByIds(servicesString: string): string[] {
+    if (!servicesString) return [];
+
+    // Check if it's already names or IDs
+    const parts = servicesString.split(',').map(s => s.trim()).filter(s => s);
+
+    // If they are IDs, map them to names
+    if (parts.length > 0 && !isNaN(parseInt(parts[0]))) {
+      const ids = parts.map(p => parseInt(p));
+      return this.servicesList
+        .filter(s => ids.includes(s.service_id))
+        .map(s => s.name);
+    }
+
+    // If they are already names or unknown, return as is
+    return parts;
   }
 
   toggleActive(id: any, currentStatus: number) {
@@ -128,8 +198,58 @@ export class VendorsComponent implements OnInit {
   }
 
   saveVendor(): void {
-    // Current API implementation doesn't have create/update for vendors
-    this.toastr.info("Vendor management is evolving. Full saving capability coming soon.");
-    this.toggleForm();
+    if (!this.newVendor.name || !this.newVendor.businessname || !this.newVendor.email || !this.newVendor.mobile) {
+      this.toastr.warning("Please fill all required fields");
+      return;
+    }
+
+    const serviceIds = this.selectedServices.map(s => s.service_id);
+    this.newVendor.services = serviceIds.join(', ');
+
+    if (this.selectedVendor) {
+      // Update
+      this.api.updateVendor(this.selectedVendor.id, this.newVendor).subscribe({
+        next: (res: any) => {
+          if (res.status) {
+            // Also sync mappings
+            this.api.syncVendorServices({ vendor_id: this.selectedVendor.id, service_ids: serviceIds }).subscribe({
+              next: () => {
+                this.toastr.success("Vendor updated successfully");
+                this.loadVendors();
+                this.toggleForm();
+              },
+              error: (err) => {
+                console.error(err);
+                this.toastr.error("Vendor info updated, but services sync failed");
+              }
+            });
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          this.toastr.error("Failed to update vendor");
+        }
+      });
+    } else {
+      // Create - reuse registerChef but change profile logic? 
+      // Actually /addUser is the way to create users.
+      const formData = new FormData();
+      Object.keys(this.newVendor).forEach(key => {
+        formData.append(key, this.newVendor[key]);
+      });
+      formData.append('role', '3'); // Vendor role
+
+      this.api.registerChef(formData).subscribe({
+        next: (res: any) => {
+          this.toastr.success("Vendor created successfully");
+          this.loadVendors();
+          this.toggleForm();
+        },
+        error: (err) => {
+          console.error(err);
+          this.toastr.error(err.error?.message || "Failed to create vendor");
+        }
+      });
+    }
   }
 }

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'https://bhagona-backend-v2.vercel.app';
+  private baseUrl = 'http://localhost:3000';
 
   constructor(private http: HttpClient) { }
 
@@ -133,6 +133,10 @@ export class ApiService {
     return this.http.put(this.baseUrl + `/profiles/status/${id}`, { isactive });
   }
 
+  updateVendor(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/profiles/update-vendor/${id}`, data);
+  }
+
   registerChef(formData: any): Observable<any> {
     // Assuming /addUser handles registration as provided in the backend snippet
     return this.http.post(`${this.baseUrl}/addUser`, formData);
@@ -186,6 +190,31 @@ export class ApiService {
 
   deleteMenuSubcategory(id: any): Observable<any> {
     return this.http.delete(`${this.baseUrl}/menu-subcategories/delete/${id}`);
+  }
+
+  // VENDOR SERVICE & ITEM MANAGEMENT
+  getServiceItemsByService(serviceId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/customer/service-items/${serviceId}`);
+  }
+
+  getVendorSetup(vendorId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/vendors/my-setup/${vendorId}`);
+  }
+
+  syncVendorServices(payload: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/vendors/services/sync`, payload);
+  }
+
+  syncVendorItems(payload: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/vendors/items/sync`, payload);
+  }
+
+  getVendorServicesList(vendorId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/vendors/services/${vendorId}`);
+  }
+
+  getVendorServiceItemsMaster(vendorId: number, serviceId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/vendors/service-items/${vendorId}/${serviceId}`);
   }
 
 }

@@ -20,7 +20,7 @@ export class MenuSubcategoryComponent implements OnInit {
     categories: any[] = []; // To hold parent categories for the multi-select
 
     // API Base URL
-    apiBaseUrl: string = "https://bhagona-backend-v2.vercel.app";
+    apiBaseUrl: string = "http://localhost:3000";
 
     // Pagination
     currentPage: number = 1;

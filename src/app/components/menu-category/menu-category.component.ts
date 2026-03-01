@@ -19,7 +19,7 @@ export class MenuCategoryComponent implements OnInit {
     paginatedCategories: any[] = [];
 
     // API Base URL
-    apiBaseUrl: string = "https://bhagona-backend-v2.vercel.app";
+    apiBaseUrl: string = "http://localhost:3000";
 
     // Pagination
     currentPage: number = 1;
