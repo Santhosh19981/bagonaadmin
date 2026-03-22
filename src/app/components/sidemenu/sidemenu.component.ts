@@ -2,10 +2,12 @@ import { Component, Input, OnInit, Output, EventEmitter, HostListener } from '@a
 import { Router } from '@angular/router';
 import { NavigationService, MenuItem } from '../../services/navigation.service';
 import { CommonModule } from '@angular/common';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-sidemenu',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './sidemenu.component.html',
   styleUrl: './sidemenu.component.scss'
 })
@@ -13,7 +15,6 @@ export class SidemenuComponent implements OnInit {
   @Input() menuFromParent: string = '';
   @Output() sidebarToggle = new EventEmitter<boolean>();
 
-  menu: string = 'dashboard';
   menuItems: any[] = [];
   userName: string = 'Admin';
   userRole: number | null = null;
@@ -61,11 +62,6 @@ export class SidemenuComponent implements OnInit {
     if (this.userRole !== null) {
       this.menuItems = this.navigationService.getMenuByRole(this.userRole);
     }
-
-    // Set initial menu from parent input
-    if (this.menuFromParent) {
-      this.gotoMenu(this.menuFromParent);
-    }
   }
 
   checkMobileView(): void {
@@ -92,23 +88,6 @@ export class SidemenuComponent implements OnInit {
     if (this.isMobileView) {
       this.isSidebarOpen = false;
       this.sidebarToggle.emit(false);
-    }
-  }
-
-  gotoMenu(menuId: string): void {
-    this.menu = menuId;
-    // Handle both cases (camelCase or kebab-case) just in case
-    const menuItem = this.menuItems.find(item =>
-      item.id.toLowerCase() === menuId.toLowerCase() ||
-      item.id.toLowerCase() === menuId.replace(/-/g, '').toLowerCase()
-    );
-    if (menuItem) {
-      this.router.navigate([menuItem.route]);
-
-      // Auto-close sidebar on mobile after navigation
-      if (this.isMobileView) {
-        this.closeSidebar();
-      }
     }
   }
 

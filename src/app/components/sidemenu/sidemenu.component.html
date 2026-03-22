@@ -45,12 +45,12 @@
     <div class="flex-1 overflow-y-auto py-2 px-3 custom-scrollbar min-h-0">
       <nav class="space-y-1">
         <div *ngFor="let item of menuItems; let i = index" class="relative group">
-          <a (click)="gotoMenu(item.id)" [class.active-item]="menu === item.id"
-            class="flex items-center gap-2.5 px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 group
+          <a [routerLink]="item.route" routerLinkActive="active-item" [routerLinkActiveOptions]="{exact: true}"
+            (click)="closeSidebar()" class="flex items-center gap-2.5 px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 group
                     hover:bg-slate-800/50
-                    {{ menu === item.id ? 'bg-gradient-to-r from-yellow-500/10 to-transparent border-l-4 border-yellow-500' : 'text-slate-400 hover:text-white' }}">
+                    text-slate-400 hover:text-white">
             <div class="flex items-center justify-center w-4 h-4 flex-shrink-0
-                        {{ menu === item.id ? 'text-yellow-500' : 'group-hover:text-yellow-400' }}">
+                        group-hover:text-yellow-400">
               <i class="bi" [ngClass]="{
                   'bi-speedometer2': item.icon === 'dashboard',
                   'bi-check-circle': item.icon === 'approval',

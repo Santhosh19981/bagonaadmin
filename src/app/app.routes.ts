@@ -16,6 +16,9 @@ import { MenuCategoryComponent } from './components/menu-category/menu-category.
 import { ApprovalsComponent } from './components/approvals/approvals.component';
 import { MenuSubcategoryComponent } from './components/menu-subcategory/menu-subcategory.component';
 import { MyServicesComponent } from './components/my-services/my-services.component';
+import { ProfileManagementComponent } from './components/profile-management/profile-management.component';
+import { BannerManagementComponent } from './components/banner-management/banner-management.component';
+import { ReviewManagementComponent } from './components/review-management/review-management.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full', },
@@ -34,5 +37,8 @@ export const routes: Routes = [
   { path: 'vendors', component: VendorsComponent, canActivate: [AuthGuard] },
   { path: 'approvals', component: ApprovalsComponent, canActivate: [AuthGuard] },
   { path: 'my-services', component: MyServicesComponent, canActivate: [AuthGuard] },
+  { path: 'profile-management', component: ProfileManagementComponent, canActivate: [AuthGuard] },
+  { path: 'banner-management', component: BannerManagementComponent, canActivate: [AuthGuard] },
+  { path: 'review-management', component: ReviewManagementComponent, canActivate: [AuthGuard] },
 
 ];

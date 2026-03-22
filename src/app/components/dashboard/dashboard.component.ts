@@ -38,6 +38,7 @@ export type ChartOptions = {
 
 @Component({
   selector: 'app-dashboard',
+  standalone: true,
   imports: [CommonModule, SidemenuComponent, HeaderComponent, NgApexchartsModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'

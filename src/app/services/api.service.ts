@@ -217,4 +217,36 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/vendors/service-items/${vendorId}/${serviceId}`);
   }
 
+  // --- NEW: PROFILE, BANNERS & REVIEWS ---
+
+  getUserProfile(id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/profiles/user/${id}`);
+  }
+
+  updateProfile(id: number, fd: FormData): Observable<any> {
+    return this.http.put(`${this.baseUrl}/profiles/user/${id}`, fd);
+  }
+
+  getBanners(vendorId?: number): Observable<any> {
+    let url = `${this.baseUrl}/banners`;
+    if (vendorId) url += `?vendor_id=${vendorId}`;
+    return this.http.get(url);
+  }
+
+  getVendorBanners(vendorId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/banners/vendor/${vendorId}`);
+  }
+
+  addBanner(fd: FormData): Observable<any> {
+    return this.http.post(`${this.baseUrl}/banners`, fd);
+  }
+
+  deleteBanner(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/banners/${id}`);
+  }
+
+  getVendorReviews(vendorId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/reviews/vendor/${vendorId}`);
+  }
+
 }

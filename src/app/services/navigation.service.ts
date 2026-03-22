@@ -117,6 +117,27 @@ export class NavigationService {
             route: '/my-services',
             icon: 'my-services',
             roles: [3] // Vendor only
+        },
+        {
+            id: 'profile-management',
+            label: 'My Profile',
+            route: '/profile-management',
+            icon: 'users',
+            roles: [3] // Vendor only
+        },
+        {
+            id: 'banner-management',
+            label: 'Promotions',
+            route: '/banner-management',
+            icon: 'events',
+            roles: [3] // Vendor only
+        },
+        {
+            id: 'review-management',
+            label: 'Reviews',
+            route: '/review-management',
+            icon: 'approval',
+            roles: [3] // Vendor only
         }
     ];
 

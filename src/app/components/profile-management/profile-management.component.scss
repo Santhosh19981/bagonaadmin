@@ -1,0 +1,43 @@
+:host {
+    display: block;
+}
+
+main {
+    background: radial-gradient(circle at top right, rgba(234, 179, 8, 0.05), transparent),
+        radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.05), transparent);
+}
+
+// Custom scrollbar for the main area
+.overflow-y-auto {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 20px;
+        border: 3px solid transparent;
+    }
+}
+
+// Animation for the saving spinner
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}

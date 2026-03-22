@@ -1,0 +1,94 @@
+<div class="flex h-screen bg-[#f8fafc] overflow-hidden">
+    <app-sidemenu [menuFromParent]="'review-management'"></app-sidemenu>
+
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <app-header></app-header>
+
+        <main class="flex-1 overflow-y-auto px-4 py-8 sm:px-6 lg:px-8">
+            <div class="max-w-6xl mx-auto space-y-6">
+
+                <!-- Page Header -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-black text-slate-800 tracking-tight">Customer Reviews</h1>
+                        <p class="text-sm text-slate-500 font-medium">Ratings and feedback from your customers</p>
+                    </div>
+                </div>
+
+                <!-- Stats Overview -->
+                <div
+                    class="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100/60 grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div class="flex flex-col items-center justify-center space-y-2 border-r border-slate-50">
+                        <span class="text-5xl font-black text-slate-800">{{ stats.average || '0.0' }}</span>
+                        <div class="flex items-center gap-1 text-yellow-500">
+                            <i class="bi bi-star-fill text-xl" *ngFor="let i of [1,2,3,4,5]"></i>
+                        </div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">{{ stats.total }} Total
+                            Reviews</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div *ngFor="let count of stats.stars; let i = index" class="flex items-center gap-4">
+                            <span class="text-[10px] font-black text-slate-400 w-4">{{ 5 - i }} <i
+                                    class="bi bi-star-fill"></i></span>
+                            <div class="flex-1 h-2 bg-slate-50 rounded-full overflow-hidden">
+                                <div [style.width.%]="stats.total > 0 ? (count / stats.total) * 100 : 0"
+                                    class="h-full bg-yellow-400 rounded-full"></div>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-500 w-8">{{ count }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews List -->
+                <div *ngIf="!loading && reviews.length > 0" class="space-y-4">
+                    <div *ngFor="let review of reviews"
+                        class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100/60 hover:shadow-md transition-all">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 bg-gradient-to-tr from-slate-100 to-slate-50 rounded-xl flex items-center justify-center text-slate-400 font-bold text-sm">
+                                    {{ review.customer_name.charAt(0) }}
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-black text-slate-800">{{ review.customer_name }}</h4>
+                                    <div class="flex items-center gap-1 text-yellow-500 text-[10px]">
+                                        <i class="bi bi-star-fill" *ngFor="let star of getStarArray(review.rating)"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                {{ review.created_at | date:'mediumDate' }}
+                            </span>
+                        </div>
+                        <p class="mt-4 text-xs text-slate-600 font-medium leading-relaxed italic">
+                            "{{ review.comment || 'No comment provided' }}"
+                        </p>
+                        <div *ngIf="review.booking_id"
+                            class="mt-4 pt-4 border-t border-slate-50 flex items-center gap-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                            <i class="bi bi-calendar-check text-blue-500"></i>
+                            Booking #{{ review.booking_id }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div *ngIf="!loading && reviews.length === 0"
+                    class="flex flex-col items-center justify-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
+                    <div class="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mb-4">
+                        <i class="bi bi-chat-heart text-3xl text-slate-300"></i>
+                    </div>
+                    <h3 class="text-lg font-black text-slate-800">No Reviews Yet</h3>
+                    <p class="text-sm text-slate-400 font-medium mt-1">Feedback from your customers will appear here.
+                    </p>
+                </div>
+
+                <!-- Loading State -->
+                <div *ngIf="loading" class="flex justify-center py-20">
+                    <div class="w-10 h-10 border-4 border-slate-100 border-t-yellow-500 rounded-full animate-spin">
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
