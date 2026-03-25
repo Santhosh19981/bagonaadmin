@@ -47,10 +47,10 @@
                             <div class="flex items-center gap-3">
                                 <div
                                     class="w-10 h-10 bg-gradient-to-tr from-slate-100 to-slate-50 rounded-xl flex items-center justify-center text-slate-400 font-bold text-sm">
-                                    {{ review.customer_name.charAt(0) }}
+                                    {{ review.customer_name?.charAt(0) || 'C' }}
                                 </div>
                                 <div>
-                                    <h4 class="text-sm font-black text-slate-800">{{ review.customer_name }}</h4>
+                                    <h4 class="text-sm font-black text-slate-800">{{ review.customer_name || 'Customer' }}</h4>
                                     <div class="flex items-center gap-1 text-yellow-500 text-[10px]">
                                         <i class="bi bi-star-fill" *ngFor="let star of getStarArray(review.rating)"></i>
                                     </div>

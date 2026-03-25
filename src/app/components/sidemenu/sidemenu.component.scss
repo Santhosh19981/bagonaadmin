@@ -62,6 +62,7 @@
 .group a {
     position: relative;
     overflow: hidden;
+    border-left: 4px solid transparent; // Added to prevent shift on active state
 
     &::after {
         content: "";

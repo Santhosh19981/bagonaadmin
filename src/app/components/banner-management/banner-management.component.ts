@@ -16,12 +16,14 @@ import { HeaderComponent } from '../header/header.component';
 export class BannerManagementComponent implements OnInit {
     vendorId: number | null = null;
     banners: any[] = [];
+    vendorServices: any[] = []; // List of services for this vendor
     loading = false;
     adding = false;
 
     newBanner: any = {
         title: '',
         description: '',
+        service_id: '',
         link_url: '',
         image: null,
         display_url: null
@@ -40,7 +42,20 @@ export class BannerManagementComponent implements OnInit {
             const user = JSON.parse(userStr);
             this.vendorId = user.id;
             this.loadBanners();
+            this.loadServices();
         }
+    }
+
+    loadServices() {
+        if (!this.vendorId) return;
+        this.apiService.getVendorServicesList(this.vendorId).subscribe({
+            next: (res: any) => {
+                this.vendorServices = res.data || [];
+            },
+            error: () => {
+                console.error('Failed to load vendor services');
+            }
+        });
     }
 
     loadBanners() {
@@ -79,6 +94,7 @@ export class BannerManagementComponent implements OnInit {
         this.adding = true;
         const formData = new FormData();
         formData.append('vendor_id', this.vendorId.toString());
+        formData.append('service_id', this.newBanner.service_id || '');
         formData.append('title', this.newBanner.title);
         formData.append('description', this.newBanner.description);
         formData.append('link_url', this.newBanner.link_url);
@@ -118,7 +134,7 @@ export class BannerManagementComponent implements OnInit {
 
     closeModal() {
         this.showAddModal = false;
-        this.newBanner = { title: '', description: '', link_url: '', image: null, display_url: null };
+        this.newBanner = { title: '', description: '', service_id: '', link_url: '', image: null, display_url: null };
         this.selectedFile = null;
     }
 }

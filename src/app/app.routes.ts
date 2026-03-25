@@ -19,6 +19,7 @@ import { MyServicesComponent } from './components/my-services/my-services.compon
 import { ProfileManagementComponent } from './components/profile-management/profile-management.component';
 import { BannerManagementComponent } from './components/banner-management/banner-management.component';
 import { ReviewManagementComponent } from './components/review-management/review-management.component';
+import { OfferManagementComponent } from './components/offer-management/offer-management.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full', },
@@ -40,5 +41,6 @@ export const routes: Routes = [
   { path: 'profile-management', component: ProfileManagementComponent, canActivate: [AuthGuard] },
   { path: 'banner-management', component: BannerManagementComponent, canActivate: [AuthGuard] },
   { path: 'review-management', component: ReviewManagementComponent, canActivate: [AuthGuard] },
+  { path: 'offer-management', component: OfferManagementComponent, canActivate: [AuthGuard] },
 
 ];

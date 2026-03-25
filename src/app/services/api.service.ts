@@ -249,4 +249,27 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/reviews/vendor/${vendorId}`);
   }
 
+  // --- OFFERS MANAGEMENT ---
+  getOffersByVendor(vendorId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/offers/vendor/${vendorId}`);
+  }
+
+  getActiveOffers(vendorId: number, serviceId?: number): Observable<any> {
+    let url = `${this.baseUrl}/offers/active/${vendorId}`;
+    if (serviceId) url += `?service_id=${serviceId}`;
+    return this.http.get(url);
+  }
+
+  addOffer(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/offers`, data);
+  }
+
+  updateOffer(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/offers/${id}`, data);
+  }
+
+  deleteOffer(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/offers/${id}`);
+  }
+
 }

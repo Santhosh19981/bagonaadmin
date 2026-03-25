@@ -130,14 +130,21 @@ export class NavigationService {
             label: 'Promotions',
             route: '/banner-management',
             icon: 'events',
-            roles: [3] // Vendor only
+            roles: [3, 4] // Vendor and Admin
         },
         {
             id: 'review-management',
             label: 'Reviews',
             route: '/review-management',
             icon: 'approval',
-            roles: [3] // Vendor only
+            roles: [3, 4] // Vendor and Admin
+        },
+        {
+            id: 'offer-management',
+            label: 'Offers',
+            route: '/offer-management',
+            icon: 'menu-items',
+            roles: [3, 4] // Vendor and Admin
         }
     ];
 
