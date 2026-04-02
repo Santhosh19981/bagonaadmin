@@ -245,6 +245,10 @@ export class ApiService {
     return this.http.delete(`${this.baseUrl}/banners/${id}`);
   }
 
+  updateBanner(id: number, fd: FormData): Observable<any> {
+    return this.http.put(`${this.baseUrl}/banners/${id}`, fd);
+  }
+
   getVendorReviews(vendorId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/reviews/vendor/${vendorId}`);
   }
@@ -270,6 +274,19 @@ export class ApiService {
 
   deleteOffer(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/offers/${id}`);
+  }
+
+  // --- ORDER MANAGEMENT ---
+  getOrders(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/orders`);
+  }
+
+  getOrderDetail(bookingId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/bookings/${bookingId}`);
+  }
+
+  updateOrderStatus(orderId: number, statusData: any): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/orders/${orderId}/status`, statusData);
   }
 
 }

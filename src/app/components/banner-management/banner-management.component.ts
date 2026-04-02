@@ -19,6 +19,8 @@ export class BannerManagementComponent implements OnInit {
     vendorServices: any[] = []; // List of services for this vendor
     loading = false;
     adding = false;
+    isEditMode = false;
+    editingBannerId: number | null = null;
 
     newBanner: any = {
         title: '',
@@ -37,13 +39,23 @@ export class BannerManagementComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        // First check if user is Master Admin to decide loading strategy
         const userStr = localStorage.getItem('user');
         if (userStr) {
             const user = JSON.parse(userStr);
-            this.vendorId = user.id;
+            // If the user is a Master Admin (Vijay), we might want to see all banners 
+            // but for now, we bind to their specific vendor ID or ID 25 as per user request
+            this.vendorId = user.role === 'MASTER ADMIN' ? 25 : user.id; 
+            
             this.loadBanners();
             this.loadServices();
         }
+    }
+
+    getServiceName(serviceId: any): string {
+        if (!serviceId) return 'Global';
+        const service = this.vendorServices.find(s => s.service_id == serviceId);
+        return service ? service.name : 'Unknown Service';
     }
 
     loadServices() {
@@ -86,7 +98,8 @@ export class BannerManagementComponent implements OnInit {
     }
 
     addBanner() {
-        if (!this.vendorId || !this.selectedFile) {
+        if (!this.vendorId) return;
+        if (!this.isEditMode && !this.selectedFile) {
             this.toastr.warning('Please select an image', 'Warning');
             return;
         }
@@ -98,22 +111,55 @@ export class BannerManagementComponent implements OnInit {
         formData.append('title', this.newBanner.title);
         formData.append('description', this.newBanner.description);
         formData.append('link_url', this.newBanner.link_url);
-        formData.append('image', this.selectedFile);
+        
+        if (this.selectedFile) {
+            formData.append('image', this.selectedFile);
+        }
 
-        this.apiService.addBanner(formData).subscribe({
-            next: (res: any) => {
-                this.adding = false;
-                if (res.status) {
-                    this.toastr.success('Banner added successfully', 'Success');
-                    this.loadBanners();
-                    this.closeModal();
+        if (this.isEditMode && this.editingBannerId) {
+            this.apiService.updateBanner(this.editingBannerId, formData).subscribe({
+                next: (res: any) => {
+                    this.adding = false;
+                    if (res.status) {
+                        this.toastr.success('Banner updated successfully', 'Success');
+                        this.loadBanners();
+                        this.closeModal();
+                    }
+                },
+                error: (err) => {
+                    this.adding = false;
+                    this.toastr.error('Failed to update banner', 'Error');
                 }
-            },
-            error: () => {
-                this.adding = false;
-                this.toastr.error('Failed to add banner', 'Error');
-            }
-        });
+            });
+        } else {
+            this.apiService.addBanner(formData).subscribe({
+                next: (res: any) => {
+                    this.adding = false;
+                    if (res.status) {
+                        this.toastr.success('Banner added successfully', 'Success');
+                        this.loadBanners();
+                        this.closeModal();
+                    }
+                },
+                error: () => {
+                    this.adding = false;
+                    this.toastr.error('Failed to add banner', 'Error');
+                }
+            });
+        }
+    }
+
+    editBanner(banner: any) {
+        this.isEditMode = true;
+        this.editingBannerId = banner.id;
+        this.newBanner = {
+            title: banner.title,
+            description: banner.description,
+            service_id: banner.service_id || '',
+            link_url: banner.link_url,
+            display_url: banner.image_url
+        };
+        this.showAddModal = true;
     }
 
     deleteBanner(id: number) {
@@ -134,6 +180,8 @@ export class BannerManagementComponent implements OnInit {
 
     closeModal() {
         this.showAddModal = false;
+        this.isEditMode = false;
+        this.editingBannerId = null;
         this.newBanner = { title: '', description: '', service_id: '', link_url: '', image: null, display_url: null };
         this.selectedFile = null;
     }

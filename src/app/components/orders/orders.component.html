@@ -42,15 +42,19 @@
 
       <div class="p-2 sm:p-8">
         <!-- Enhanced Table UI -->
-        <div class="table-container shadow-xl">
+        <div class="table-container shadow-xl min-h-[400px] relative">
+          <div *ngIf="isLoading" class="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-10">
+            <div class="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+
           <table class="w-full hidden sm:table">
             <thead>
               <tr>
                 <th>Order Reference</th>
-                <th>Service Type</th>
+                <th>Booking Status</th>
+                <th>Payment Status</th>
                 <th>Schedule Date</th>
-                <th>Destination</th>
-                <th>Status</th>
+                <th>Members</th>
                 <th class="text-right">Actions</th>
               </tr>
             </thead>
@@ -58,41 +62,38 @@
               <tr *ngFor="let order of filteredOrders">
                 <td>
                   <div class="flex items-center gap-4">
-                    <div
-                      class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs border border-slate-200">
-                      #
-                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs border border-slate-200">#</div>
                     <div>
-                      <div class="text-sm font-bold text-slate-800">{{order.id}}</div>
+                      <div class="text-sm font-bold text-slate-800">{{order.order_id}}</div>
                       <div class="text-[11px] font-medium text-slate-400 mt-0.5">Reference ID</div>
                     </div>
                   </div>
                 </td>
                 <td>
-                  <div
-                    class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-wider rounded inline-block border border-slate-200">
-                    {{order.type}}
-                  </div>
-                </td>
-                <td>
-                  <div class="text-xs font-bold text-slate-700">
-                    {{order.date}}
-                  </div>
-                </td>
-                <td>
-                  <div class="flex items-center gap-2">
-                    <i class="bi bi-geo-alt text-slate-400"></i>
-                    <span class="text-xs font-medium text-slate-600">{{order.address}}</span>
-                  </div>
+                  <span class="badge" [ngClass]="{
+                    'badge-pending': order.booking_status === 'pending' || order.booking_status === 'upcoming',
+                    'badge-approved': order.booking_status === 'accepted' || order.booking_status === 'completed',
+                    'badge-rejected': order.booking_status === 'cancelled'
+                  }">
+                    {{order.booking_status}}
+                  </span>
                 </td>
                 <td>
                   <span class="badge" [ngClass]="{
-                                        'badge-pending': order.status === 'Pending',
-                                        'badge-approved': order.status === 'Completed',
-                                        'badge-rejected': order.status === 'Cancelled'
-                                    }">
-                    {{order.status}}
+                    'badge-pending': order.payment_status === 'pending',
+                    'badge-approved': order.payment_status === 'paid',
+                    'badge-rejected': order.payment_status === 'failed'
+                  }">
+                    {{order.payment_status}}
                   </span>
+                </td>
+                <td>
+                  <div class="text-xs font-bold text-slate-700">
+                    {{order.event_date | date:'dd-MM-yyyy'}}
+                  </div>
+                </td>
+                <td>
+                  <div class="text-xs font-medium text-slate-600">{{order.members}} Guests</div>
                 </td>
                 <td class="text-right">
                   <button (click)="viewDetails(order)" class="btn-inspect">
@@ -100,87 +101,27 @@
                   </button>
                 </td>
               </tr>
-              <tr *ngIf="filteredOrders.length === 0">
+              <tr *ngIf="filteredOrders.length === 0 && !isLoading">
                 <td colspan="6" class="text-center py-20">
                   <div class="flex flex-col items-center">
                     <i class="bi bi-cart-x text-4xl text-slate-200"></i>
-                    <p class="text-slate-400 font-bold mt-4">No orders found for this selection</p>
+                    <p class="text-slate-400 font-bold mt-4">No orders found</p>
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-
-        <!-- Mobile Card Layout (visible only on mobile) -->
-        <div class="sm:hidden">
-          <div class="space-y-3 px-2">
-            <div *ngFor="let order of filteredOrders" class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
-              <div class="flex items-start gap-2.5 mb-2.5 pb-2.5 border-b border-slate-100">
-                <div
-                  class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs border border-slate-200 flex-shrink-0">
-                  #
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="text-sm font-bold text-slate-800">{{order.id}}</div>
-                  <div class="text-[9px] font-medium text-slate-400 uppercase tracking-wider mt-0.5">Reference ID</div>
-                </div>
-                <span class="badge flex-shrink-0 text-[9px] px-2 py-1" [ngClass]="{
-                  'badge-pending': order.status === 'Pending',
-                  'badge-approved': order.status === 'Completed',
-                  'badge-rejected': order.status === 'Cancelled'
-                }">{{order.status}}</span>
-              </div>
-              <div class="space-y-2 mb-2.5">
-                <div>
-                  <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Service Type</div>
-                  <div
-                    class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-wider rounded inline-block border border-slate-200">
-                    {{order.type}}
-                  </div>
-                </div>
-                <div>
-                  <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Schedule Date</div>
-                  <div class="text-xs font-bold text-slate-700">{{order.date}}</div>
-                </div>
-                <div>
-                  <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Destination</div>
-                  <div class="flex items-center gap-2">
-                    <i class="bi bi-geo-alt text-slate-400 text-xs"></i>
-                    <span class="text-xs font-medium text-slate-600">{{order.address}}</span>
-                  </div>
-                </div>
-              </div>
-              <button (click)="viewDetails(order)"
-                class="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-800 text-slate-600 hover:text-white rounded-lg text-[9px] font-black uppercase tracking-wider transition-all">
-                <i class="bi bi-eye"></i>
-                <span>View Details</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Mobile Empty State -->
-          <div *ngIf="filteredOrders.length === 0"
-            class="text-center py-16 bg-white rounded-xl border border-slate-200 mx-2">
-            <div
-              class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100">
-              <i class="bi bi-cart-x text-4xl text-slate-300"></i>
-            </div>
-            <h3 class="text-slate-800 font-bold text-sm">No orders found</h3>
-            <p class="text-xs text-slate-400 mt-1">No orders for this selection.</p>
-          </div>
-        </div>
       </div>
     </main>
   </section>
 
   <!-- ENHANCED ORDER DETAILS OVERLAY -->
-  <div *ngIf="showTemplate"
+  <div *ngIf="showTemplate && selectedOrder"
     class="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4 lg:p-12 overflow-y-auto">
     <div
       class="bg-slate-100 rounded-[20px] sm:rounded-[40px] shadow-3xl w-full max-w-7xl min-h-[85vh] overflow-hidden flex flex-col relative animate-slide-up">
 
-      <!-- Close Button -->
       <button (click)="closeDetails()"
         class="absolute top-4 right-4 sm:top-8 sm:right-8 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-red-50 hover:text-red-600 transition-all z-50">
         <i class="bi bi-x-lg text-base sm:text-lg"></i>
@@ -188,193 +129,161 @@
 
       <!-- 1. SUMMARY INFO CARD (TOP) -->
       <div class="p-4 sm:p-8 lg:p-12">
-        <div
-          class="bg-white rounded-[16px] sm:rounded-[32px] p-4 sm:p-8 shadow-sm border border-white/50 flex flex-col lg:flex-row gap-4 sm:gap-8 items-center justify-between">
+        <div class="bg-white rounded-[16px] sm:rounded-[32px] p-4 sm:p-8 shadow-sm border border-white/50 flex flex-col lg:flex-row gap-4 sm:gap-8 items-center justify-between">
           <div class="flex items-center gap-4 sm:gap-8 w-full lg:w-auto">
-            <div
-              class="w-14 h-14 sm:w-20 sm:h-20 bg-yellow-50 rounded-2xl sm:rounded-3xl flex items-center justify-center border border-yellow-100 shadow-inner flex-shrink-0">
+            <div class="w-14 h-14 sm:w-20 sm:h-20 bg-yellow-50 rounded-2xl sm:rounded-3xl flex items-center justify-center border border-yellow-100 shadow-inner flex-shrink-0">
               <i class="bi bi-receipt text-2xl sm:text-3xl text-yellow-600"></i>
             </div>
             <div class="flex-1 min-w-0">
-              <h2 class="text-xl sm:text-3xl font-black text-slate-900 truncate">{{selectedOrder?.id}}</h2>
-              <p class="text-slate-500 font-bold uppercase tracking-widest text-[10px]">{{selectedOrder?.type}}</p>
-            </div>
-            <div class="h-12 w-px bg-slate-100 mx-4 hidden lg:block"></div>
-            <div class="hidden lg:block">
-              <p class="text-[10px] font-black text-slate-400 uppercase">Contact Person</p>
-              <p class="text-sm font-bold text-slate-800">{{selectedOrder?.summary?.contactPerson}}</p>
-            </div>
-            <div class="hidden lg:block">
-              <p class="text-[10px] font-black text-slate-400 uppercase">Phone & Email</p>
-              <p class="text-sm font-bold text-slate-800">{{selectedOrder?.summary?.phone}}</p>
-              <p class="text-[11px] font-medium text-slate-500">{{selectedOrder?.summary?.email}}</p>
+              <h2 class="text-xl sm:text-3xl font-black text-slate-900 truncate">#{{selectedOrder?.order?.order_id || 'N/A'}}</h2>
+              <p class="text-slate-500 font-bold uppercase tracking-widest text-[10px]">{{selectedOrder?.booking?.booking_type}}</p>
             </div>
           </div>
 
           <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full lg:w-auto">
             <div class="text-center sm:text-right w-full sm:w-auto">
-              <p class="text-[10px] font-black text-slate-400 uppercase">Total Pricing</p>
+              <p class="text-[10px] font-black text-slate-400 uppercase">Total Order Value</p>
               <p class="text-2xl sm:text-3xl font-black text-emerald-600 tracking-tight">
-                {{selectedOrder?.summary?.totalPrice}}</p>
+                ₹{{selectedOrder?.order?.order_value | number:'1.2-2'}}</p>
             </div>
-            <button
-              class="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-slate-900 text-white rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm hover:bg-slate-800 shadow-xl transition-all">Download
-              Invoice</button>
           </div>
-        </div>
-
-        <div class="mt-4 sm:mt-8 flex items-start gap-2 sm:gap-3 px-2 sm:px-4">
-          <i class="bi bi-geo-alt-fill text-yellow-600 mt-0.5 flex-shrink-0"></i>
-          <p class="text-xs sm:text-sm font-medium text-slate-600"><strong>Delivery Address:</strong>
-            {{selectedOrder?.summary?.fullAddress}}</p>
         </div>
       </div>
 
       <!-- 2. CATEGORY TABS -->
       <div class="px-4 sm:px-12 pb-2">
-        <div
-          class="bg-[#104d5b] rounded-[99px] p-1.5 sm:p-2 flex items-center justify-center gap-1 w-fit mx-auto shadow-2xl">
-          <button (click)="setDetailsTab('events')" [class.active-nav]="detailsActiveTab === 'events'"
-            class="nav-btn">Events</button>
-          <button (click)="setDetailsTab('cheffs')" [class.active-nav]="detailsActiveTab === 'cheffs'"
-            class="nav-btn">Cheffs</button>
-          <button (click)="setDetailsTab('services')" [class.active-nav]="detailsActiveTab === 'services'"
-            class="nav-btn">Services</button>
+        <div class="bg-[#104d5b] rounded-[99px] p-1.5 sm:p-2 flex items-center justify-center gap-1 w-fit mx-auto shadow-2xl">
+          <button (click)="setDetailsTab('summary')" [class.active-nav]="detailsActiveTab === 'summary'" class="nav-btn">Summary</button>
+          <button (click)="setDetailsTab('items')" [class.active-nav]="detailsActiveTab === 'items'" class="nav-btn">Menu Items</button>
+          <button (click)="setDetailsTab('providers')" [class.active-nav]="detailsActiveTab === 'providers'" class="nav-btn">Providers</button>
         </div>
       </div>
 
       <!-- 3. TAB CONTENT AREA -->
-      <div
-        class="flex-grow p-4 sm:p-8 lg:p-12 overflow-y-auto bg-slate-50/50 mt-4 rounded-t-[30px] sm:rounded-t-[60px] border-t border-white/50">
+      <div class="flex-grow p-4 sm:p-8 lg:p-12 overflow-y-auto bg-slate-50/50 mt-4 rounded-t-[30px] sm:rounded-t-[60px] border-t border-white/50">
 
-        <!-- EVENTS TAB CONTENT -->
-        <div *ngIf="detailsActiveTab === 'events'" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div *ngFor="let event of selectedOrder?.events" class="event-glow-card flex overflow-hidden">
-            <div class="w-2/5 relative h-full">
-              <img [src]="event.image" alt="event" class="w-full h-full object-cover">
-              <div class="absolute inset-0 bg-gradient-to-r from-transparent to-[#0a0f12]"></div>
+        <!-- SUMMARY TAB -->
+        <div *ngIf="detailsActiveTab === 'summary'" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+              <h3 class="text-lg font-black text-slate-800 mb-6 flex items-center gap-3">
+                <i class="bi bi-calendar-event text-emerald-500"></i> Event Layout
+              </h3>
+              <div class="space-y-6">
+                <div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Scheduled For</label>
+                  <p class="text-lg font-bold text-slate-800">{{selectedOrder?.booking?.event_date | date:'fullDate'}}</p>
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                  <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Guests</label>
+                    <p class="text-lg font-bold text-slate-800">{{selectedOrder?.booking?.total_members}}</p>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Veg</label>
+                    <p class="text-lg font-bold text-emerald-600">{{selectedOrder?.booking?.veg_guests}}</p>
+                  </div>
+                  <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Non-Veg</label>
+                    <p class="text-lg font-bold text-rose-600">{{selectedOrder?.booking?.non_veg_guests}}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="w-3/5 p-6 bg-[#0a0f12] text-white flex flex-col justify-center">
-              <h3 class="text-xl font-bold mb-4">{{event.title}}</h3>
-              <ul class="space-y-2 text-[11px] font-medium text-slate-300">
-                <li class="flex items-start gap-2">
-                  <i class="bi bi-check-circle-fill text-yellow-500 mt-0.5"></i>
-                  <span>Date: {{event.date}}</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <i class="bi bi-check-circle-fill text-yellow-500 mt-0.5"></i>
-                  <span>Time: {{event.time}}</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <i class="bi bi-check-circle-fill text-yellow-500 mt-0.5"></i>
-                  <span>Total Members: {{event.members}}</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <i class="bi bi-check-circle-fill text-yellow-500 mt-0.5"></i>
-                  <span>Contact: {{event.contact}}</span>
-                </li>
-                <li class="flex items-start gap-2">
-                  <i class="bi bi-check-circle-fill text-yellow-500 mt-0.5"></i>
-                  <span class="leading-relaxed">Address: {{event.address}}</span>
-                </li>
-              </ul>
+
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+              <h3 class="text-lg font-black text-slate-800 mb-6 flex items-center gap-3">
+                <i class="bi bi-shield-check text-emerald-500"></i> Management Actions
+              </h3>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                  <span class="text-sm font-bold text-slate-600">Booking Status:</span>
+                  <select [value]="selectedOrder?.booking?.status" (change)="updateStatus(selectedOrder?.order?.order_id, $any($event.target).value, 'booking')" class="bg-white border border-slate-200 rounded-lg px-3 py-1 text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500">
+                    <option value="pending">Pending</option>
+                    <option value="accepted">Accepted</option>
+                    <option value="processing">Processing</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                  <span class="text-sm font-bold text-slate-600">Payment Status:</span>
+                  <select [value]="selectedOrder?.order?.payment_status" (change)="updateStatus(selectedOrder?.order?.order_id, $any($event.target).value, 'payment')" class="bg-white border border-slate-200 rounded-lg px-3 py-1 text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500">
+                    <option value="pending">Pending</option>
+                    <option value="paid">Paid</option>
+                    <option value="failed">Failed</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- CHEFFS TAB CONTENT -->
-        <div *ngIf="detailsActiveTab === 'cheffs'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div *ngFor="let chef of selectedOrder?.cheffs" class="chef-glow-card flex flex-col overflow-hidden">
-            <div class="h-48 relative">
-              <img [src]="chef.image" alt="chef" class="w-full h-full object-cover">
-              <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0a0f12] to-transparent"></div>
-            </div>
-            <div class="p-6 bg-[#0a0f12] text-white flex-grow">
-              <h3 class="text-lg font-bold mb-4 text-center">{{chef.name}}</h3>
-              <ul class="space-y-3 text-[12px] font-medium text-slate-300">
-                <li class="flex items-center gap-3">
-                  <div
-                    class="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 border border-yellow-500/20">
-                    <i class="bi bi-star-fill"></i>
-                  </div>
-                  <span>Experience: {{chef.experience}}</span>
-                </li>
-                <li class="flex items-center gap-3">
-                  <div
-                    class="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 border border-yellow-500/20">
-                    <i class="bi bi-telephone-fill"></i>
-                  </div>
-                  <span>Contact: {{chef.contact}}</span>
-                </li>
-                <li class="flex items-start gap-3">
-                  <div
-                    class="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 border border-yellow-500/20 mt-0.5">
-                    <i class="bi bi-geo-alt-fill"></i>
-                  </div>
-                  <span class="leading-relaxed">Address: {{chef.address}}</span>
-                </li>
-              </ul>
+        <!-- ITEMS TAB -->
+        <div *ngIf="detailsActiveTab === 'items'" class="bg-white p-8 rounded-[40px] shadow-sm border border-slate-100">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div *ngFor="let item of selectedOrder?.menu_items" class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between group hover:bg-emerald-50 transition-all cursor-default">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-all">
+                  <i class="bi bi-box-seam"></i>
+                </div>
+                <div>
+                  <p class="text-xs font-black text-slate-800 truncate">{{item.name}}</p>
+                  <p class="text-[10px] font-bold text-slate-400">Qty: {{item.quantity}}</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="text-sm font-black text-emerald-600">₹{{item.price | number:'1.2-2'}}</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- SERVICES TAB CONTENT -->
-        <div *ngIf="detailsActiveTab === 'services'" class="space-y-4">
-          <!-- Services Header (Mobile & Desktop) -->
-          <div class="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-100">
-            <h3 class="text-lg sm:text-xl font-black text-slate-800 mb-1">Service Items</h3>
-            <p class="text-xs sm:text-sm text-slate-500 font-medium">Browse items by category</p>
+        <!-- PROVIDERS TAB -->
+        <div *ngIf="detailsActiveTab === 'providers'" class="space-y-8">
+          <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+            <h3 class="text-lg font-black text-slate-800 mb-6 flex items-center gap-3 uppercase tracking-widest text-xs">
+              <i class="bi bi-person-badge text-amber-500"></i> Chef Acceptance Log
+            </h3>
+            <div class="space-y-3">
+              <div *ngFor="let chef of selectedOrder?.chef_status" class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 font-black text-xs uppercase">{{chef.full_name.charAt(0)}}</div>
+                  <span class="text-sm font-bold text-slate-700">{{chef.full_name}}</span>
+                </div>
+                <div class="flex items-center gap-4">
+                  <span class="text-[10px] font-medium text-slate-400">{{chef.decision_time | date:'short'}}</span>
+                  <span class="badge" [ngClass]="{
+                    'badge-pending': chef.acceptance_status === 'pending',
+                    'badge-approved': chef.acceptance_status === 'accepted',
+                    'badge-rejected': chef.acceptance_status === 'rejected'
+                  }">{{chef.acceptance_status}}</span>
+                </div>
+              </div>
+              <p *ngIf="selectedOrder?.chef_status?.length === 0" class="text-center py-4 text-slate-400 text-xs font-bold">No chefs assigned yet</p>
+            </div>
           </div>
 
-          <div
-            class="bg-[#1a5b6a] rounded-[16px] sm:rounded-[32px] overflow-hidden flex flex-col lg:flex-row min-h-[500px] shadow-2xl">
-            <!-- Categories Section -->
-            <!-- Mobile: Horizontal scroll -->
-            <div class="lg:hidden bg-[#144d5a] p-4 overflow-x-auto">
-              <div class="flex gap-2 min-w-max">
-                <button *ngFor="let cat of selectedOrder?.services?.categories" (click)="setServiceCategory(cat)"
-                  [class.active-cat]="servicesActiveCategory === cat" class="category-btn whitespace-nowrap">
-                  {{cat}}
-                </button>
-              </div>
-            </div>
-
-            <!-- Desktop: Sidebar -->
-            <div class="hidden lg:flex lg:w-1/4 bg-[#144d5a] p-8 flex-col gap-4">
-              <button *ngFor="let cat of selectedOrder?.services?.categories" (click)="setServiceCategory(cat)"
-                [class.active-cat]="servicesActiveCategory === cat" class="category-btn">
-                {{cat}}
-              </button>
-            </div>
-
-            <!-- Items Grid -->
-            <div
-              class="flex-1 p-4 sm:p-6 lg:p-10 bg-white/95 backdrop-blur-sm m-2 sm:m-4 rounded-[16px] sm:rounded-[28px] flex flex-col">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 flex-grow content-start">
-                <div *ngFor="let item of selectedOrder?.services?.items?.[servicesActiveCategory]"
-                  class="service-item-card">
-                  <div
-                    class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-yellow-50 transition-all flex-shrink-0">
-                    <i class="bi text-base sm:text-lg" [ngClass]="item.icon"></i>
-                  </div>
-                  <div class="flex-grow min-w-0">
-                    <p class="text-xs font-black text-slate-800 truncate">{{item.name}}</p>
-                    <p class="text-[10px] font-bold text-slate-400">{{item.weight}}</p>
-                  </div>
-                  <div class="text-right flex-shrink-0">
-                    <p class="text-sm font-black text-yellow-600">{{item.price}}</p>
-                  </div>
+          <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+            <h3 class="text-lg font-black text-slate-800 mb-6 flex items-center gap-3 uppercase tracking-widest text-xs">
+              <i class="bi bi-shop text-blue-500"></i> Vendor Acceptance Log
+            </h3>
+            <div class="space-y-3">
+              <div *ngFor="let vendor of selectedOrder?.vendor_status" class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-black text-xs uppercase">{{vendor.full_name.charAt(0)}}</div>
+                  <span class="text-sm font-bold text-slate-700">{{vendor.full_name}}</span>
+                </div>
+                <div class="flex items-center gap-4">
+                  <span class="text-[10px] font-medium text-slate-400">{{vendor.decision_time | date:'short'}}</span>
+                  <span class="badge" [ngClass]="{
+                    'badge-pending': vendor.acceptance_status === 'pending',
+                    'badge-approved': vendor.acceptance_status === 'accepted',
+                    'badge-rejected': vendor.acceptance_status === 'rejected'
+                  }">{{vendor.acceptance_status}}</span>
                 </div>
               </div>
-
-              <!-- Bottom Section -->
-              <div class="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-slate-100">
-                <p class="text-[10px] font-black text-slate-400 uppercase mb-2 sm:mb-3">Associated Vendors</p>
-                <div
-                  class="bg-slate-50 border border-slate-200 rounded-lg sm:rounded-xl px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-bold text-slate-600">
-                  Function Halls & Premium Catering Services
-                </div>
-              </div>
+              <p *ngIf="selectedOrder?.vendor_status?.length === 0" class="text-center py-4 text-slate-400 text-xs font-bold">No vendors assigned yet</p>
             </div>
           </div>
         </div>
@@ -382,4 +291,4 @@
       </div>
     </div>
   </div>
-</div>
+</div>
