@@ -194,12 +194,35 @@ $cancelled: #ef4444;
 }
 
 // ENHANCED DETAILS STYLES
-.animate-slide-up {
-  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
 .shadow-3xl {
   box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+}
+
+// Ensure modal layout works without relying solely on Tailwind utilities
+.details-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.8); // slate-900/80
+  backdrop-filter: blur(12px); // backdrop-blur-md
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.details-modal-container {
+  background-color: #f1f5f9; // slate-100
+  border-radius: 40px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 80rem; // max-w-7xl
+  min-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
 }
 
 .nav-btn {

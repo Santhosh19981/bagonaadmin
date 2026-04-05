@@ -118,9 +118,9 @@
 
   <!-- ENHANCED ORDER DETAILS OVERLAY -->
   <div *ngIf="showTemplate && selectedOrder"
-    class="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4 lg:p-12 overflow-y-auto">
+    class="details-overlay">
     <div
-      class="bg-slate-100 rounded-[20px] sm:rounded-[40px] shadow-3xl w-full max-w-7xl min-h-[85vh] overflow-hidden flex flex-col relative animate-slide-up">
+      class="details-modal-container animate-slide-up">
 
       <button (click)="closeDetails()"
         class="absolute top-4 right-4 sm:top-8 sm:right-8 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-red-50 hover:text-red-600 transition-all z-50">
@@ -167,12 +167,33 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
               <h3 class="text-lg font-black text-slate-800 mb-6 flex items-center gap-3">
+                <i class="bi bi-person-circle text-emerald-500"></i> Customer Details
+              </h3>
+              <div class="space-y-4">
+                <div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Name</label>
+                  <p class="text-sm font-bold text-slate-800">{{selectedOrder?.order?.customer_name || 'N/A'}}</p>
+                </div>
+                <div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Contact Info</label>
+                  <p class="text-sm font-bold text-slate-800">{{selectedOrder?.order?.customer_mobile}}</p>
+                  <p class="text-[11px] font-medium text-slate-400">{{selectedOrder?.order?.customer_email}}</p>
+                </div>
+                <div>
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Delivery Address</label>
+                  <p class="text-sm font-medium text-slate-600 leading-relaxed">{{selectedOrder?.order?.customer_address}}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+              <h3 class="text-lg font-black text-slate-800 mb-6 flex items-center gap-3">
                 <i class="bi bi-calendar-event text-emerald-500"></i> Event Layout
               </h3>
               <div class="space-y-6">
                 <div>
                   <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Scheduled For</label>
-                  <p class="text-lg font-bold text-slate-800">{{selectedOrder?.booking?.event_date | date:'fullDate'}}</p>
+                  <p class="text-lg font-bold text-slate-800">{{(selectedOrder?.booking?.event_date | date:'fullDate') || 'Standard Service Delivery'}}</p>
                 </div>
                 <div class="grid grid-cols-3 gap-4">
                   <div>
@@ -190,7 +211,9 @@
                 </div>
               </div>
             </div>
+          </div>
 
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
             <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
               <h3 class="text-lg font-black text-slate-800 mb-6 flex items-center gap-3">
                 <i class="bi bi-shield-check text-emerald-500"></i> Management Actions
@@ -228,7 +251,7 @@
                   <i class="bi bi-box-seam"></i>
                 </div>
                 <div>
-                  <p class="text-xs font-black text-slate-800 truncate">{{item.name}}</p>
+                  <p class="text-xs font-black text-slate-800 truncate">{{item.item_name || item.name || 'Service Item'}}</p>
                   <p class="text-[10px] font-bold text-slate-400">Qty: {{item.quantity}}</p>
                 </div>
               </div>
@@ -248,8 +271,8 @@
             <div class="space-y-3">
               <div *ngFor="let chef of selectedOrder?.chef_status" class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
                 <div class="flex items-center gap-4">
-                  <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 font-black text-xs uppercase">{{chef.full_name.charAt(0)}}</div>
-                  <span class="text-sm font-bold text-slate-700">{{chef.full_name}}</span>
+                  <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 font-black text-xs uppercase">{{(chef.name || '?').charAt(0)}}</div>
+                  <span class="text-sm font-bold text-slate-700">{{chef.name || 'Chef'}}</span>
                 </div>
                 <div class="flex items-center gap-4">
                   <span class="text-[10px] font-medium text-slate-400">{{chef.decision_time | date:'short'}}</span>
@@ -271,8 +294,8 @@
             <div class="space-y-3">
               <div *ngFor="let vendor of selectedOrder?.vendor_status" class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
                 <div class="flex items-center gap-4">
-                  <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-black text-xs uppercase">{{vendor.full_name.charAt(0)}}</div>
-                  <span class="text-sm font-bold text-slate-700">{{vendor.full_name}}</span>
+                  <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-black text-xs uppercase">{{(vendor.name || '?').charAt(0)}}</div>
+                  <span class="text-sm font-bold text-slate-700">{{vendor.name || 'Vendor'}}</span>
                 </div>
                 <div class="flex items-center gap-4">
                   <span class="text-[10px] font-medium text-slate-400">{{vendor.decision_time | date:'short'}}</span>
