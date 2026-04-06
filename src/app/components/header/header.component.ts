@@ -18,6 +18,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     currentTime: string = '';
     showNotifications: boolean = false;
     showProfile: boolean = false;
+    showMobileSearch: boolean = false;
     searchQuery: string = '';
     private timeInterval: any;
 
@@ -78,6 +79,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     toggleProfile(): void {
         this.showProfile = !this.showProfile;
         this.showNotifications = false;
+    }
+
+    toggleMobileSearch(): void {
+        this.showMobileSearch = !this.showMobileSearch;
     }
 
     onSearch(event: any): void {

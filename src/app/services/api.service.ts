@@ -75,8 +75,12 @@ export class ApiService {
     return this.http.delete(`${this.baseUrl}/menu-items/delete/${id}`);
   }
 
-  getServiceItems(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/service-items`);
+  getServiceItems(search?: string): Observable<any> {
+    let url = `${this.baseUrl}/service-items`;
+    if (search) {
+      url += `?search=${encodeURIComponent(search)}`;
+    }
+    return this.http.get(url);
   }
 
   createServiceItem(fd: FormData): Observable<any> {
@@ -277,8 +281,12 @@ export class ApiService {
   }
 
   // --- ORDER MANAGEMENT ---
-  getOrders(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/orders`);
+  getOrders(userId?: number, role?: number): Observable<any> {
+    let url = `${this.baseUrl}/orders`;
+    if (userId && role) {
+      url += `?userId=${userId}&role=${role}`;
+    }
+    return this.http.get(url);
   }
 
   getOrderDetail(bookingId: number): Observable<any> {

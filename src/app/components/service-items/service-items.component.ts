@@ -95,25 +95,28 @@ export class ServiceItemsComponent implements OnInit {
   }
 
   // LOAD SERVICE ITEMS LIST
-  loadServiceItems() {
-    this.api.getServiceItems().subscribe({
+  loadServiceItems(search?: string) {
+    this.api.getServiceItems(search).subscribe({
       next: (res: any) => {
         this.allServiceItems = res.data?.map((item: any) => ({
           ...item,
           image: item.image_url
         })) || [];
-        this.applyFilter('');
+        this.filteredServiceItems = [...this.allServiceItems];
+        this.currentPage = 1;
+        this.calculatePagination();
       },
       error: (err) => {
         console.error("Error loading service items:", err);
         this.allServiceItems = [];
-        this.applyFilter('');
+        this.filteredServiceItems = [];
+        this.calculatePagination();
       }
     });
   }
 
   onSearch(query: string) {
-    this.applyFilter(query);
+    this.loadServiceItems(query);
   }
 
   applyFilter(query: string) {

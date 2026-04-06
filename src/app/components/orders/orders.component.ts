@@ -32,7 +32,12 @@ export class OrdersComponent implements OnInit {
 
     loadOrders() {
         this.isLoading = true;
-        this.apiService.getOrders().subscribe({
+        const userStr = localStorage.getItem('user');
+        const user = userStr ? JSON.parse(userStr) : null;
+        const userId = user ? user.id : null;
+        const role = user ? user.role : null;
+
+        this.apiService.getOrders(userId, role).subscribe({
             next: (res) => {
                 this.orders = res.data || [];
                 this.applyFilters();

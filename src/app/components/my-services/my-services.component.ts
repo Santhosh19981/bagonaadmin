@@ -53,11 +53,22 @@ export class MyServicesComponent implements OnInit {
         this.loading = true;
         this.apiService.getVendorServicesList(this.vendorId).subscribe({
             next: (res: any) => {
-                this.vendorServices = res.data || [];
+                console.log('📦 Vendor Services raw response:', res);
+                const rawData = res.data || [];
+                // Dynamic mapping for image paths
+                this.vendorServices = rawData.map((s: any) => {
+                    const item = { ...s };
+                    if (item.display_url && item.display_url.startsWith('/')) {
+                        item.display_url = `http://localhost:3000${item.display_url}`;
+                    }
+                    return item;
+                });
+                console.log('✅ vendorServices populated with full URLs:', this.vendorServices);
                 this.loading = false;
             },
-            error: () => {
+            error: (err: any) => {
                 this.loading = false;
+                console.error('❌ Failed to load services:', err);
                 this.toastr.error('Failed to load your services', 'Error');
             }
         });
