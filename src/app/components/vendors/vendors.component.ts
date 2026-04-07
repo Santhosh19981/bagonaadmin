@@ -30,6 +30,8 @@ export class VendorsComponent implements OnInit {
   servicesList: any[] = [];
   selectedServices: any[] = [];
   dropdownOpen = false;
+  selectedFile: File | null = null;
+  imagePreview: string | null = null;
 
   newVendor: any = {
     name: '',
@@ -65,7 +67,10 @@ export class VendorsComponent implements OnInit {
     this.api.getVendors().subscribe({
       next: (res: any) => {
         if (res.status) {
-          this.allVendors = res.data || [];
+          this.allVendors = (res.data || []).map((v: any) => ({
+            ...v,
+            image: this.api.getImageUrl(v.display_url || v.image || null)
+          }));
           this.applyFilter('');
         }
       },
@@ -118,8 +123,10 @@ export class VendorsComponent implements OnInit {
   toggleForm(vendor?: any) {
     this.selectedVendor = vendor || null;
     this.dropdownOpen = false;
+    this.selectedFile = null;
     if (vendor) {
       this.newVendor = { ...vendor };
+      this.imagePreview = vendor.image || null;
       // Handle services - they come as comma separated IDs in this.newVendor.services
       if (typeof this.newVendor.services === 'string' && this.newVendor.services) {
         const serviceIds = this.newVendor.services.split(',').map((id: string) => parseInt(id.trim())).filter((id: number) => !isNaN(id));
@@ -138,6 +145,7 @@ export class VendorsComponent implements OnInit {
         describe: '',
         services: ''
       };
+      this.imagePreview = null;
       this.selectedServices = [];
     }
     this.showForm = !this.showForm;
@@ -166,6 +174,18 @@ export class VendorsComponent implements OnInit {
 
   getSelectedServiceNames(): string {
     return this.selectedServices.map(s => s.name).join(', ');
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imagePreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   getServiceNamesByIds(servicesString: string): string[] {
@@ -206,13 +226,25 @@ export class VendorsComponent implements OnInit {
     const serviceIds = this.selectedServices.map(s => s.service_id);
     this.newVendor.services = serviceIds.join(', ');
 
+    const formData = new FormData();
+    Object.keys(this.newVendor).forEach(key => {
+      // Don't append null or undefined
+      if (this.newVendor[key] !== null && this.newVendor[key] !== undefined) {
+        formData.append(key, this.newVendor[key]);
+      }
+    });
+
+    if (this.selectedFile) {
+      formData.append('image', this.selectedFile);
+    }
+
     if (this.selectedVendor) {
       // Update
-      this.api.updateVendor(this.selectedVendor.id, this.newVendor).subscribe({
+      this.api.updateVendor(this.selectedVendor.user_id, formData).subscribe({
         next: (res: any) => {
           if (res.status) {
-            // Also sync mappings
-            this.api.syncVendorServices({ vendor_id: this.selectedVendor.id, service_ids: serviceIds }).subscribe({
+            // Also sync mappings - use selectedVendor.user_id directly
+            this.api.syncVendorServices({ vendor_id: this.selectedVendor.user_id, service_ids: serviceIds }).subscribe({
               next: () => {
                 this.toastr.success("Vendor updated successfully");
                 this.loadVendors();
@@ -231,14 +263,8 @@ export class VendorsComponent implements OnInit {
         }
       });
     } else {
-      // Create - reuse registerChef but change profile logic? 
-      // Actually /addUser is the way to create users.
-      const formData = new FormData();
-      Object.keys(this.newVendor).forEach(key => {
-        formData.append(key, this.newVendor[key]);
-      });
+      // Create
       formData.append('role', '3'); // Vendor role
-
       this.api.registerChef(formData).subscribe({
         next: (res: any) => {
           this.toastr.success("Vendor created successfully");

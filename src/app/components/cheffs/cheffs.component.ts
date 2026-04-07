@@ -157,7 +157,7 @@ export class CheffsComponent implements OnInit {
     }
 
     if (this.selectedCheff) {
-      this.api.updateChefProfile(this.selectedCheff.id, formData).subscribe({
+      this.api.updateChefProfile(this.selectedCheff.user_id, formData).subscribe({
         next: (res: any) => {
           this.toastr.success("Chef updated successfully");
           this.loadCheffs();
@@ -181,9 +181,9 @@ export class CheffsComponent implements OnInit {
     }
   }
 
-  deleteCheff(id: number) {
+  deleteCheff(user_id: number) {
     if (confirm("Are you sure you want to delete this chef?")) {
-      this.api.deleteChef(id).subscribe({
+      this.api.deleteChef(user_id).subscribe({
         next: () => {
           this.toastr.success("Chef deleted successfully");
           this.loadCheffs();
@@ -195,8 +195,8 @@ export class CheffsComponent implements OnInit {
     }
   }
 
-  updateStatus(id: number, status: number) {
-    this.api.updateActiveStatus(id, status).subscribe({
+  updateStatus(user_id: number, status: number) {
+    this.api.updateActiveStatus(user_id, status).subscribe({
       next: () => {
         this.toastr.success(`Chef status updated to ${status === 1 ? 'Run' : 'Stop'} successfully`);
         this.loadCheffs();
