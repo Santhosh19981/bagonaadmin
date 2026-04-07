@@ -5,6 +5,7 @@ import { SidemenuComponent } from '../sidemenu/sidemenu.component';
 import { HeaderComponent } from '../header/header.component';
 import { ApiService } from '../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
+import { config } from '../../config';
 
 @Component({
   selector: 'app-service-items',
@@ -21,7 +22,7 @@ export class ServiceItemsComponent implements OnInit {
   services: any[] = [];
 
   // API Base URL - update this to your production URL when deploying
-  apiBaseUrl: string = "http://localhost:3000";
+  apiBaseUrl: string = config.apiUrl;
 
   // Pagination
   currentPage: number = 1;

@@ -5,6 +5,7 @@ import { SidemenuComponent } from '../sidemenu/sidemenu.component';
 import { HeaderComponent } from '../header/header.component';
 import { ApiService } from '../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
+import { config } from '../../config';
 
 @Component({
     selector: 'app-menu-category',
@@ -19,7 +20,7 @@ export class MenuCategoryComponent implements OnInit {
     paginatedCategories: any[] = [];
 
     // API Base URL
-    apiBaseUrl: string = "http://localhost:3000";
+    apiBaseUrl: string = config.apiUrl;
 
     // Pagination
     currentPage: number = 1;

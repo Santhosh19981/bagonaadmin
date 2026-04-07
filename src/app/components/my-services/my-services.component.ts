@@ -5,6 +5,7 @@ import { ApiService } from '../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { SidemenuComponent } from '../sidemenu/sidemenu.component';
 import { HeaderComponent } from '../header/header.component';
+import { config } from '../../config';
 
 @Component({
     selector: 'app-my-services',
@@ -59,7 +60,7 @@ export class MyServicesComponent implements OnInit {
                 this.vendorServices = rawData.map((s: any) => {
                     const item = { ...s };
                     if (item.display_url && item.display_url.startsWith('/')) {
-                        item.display_url = `http://localhost:3000${item.display_url}`;
+                        item.display_url = `${config.apiUrl}${item.display_url}`;
                     }
                     return item;
                 });

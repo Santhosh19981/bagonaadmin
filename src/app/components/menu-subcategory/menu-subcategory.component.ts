@@ -5,6 +5,7 @@ import { SidemenuComponent } from '../sidemenu/sidemenu.component';
 import { HeaderComponent } from '../header/header.component';
 import { ApiService } from '../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
+import { config } from '../../config';
 
 @Component({
     selector: 'app-menu-subcategory',
@@ -20,7 +21,7 @@ export class MenuSubcategoryComponent implements OnInit {
     categories: any[] = []; // To hold parent categories for the multi-select
 
     // API Base URL
-    apiBaseUrl: string = "http://localhost:3000";
+    apiBaseUrl: string = config.apiUrl;
 
     // Pagination
     currentPage: number = 1;
