@@ -1,0 +1,245 @@
+<div class="admin-dashboard-container min-h-screen bg-[#f8fafc] text-slate-800 font-sans">
+  <!-- SIDEBAR -->
+  <app-sidemenu [menuFromParent]="'accounts'" #sidebarComponent></app-sidemenu>
+
+  <!-- MAIN CONTENT -->
+  <main class="lg:ml-72 min-h-screen transition-all duration-300">
+    <!-- Header -->
+    <header class="p-6 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-10 border-b border-slate-200">
+      <div>
+        <h1 class="text-2xl font-black text-slate-800 tracking-tight">Accounts & Payouts</h1>
+        <p class="text-slate-500 text-sm font-medium mt-1">Manage vendor bank details and settle payments</p>
+      </div>
+
+      <div class="flex gap-4">
+        <div class="bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-2xl px-4 py-2 flex items-center gap-2">
+          <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span class="text-[10px] font-black uppercase tracking-widest">{{ pendingPayouts.length }} Pending Payouts</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="p-6 space-y-8 max-w-7xl mx-auto">
+
+      <!-- Pending Payouts Section (Admin Only) -->
+      <section *ngIf="currentUserRole === 4 && pendingPayouts.length > 0"
+        class="relative group overflow-hidden rounded-[2.5rem] bg-white border border-slate-200 p-6 shadow-sm shadow-slate-200/50"
+        data-aos="fade-up">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 border border-orange-100">
+              <i class="bi bi-wallet2 text-xl"></i>
+            </div>
+            <h2 class="text-lg font-black text-slate-800">Settlements Due</h2>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-separate border-spacing-y-3">
+            <thead>
+              <tr class="text-slate-500 text-xs uppercase tracking-widest">
+                <th class="px-4 py-2 font-semibold">Vendor</th>
+                <th class="px-4 py-2 font-semibold">Order ID</th>
+                <th class="px-4 py-2 font-semibold">Payout Amount</th>
+                <th class="px-4 py-2 font-semibold">Bank Detail</th>
+                <th class="px-4 py-2 font-semibold text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of pendingPayouts" class="hover:bg-slate-50 transition-all duration-300 rounded-xl group/row">
+                <td class="px-4 py-4 first:rounded-l-2xl">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-black text-slate-500 border border-slate-200">
+                      {{ p.vendor_name?.charAt(0) }}
+                    </div>
+                    <span class="font-bold text-slate-800">{{ p.vendor_name }}</span>
+                  </div>
+                </td>
+                <td class="px-4 py-4 text-sm text-slate-500 font-mono">#{{ p.booking_id }}</td>
+                <td class="px-4 py-4">
+                  <span class="text-emerald-600 font-black">₹{{ p.vendor_payout_amount }}</span>
+                </td>
+                <td class="px-4 py-4">
+                  <div *ngIf="p.account_number" class="text-[11px]">
+                    <p class="text-slate-800 font-bold">{{ p.bank_name }}</p>
+                    <p class="text-slate-400 font-medium">{{ p.account_number }} ({{ p.ifsc_code }})</p>
+                  </div>
+                  <span *ngIf="!p.account_number" class="text-xs text-rose-400 font-medium italic">No default account!</span>
+                </td>
+                <td class="px-4 py-4 last:rounded-r-2xl text-right">
+                  <button (click)="confirmPayout(p)" [disabled]="!p.account_number"
+                    class="px-4 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold hover:bg-emerald-600 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                    Confirm Payout
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Main Management Layout -->
+      <div class="grid grid-cols-1" [ngClass]="{'lg:grid-cols-12 lg:gap-8': currentUserRole === 4}">
+
+        <!-- Vendor Selection Column (Admin Only) -->
+        <div *ngIf="currentUserRole === 4" class="lg:col-span-4 space-y-4">
+          <div class="flex items-center justify-between px-2">
+            <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500">Select Vendor</h3>
+            <span class="text-[10px] bg-slate-100 px-2 py-1 rounded text-slate-500 font-bold border border-slate-200">{{ vendors.length }} total</span>
+          </div>
+
+          <div class="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+            <div *ngFor="let v of vendors" (click)="selectVendor(v)"
+              [class.border-emerald-500]="selectedVendor?.user_id === v.user_id"
+              [class.bg-white]="selectedVendor?.user_id === v.user_id"
+              class="p-4 rounded-[2rem] bg-white/50 border border-slate-200 cursor-pointer hover:border-emerald-400 transition-all duration-300 group shadow-sm hover:shadow-md">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
+                  {{ v.name?.charAt(0) }}
+                </div>
+                <div>
+                  <h4 class="font-black text-slate-800 group-hover:text-emerald-600 transition-colors">{{ v.name }}</h4>
+                  <div class="flex gap-2 mt-1">
+                    <span class="text-[9px] bg-slate-50 text-slate-500 px-2 py-0.5 rounded-full border border-slate-100 font-bold uppercase">{{ v.displayRole }}</span>
+                    <span class="text-[9px] bg-slate-50 text-slate-500 px-2 py-0.5 rounded-full border border-slate-100 font-bold uppercase">{{ v.mobile }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Management Column -->
+        <div [ngClass]="{'lg:col-span-8': currentUserRole === 4}">
+          <div *ngIf="!selectedVendor"
+            class="h-full min-h-[400px] rounded-[3rem] border-2 border-dashed border-slate-200 bg-white flex flex-col items-center justify-center text-slate-400 text-center p-8">
+            <div class="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mb-4">
+              <i class="bi bi-person-circle text-4xl text-slate-200"></i>
+            </div>
+            <p class="text-lg font-black">Select a vendor from the list to manage accounts</p>
+          </div>
+
+          <div *ngIf="selectedVendor" data-aos="fade-left" class="space-y-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-xl font-black text-slate-800">Accounts for {{ selectedVendor.name }}</h2>
+                <p class="text-slate-500 text-sm font-medium">Manage bank settlement destinations</p>
+              </div>
+              <button (click)="openAccountModal()"
+                class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-2xl shadow-lg shadow-orange-600/30 transition-all active:scale-95 flex items-center gap-2 text-sm uppercase tracking-widest">
+                <i class="bi bi-plus-lg"></i>
+                Add New Account
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div *ngFor="let acc of accounts"
+                class="relative group rounded-[2.5rem] bg-white border border-slate-200 p-6 hover:shadow-xl hover:border-emerald-200 transition-all duration-500 min-h-[220px] flex flex-col justify-between">
+
+                <div *ngIf="acc.is_default"
+                  class="absolute top-6 right-6 flex items-center gap-1 bg-emerald-50 text-emerald-600 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-xl border border-emerald-100">
+                  <i class="bi bi-check-circle-fill"></i> Default
+                </div>
+
+                <div class="space-y-4">
+                  <div class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors">
+                    <i class="bi bi-bank text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 class="text-lg font-black text-slate-800 tracking-tight">{{ acc.bank_name }}</h4>
+                    <p class="text-emerald-600 text-sm font-black font-mono tracking-tighter">{{ acc.account_number }}</p>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">IFSC Code</p>
+                      <p class="text-[11px] font-bold text-slate-700 font-mono">{{ acc.ifsc_code }}</p>
+                    </div>
+                    <div>
+                      <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Status</p>
+                      <p class="text-[11px] font-bold text-emerald-600 uppercase tracking-widest">{{ acc.status }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex gap-2 mt-6 pt-4 border-t border-slate-50">
+                  <button *ngIf="!acc.is_default" (click)="setDefault(acc)"
+                    class="flex-1 py-2 rounded-xl bg-slate-50 text-slate-500 text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all">
+                    Set Default
+                  </button>
+                  <button (click)="openEditModal(acc)"
+                    class="w-10 h-8 flex items-center justify-center rounded-xl bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white transition-all">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <button (click)="deleteAccount(acc)"
+                    class="w-10 h-8 flex items-center justify-center rounded-xl bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white transition-all">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div *ngIf="accounts.length === 0"
+                class="col-span-full py-16 flex flex-col items-center justify-center text-slate-400 bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
+                <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4">
+                  <i class="bi bi-info-circle text-2xl text-slate-200"></i>
+                </div>
+                <p class="font-bold">No bank accounts found for this vendor.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add Account Modal -->
+  <div *ngIf="isAccountModalOpen"
+    class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="relative w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl p-8 overflow-hidden animate-in zoom-in-95 duration-300">
+      <div class="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-full -mr-16 -mt-16"></div>
+
+      <h3 class="text-xl font-black text-slate-800 mb-6">{{ isEditMode ? 'Edit' : 'Add' }} Bank Account</h3>
+
+      <div class="space-y-4">
+        <div class="space-y-1">
+          <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Bank Name</label>
+          <input type="text" [(ngModel)]="accountForm.bank_name"
+            class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-slate-800 text-xs font-bold focus:ring-2 focus:ring-orange-500/20 outline-none"
+            placeholder="e.g. HDFC Bank">
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Account Holder Name</label>
+          <input type="text" [(ngModel)]="accountForm.account_holder_name"
+            class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-slate-800 text-xs font-bold focus:ring-2 focus:ring-orange-500/20 outline-none"
+            placeholder="Name as per bank">
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Account Number</label>
+          <input type="text" [(ngModel)]="accountForm.account_number"
+            class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-slate-800 text-xs font-bold focus:ring-2 focus:ring-orange-500/20 outline-none"
+            placeholder="000000000000">
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">IFSC Code</label>
+          <input type="text" [(ngModel)]="accountForm.ifsc_code"
+            class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-slate-800 text-xs font-bold focus:ring-2 focus:ring-orange-500/20 outline-none"
+            placeholder="IFSC0001234">
+        </div>
+
+        <div class="flex items-center gap-3 py-2">
+          <input type="checkbox" id="isDefault" [(ngModel)]="accountForm.is_default"
+            class="w-5 h-5 rounded-lg border-slate-200 bg-slate-50 text-emerald-600 focus:ring-emerald-500 transition-all">
+          <label for="isDefault" class="text-xs font-bold text-slate-500 uppercase tracking-widest">Set as default payout account</label>
+        </div>
+
+        <div class="flex gap-4 mt-8">
+          <button (click)="isAccountModalOpen = false"
+            class="flex-1 py-3 bg-slate-100 text-slate-500 font-bold rounded-2xl hover:bg-slate-200 transition-all">Cancel</button>
+          <button (click)="saveAccount()"
+            class="flex-[2] py-3 bg-orange-600 text-white font-black uppercase tracking-widest rounded-2xl shadow-lg shadow-orange-600/30 hover:bg-orange-700 transition-all text-sm">
+            {{ isEditMode ? 'Update' : 'Save' }} Account
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

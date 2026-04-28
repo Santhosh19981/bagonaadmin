@@ -35,12 +35,26 @@
             </div>
 
             <div class="p-2 sm:p-8">
+                <!-- Loading State -->
+                <div *ngIf="loading" class="flex flex-col items-center justify-center py-20">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
+                    <p class="mt-4 text-slate-500 font-bold">Loading transactions...</p>
+                </div>
+
+                <!-- Error State -->
+                <div *ngIf="error" class="bg-red-50 border border-red-100 text-red-700 px-4 py-3 rounded-xl mb-4 flex items-center gap-3">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <p class="font-bold text-sm">{{error}}</p>
+                    <button (click)="fetchPaymentHistory()" class="ml-auto text-xs underline font-black">Retry</button>
+                </div>
+
                 <!-- Enhanced Table UI -->
-                <div class="table-container">
+                <div class="table-container" *ngIf="!loading && !error">
                     <table class="w-full hidden sm:table">
                         <thead>
                             <tr>
                                 <th>Transaction Date</th>
+                                <th *ngIf="userRole === 4">User</th>
                                 <th>Type</th>
                                 <th>Amount</th>
                                 <th>Location Details</th>
@@ -53,8 +67,11 @@
                                         <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
                                             <i class="bi bi-calendar3 text-slate-400 text-xs"></i>
                                         </div>
-                                        <div class="text-sm font-bold text-slate-800">{{tx.date}}</div>
+                                        <div class="text-sm font-bold text-slate-800">{{tx.date | date:'mediumDate'}}</div>
                                     </div>
+                                </td>
+                                <td *ngIf="userRole === 4">
+                                    <div class="text-xs font-bold text-slate-600">{{tx.userName || 'System'}}</div>
                                 </td>
                                 <td>
                                     <span class="type-badge" [ngClass]="{
@@ -88,7 +105,7 @@
                 </div>
 
                 <!-- Mobile Card Layout (visible only on mobile) -->
-                <div class="sm:hidden">
+                <div class="sm:hidden" *ngIf="!loading && !error">
                     <div class="space-y-3 px-2">
                         <div *ngFor="let tx of filteredTransactions"
                             class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
@@ -98,14 +115,17 @@
                                     <i class="bi bi-calendar3 text-slate-400 text-base"></i>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-bold text-slate-800">{{tx.date}}</div>
+                                    <div class="text-sm font-bold text-slate-800">{{tx.date | date:'mediumDate'}}</div>
                                     <div class="text-[9px] font-medium text-slate-400 uppercase tracking-wider mt-0.5">
                                         Transaction</div>
                                 </div>
-                                <span class="type-badge flex-shrink-0 text-[9px] px-2 py-1" [ngClass]="{
-                                    'badge-credit': tx.type === 'Credit',
-                                    'badge-debit': tx.type === 'Debit'
-                                }">{{tx.type}}</span>
+                                <div class="flex flex-col items-end gap-1">
+                                    <span class="type-badge flex-shrink-0 text-[9px] px-2 py-1" [ngClass]="{
+                                        'badge-credit': tx.type === 'Credit',
+                                        'badge-debit': tx.type === 'Debit'
+                                    }">{{tx.type}}</span>
+                                    <span *ngIf="userRole === 4" class="text-[8px] font-black text-slate-400 uppercase">{{tx.userName || 'System'}}</span>
+                                </div>
                             </div>
                             <div class="space-y-2">
                                 <div>

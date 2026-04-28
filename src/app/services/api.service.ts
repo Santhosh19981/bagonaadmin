@@ -164,8 +164,12 @@ export class ApiService {
     return this.http.delete(`${this.baseUrl}/profiles/delete-chef/${id}`);
   }
 
-  getPaymentHistory(userId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/payment/history/${userId}`);
+  getPaymentHistory(userId?: number): Observable<any> {
+    let url = `${this.baseUrl}/payments/history`;
+    if (userId) {
+      url += `?userId=${userId}`;
+    }
+    return this.http.get(url);
   }
 
   // MENU CATEGORY API
@@ -305,6 +309,57 @@ export class ApiService {
 
   updateOrderStatus(orderId: number, statusData: any): Observable<any> {
     return this.http.patch(`${this.baseUrl}/orders/${orderId}/status`, statusData);
+  }
+
+  // --- VENDOR BANK ACCOUNTS ---
+  getVendorAccounts(vendorId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/vendor-accounts/list/${vendorId}`);
+  }
+
+  addVendorAccount(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/vendor-accounts/add`, data);
+  }
+
+  updateVendorAccount(accountId: number, data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/vendor-accounts/update/${accountId}`, data);
+  }
+
+  setDefaultAccount(accountId: number, vendorUserId: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/vendor-accounts/set-default/${accountId}`, { vendor_user_id: vendorUserId });
+  }
+
+  deleteVendorAccount(accountId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/vendor-accounts/delete/${accountId}`);
+  }
+
+  // --- PAYOUT MANAGEMENT ---
+  getPendingPayouts(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/orders/payouts/pending`);
+  }
+
+  confirmPayout(orderId: number, data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/orders/payouts/confirm/${orderId}`, data);
+  }
+  
+  getDashboardStats(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/dashboard/stats`);
+  }
+
+  // --- ORDER COMPLETION PROOFS ---
+  getOrderProofs(orderId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/order-proofs/${orderId}`);
+  }
+
+  uploadOrderProofs(orderId: string, formData: FormData): Observable<any> {
+    return this.http.post(`${this.baseUrl}/order-proofs/${orderId}/upload`, formData);
+  }
+
+  deleteOrderProof(orderId: string, proofId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/order-proofs/${orderId}/${proofId}`);
+  }
+
+  getOrderProofCount(orderId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/order-proofs/${orderId}/count`);
   }
 
 }

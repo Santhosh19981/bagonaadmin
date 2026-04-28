@@ -40,11 +40,43 @@
                     </div>
                 </div>
 
-                <div class="active-state-indicator">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">Active
-                        State:</span>
-                    <span
-                        class="px-2 sm:px-3 py-1 bg-yellow-50 text-yellow-700 text-[10px] font-black rounded-lg border border-yellow-100 uppercase">{{activeTab}}</span>
+                <div class="flex items-center gap-3">
+                    <div class="filter-dropdown hidden sm:flex items-center gap-2">
+                        <!-- Services Dropdown for Vendors -->
+                        <div class="relative flex items-center" *ngIf="selectedBusinessType === 'vendor'">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="bi bi-ui-checks-grid text-slate-400 text-xs"></i>
+                            </div>
+                            <select (change)="onServiceChange($event)" class="pl-8 pr-8 py-1.5 text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all cursor-pointer appearance-none">
+                                <option value="all">All Services</option>
+                                <option *ngFor="let srv of servicesList" [value]="srv.service_id">{{srv.name}}</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                <i class="bi bi-chevron-down text-slate-400 text-[10px]"></i>
+                            </div>
+                        </div>
+
+                        <!-- Business Type Dropdown -->
+                        <div class="relative flex items-center">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="bi bi-funnel text-slate-400 text-xs"></i>
+                            </div>
+                            <select (change)="onBusinessTypeChange($event)" class="pl-8 pr-8 py-1.5 text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all cursor-pointer appearance-none">
+                                <option value="all">All Types</option>
+                                <option value="chef">Chef</option>
+                                <option value="vendor">Vendor</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                <i class="bi bi-chevron-down text-slate-400 text-[10px]"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="active-state-indicator">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">Active
+                            State:</span>
+                        <span
+                            class="px-2 sm:px-3 py-1 bg-yellow-50 text-yellow-700 text-[10px] font-black rounded-lg border border-yellow-100 uppercase">{{activeTab}}</span>
+                    </div>
                 </div>
             </div>
 
@@ -137,7 +169,35 @@
                     </div>
                 </div>
 
-                <!-- Mobile Card Layout (visible only on mobile) -->
+                <div class="sm:hidden mb-4 space-y-2">
+                        <!-- Services Dropdown for Vendors (Mobile) -->
+                    <div class="relative" *ngIf="selectedBusinessType === 'vendor'">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="bi bi-ui-checks-grid text-slate-400"></i>
+                        </div>
+                        <select (change)="onServiceChange($event)" class="w-full pl-10 pr-10 py-2.5 text-sm font-bold text-slate-700 bg-white border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all appearance-none">
+                            <option value="all">All Services</option>
+                            <option *ngFor="let srv of servicesList" [value]="srv.service_id">{{srv.name}}</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                            <i class="bi bi-chevron-down text-slate-400"></i>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="bi bi-funnel text-slate-400"></i>
+                        </div>
+                        <select (change)="onBusinessTypeChange($event)" class="w-full pl-10 pr-10 py-2.5 text-sm font-bold text-slate-700 bg-white border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all appearance-none">
+                            <option value="all">All Business Types</option>
+                            <option value="chef">Chef</option>
+                            <option value="vendor">Vendor</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                            <i class="bi bi-chevron-down text-slate-400"></i>
+                        </div>
+                    </div>
+                </div>
                 <div class="sm:hidden space-y-2 p-2">
                     <div *ngFor="let user of paginatedUsers" class="bg-slate-50 border border-slate-200 rounded-xl p-3">
                         <div class="flex items-start gap-2.5 mb-2.5 pb-2.5 border-b border-slate-200">
@@ -203,22 +263,56 @@
                 </button>
             </div>
 
-            <div class="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+            <div class="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-h-[70vh] overflow-y-auto">
+                <!-- User Profile Header -->
+                <div class="flex items-center gap-4 sm:gap-6 pb-4 border-b border-slate-100">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-100 border-4 border-white shadow-md overflow-hidden flex items-center justify-center flex-shrink-0">
+                        <img *ngIf="selectedUser?.image" [src]="api.getImageUrl(selectedUser.image)" class="w-full h-full object-cover" alt="Profile">
+                        <span *ngIf="!selectedUser?.image" class="text-2xl font-black text-slate-400">{{selectedUser?.name?.charAt(0)?.toUpperCase()}}</span>
+                    </div>
+                    <div>
+                        <h3 class="text-lg sm:text-xl font-black text-slate-800">{{selectedUser?.name}}</h3>
+                        <div class="flex flex-wrap items-center gap-2 mt-1.5">
+                            <span class="px-2.5 py-0.5 bg-yellow-50 text-yellow-700 text-[10px] font-black uppercase tracking-wider rounded border border-yellow-200">
+                                {{ selectedUser?.role == 2 ? 'Chef' : (selectedUser?.role == 3 ? 'Vendor' : 'User') }}
+                            </span>
+                            <span class="text-xs font-medium text-slate-500"><i class="bi bi-telephone-fill mr-1 text-slate-400"></i>{{selectedUser?.mobile}}</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Full Name</label>
-                        <p class="text-sm font-bold text-slate-800 mt-1">{{selectedUser?.name}}</p>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email Address</label>
+                        <p class="text-sm font-bold text-slate-800 mt-1 break-words">{{selectedUser?.email}}</p>
                     </div>
                     <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Phone
-                            Number</label>
-                        <p class="text-sm font-bold text-slate-800 mt-1">{{selectedUser?.mobile}}</p>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Business Name</label>
+                        <p class="text-sm font-bold text-slate-800 mt-1">{{selectedUser?.businessname || 'Independent'}}</p>
+                    </div>
+                    <div *ngIf="selectedUser?.role == 2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Age</label>
+                        <p class="text-sm font-bold text-slate-800 mt-1">{{selectedUser?.age || 'N/A'}}</p>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Experience (Years)</label>
+                        <p class="text-sm font-bold text-slate-800 mt-1">{{selectedUser?.experience || '0'}}</p>
                     </div>
                     <div class="sm:col-span-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Business
-                            Name</label>
-                        <p class="text-sm font-bold text-slate-800 mt-1">{{selectedUser?.businessname || 'Independent'}}
-                        </p>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Address</label>
+                        <p class="text-sm font-bold text-slate-800 mt-1">{{selectedUser?.address || 'N/A'}}</p>
+                    </div>
+                    <div class="sm:col-span-2" *ngIf="selectedUser?.describe">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Description</label>
+                        <p class="text-sm font-bold text-slate-800 mt-1 whitespace-pre-wrap">{{selectedUser?.describe}}</p>
+                    </div>
+                    <div class="sm:col-span-2" *ngIf="selectedUser?.role == 2 && selectedUser?.cookingstyle">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cooking Style</label>
+                        <p class="text-sm font-bold text-slate-800 mt-1">{{selectedUser?.cookingstyle}}</p>
+                    </div>
+                    <div class="sm:col-span-2" *ngIf="selectedUser?.role == 3 && selectedUser?.services">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Provided Services</label>
+                        <p class="text-sm font-bold text-slate-800 mt-1">{{getServiceNames(selectedUser?.services)}}</p>
                     </div>
                 </div>
             </div>

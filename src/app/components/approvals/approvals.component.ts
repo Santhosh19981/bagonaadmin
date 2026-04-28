@@ -26,10 +26,21 @@ export class ApprovalsComponent implements OnInit {
   selectedUser: any | null = null;
   showDetailModal: boolean = false;
 
-  constructor(private api: ApiService) { }
+  // Filters
+  selectedBusinessType: string = 'all';
+  selectedServiceFilter: string = 'all';
+  currentSearchQuery: string = '';
+  servicesList: any[] = [];
+
+  constructor(public api: ApiService) { }
 
   ngOnInit() {
     this.fetchUsers('pending');
+    this.api.getServices().subscribe((res: any) => {
+      if (res.status === 'success' || res.status === true) {
+        this.servicesList = res.data;
+      }
+    });
   }
 
   fetchUsers(type: string) {
@@ -48,21 +59,50 @@ export class ApprovalsComponent implements OnInit {
     apiCall.subscribe((res: any) => {
       if (res.status) {
         this.allUsers = res.data;
-        this.applyFilter('');
+        this.applyFilter(this.currentSearchQuery);
       }
     });
   }
 
   onSearch(query: string) {
+    this.currentSearchQuery = query;
     this.applyFilter(query);
+  }
+
+  onBusinessTypeChange(event: any) {
+    this.selectedBusinessType = event.target.value;
+    if (this.selectedBusinessType !== 'vendor') {
+      this.selectedServiceFilter = 'all';
+    }
+    this.applyFilter(this.currentSearchQuery);
+  }
+
+  onServiceChange(event: any) {
+    this.selectedServiceFilter = event.target.value;
+    this.applyFilter(this.currentSearchQuery);
   }
 
   applyFilter(query: string) {
     const q = query.toLowerCase().trim();
+    let filtered = this.allUsers;
+
+    if (this.selectedBusinessType !== 'all') {
+      const targetRole = this.selectedBusinessType === 'chef' ? 2 : 3;
+      filtered = filtered.filter(u => Number(u.role) === targetRole);
+
+      if (this.selectedBusinessType === 'vendor' && this.selectedServiceFilter !== 'all') {
+        filtered = filtered.filter(u => {
+          if (!u.services) return false;
+          const userServices = String(u.services).split(',').map(s => s.trim());
+          return userServices.includes(String(this.selectedServiceFilter));
+        });
+      }
+    }
+
     if (!q) {
-      this.filteredUsers = [...this.allUsers];
+      this.filteredUsers = [...filtered];
     } else {
-      this.filteredUsers = this.allUsers.filter(u =>
+      this.filteredUsers = filtered.filter(u =>
         u.name.toLowerCase().includes(q) ||
         (u.businessname && u.businessname.toLowerCase().includes(q)) ||
         u.mobile.includes(q)
@@ -112,5 +152,15 @@ export class ApprovalsComponent implements OnInit {
       this.fetchUsers(this.activeTab);
       this.closeDetails();
     });
+  }
+
+  getServiceNames(serviceIdsString: string): string {
+    if (!serviceIdsString || !this.servicesList.length) return serviceIdsString;
+    const ids = String(serviceIdsString).split(',').map(id => id.trim());
+    const names = ids.map(id => {
+       const service = this.servicesList.find(s => String(s.service_id) === id);
+       return service ? service.name : id;
+    });
+    return names.join(', ');
   }
 }

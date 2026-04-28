@@ -20,6 +20,7 @@ import { ProfileManagementComponent } from './components/profile-management/prof
 import { BannerManagementComponent } from './components/banner-management/banner-management.component';
 import { ReviewManagementComponent } from './components/review-management/review-management.component';
 import { OfferManagementComponent } from './components/offer-management/offer-management.component';
+import { AccountsComponent } from './components/accounts/accounts.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full', },
@@ -42,5 +43,7 @@ export const routes: Routes = [
   { path: 'banner-management', component: BannerManagementComponent, canActivate: [AuthGuard] },
   { path: 'review-management', component: ReviewManagementComponent, canActivate: [AuthGuard] },
   { path: 'offer-management', component: OfferManagementComponent, canActivate: [AuthGuard] },
+  { path: 'accounts', component: AccountsComponent, canActivate: [AuthGuard] },
+
 
 ];

@@ -244,25 +244,25 @@
                   <span class="text-xs font-medium text-slate-500">{{order.item}}</span>
                 </td>
                 <td class="py-5">
-                  <span class="text-xs font-black text-slate-800">${{order.amount.toFixed(2)}}</span>
+                  <span class="text-xs font-black text-slate-800">₹{{order.amount | number:'1.2-2'}}</span>
                 </td>
                 <td class="py-5">
                   <span class="px-3 py-1 rounded-lg text-[10px] font-bold inline-flex items-center gap-1.5" [ngClass]="{
-                      'bg-green-50 text-green-600': order.status === 'Completed',
-                      'bg-blue-50 text-blue-600': order.status === 'Shipped',
-                      'bg-orange-50 text-orange-600': order.status === 'Processing',
-                      'bg-slate-50 text-slate-400': order.status === 'Pending'
+                      'bg-green-50 text-green-600': order.status === 'Completed' || order.status === 'completed' || order.status === 'Paid',
+                      'bg-blue-50 text-blue-600': order.status === 'Shipped' || order.status === 'confirmed',
+                      'bg-orange-50 text-orange-600': order.status === 'Processing' || order.status === 'processing',
+                      'bg-slate-50 text-slate-400': order.status === 'Pending' || order.status === 'pending' || order.status === 'upcoming'
                     }">
                     <span class="w-1.5 h-1.5 rounded-full" [ngClass]="{
-                        'bg-green-500': order.status === 'Completed',
-                        'bg-blue-500': order.status === 'Shipped',
-                        'bg-orange-500': order.status === 'Processing',
-                        'bg-slate-300': order.status === 'Pending'
+                        'bg-green-500': order.status === 'Completed' || order.status === 'completed' || order.status === 'Paid',
+                        'bg-blue-500': order.status === 'Shipped' || order.status === 'confirmed',
+                        'bg-orange-500': order.status === 'Processing' || order.status === 'processing',
+                        'bg-slate-300': order.status === 'Pending' || order.status === 'pending' || order.status === 'upcoming'
                       }"></span>
                     {{order.status}}
                   </span>
                 </td>
-                <td class="py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{order.date}}</td>
+                <td class="py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{order.date | date:'mediumDate'}}</td>
               </tr>
             </tbody>
           </table>

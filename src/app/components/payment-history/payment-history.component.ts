@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { SidemenuComponent } from '../sidemenu/sidemenu.component';
 import { HeaderComponent } from '../header/header.component';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-payment-history',
@@ -14,19 +15,58 @@ export class PaymentHistoryComponent implements OnInit {
   transactions: any[] = [];
   activeTab: string = 'All';
   searchQuery: string = '';
+  loading: boolean = false;
+  error: string | null = null;
+  userRole: number | null = null;
+
+  constructor(private apiService: ApiService) {}
 
   ngOnInit() {
-    const storedData = localStorage.getItem('paymentTransactions');
-    if (storedData) {
-      this.transactions = JSON.parse(storedData);
-    } else {
-      this.transactions = [
-        { id: 1, date: '2025-05-15', type: 'Credit', amount: 1200, location: 'Hyderabad' },
-        { id: 2, date: '2025-05-16', type: 'Debit', amount: 800, location: 'Mumbai' },
-        { id: 3, date: '2025-05-17', type: 'Credit', amount: 500, location: 'Delhi' },
-        { id: 4, date: '2025-05-18', type: 'Debit', amount: 300, location: 'Bangalore' }
-      ];
-      this.saveTransactions();
+    this.fetchPaymentHistory();
+  }
+
+  fetchPaymentHistory() {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) {
+      this.error = "User not logged in";
+      return;
+    }
+
+    try {
+      const user = JSON.parse(userStr);
+      const userId = user.id || user.user_id;
+      this.userRole = user.role;
+      const role = user.role;
+
+      this.loading = true;
+      
+      // Role-based filtering:
+      // If Admin (role 4), pass null to fetch all history.
+      // Otherwise (Vendor/Chef), pass userId to fetch only their own history.
+      const fetchId = role === 4 ? undefined : userId;
+
+      this.apiService.getPaymentHistory(fetchId).subscribe({
+        next: (res) => {
+          if (res.status && res.data) {
+            this.transactions = res.data.map((tx: any) => ({
+              ...tx,
+              // Backend returns 'credit'/'debit' (lowercase enum), component expects 'Credit'/'Debit'
+              type: tx.type.charAt(0).toUpperCase() + tx.type.slice(1).toLowerCase(),
+              // Backend uses 'description' as location/details
+              location: tx.description || 'N/A'
+            }));
+          }
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error('Error fetching payment history', err);
+          this.error = "Failed to load payment history";
+          this.loading = false;
+        }
+      });
+    } catch (e) {
+      console.error('Error parsing user data', e);
+      this.error = "Invalid user data";
     }
   }
 
@@ -56,19 +96,5 @@ export class PaymentHistoryComponent implements OnInit {
 
   setTab(tab: string) {
     this.activeTab = tab;
-  }
-
-  addTransaction(transaction: any) {
-    this.transactions.push(transaction);
-    this.saveTransactions();
-  }
-
-  deleteTransaction(id: number) {
-    this.transactions = this.transactions.filter(tx => tx.id !== id);
-    this.saveTransactions();
-  }
-
-  saveTransactions() {
-    localStorage.setItem('paymentTransactions', JSON.stringify(this.transactions));
   }
 }

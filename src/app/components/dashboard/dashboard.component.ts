@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SidemenuComponent } from "../sidemenu/sidemenu.component";
 import { HeaderComponent } from "../header/header.component";
 import { NavigationService } from '../../services/navigation.service';
+import { ApiService } from '../../services/api.service';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -52,25 +53,49 @@ export class DashboardComponent implements OnInit {
 
   // Dashboard Stats
   dashboardStats = {
-    totalRevenue: '₹12,45,000',
-    totalOrders: '2,834',
-    registeredChefs: '156',
-    pendingApprovals: '12'
+    totalRevenue: '₹0',
+    totalOrders: '0',
+    registeredChefs: '0',
+    pendingApprovals: '0'
   };
 
-  // Dummy data for recent orders
-  recentOrders: any[] = [
-    { id: '#ORD-7234', customer: 'John Doe', item: 'Wedding Event Planning', amount: 4500.00, status: 'Completed', date: '2023-10-24' },
-    { id: '#ORD-7235', customer: 'Sarah Smith', item: 'Executive Chef Service', amount: 325.50, status: 'Processing', date: '2023-10-24' },
-    { id: '#ORD-7236', customer: 'Mike Johnson', item: 'Catering - 50 Guest Service', amount: 2800.00, status: 'Shipped', date: '2023-10-23' },
-    { id: '#ORD-7237', customer: 'Emily Brown', item: 'Corporate Lunch Event', amount: 1800.00, status: 'Completed', date: '2023-10-23' },
-    { id: '#ORD-7238', customer: 'David Wilson', item: 'Private Chef Booking', amount: 245.50, status: 'Pending', date: '2023-10-22' }
-  ];
+  recentOrders: any[] = [];
+  isLoading: boolean = false;
 
-  constructor(private navigationService: NavigationService) { }
+  constructor(
+    private navigationService: NavigationService,
+    private apiService: ApiService
+  ) { }
 
   ngOnInit(): void {
+    import('aos').then(AOS => {
+      AOS.refresh();
+    });
     this.initCharts();
+    this.loadDashboardData();
+  }
+
+  loadDashboardData(): void {
+    this.isLoading = true;
+    this.apiService.getDashboardStats().subscribe({
+      next: (res) => {
+        if (res.status && res.data) {
+          const stats = res.data.stats;
+          this.dashboardStats = {
+            totalRevenue: `₹${Number(stats.totalRevenue).toLocaleString()}`,
+            totalOrders: stats.totalOrders.toLocaleString(),
+            registeredChefs: stats.registeredChefs.toLocaleString(),
+            pendingApprovals: stats.pendingApprovals.toLocaleString()
+          };
+          this.recentOrders = res.data.recentOrders;
+        }
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading dashboard stats:', err);
+        this.isLoading = false;
+      }
+    });
   }
 
   // Chart initialization remains here

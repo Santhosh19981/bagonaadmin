@@ -137,7 +137,7 @@ export class NavigationService {
             label: 'Reviews',
             route: '/review-management',
             icon: 'approval',
-            roles: [3, 4] // Vendor and Admin
+            roles: [2, 3, 4] // Chef, Vendor and Admin
         },
         {
             id: 'offer-management',
@@ -145,7 +145,16 @@ export class NavigationService {
             route: '/offer-management',
             icon: 'menu-items',
             roles: [3, 4] // Vendor and Admin
+        },
+        {
+            id: 'accounts',
+            label: 'Accounts',
+            route: '/accounts',
+            icon: 'payments',
+            roles: [2, 3, 4] // Chef, Vendor, and Admin
         }
+
+
     ];
 
     constructor() { }

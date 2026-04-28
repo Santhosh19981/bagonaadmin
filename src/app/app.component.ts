@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import * as AOS from 'aos';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,8 @@ import * as AOS from 'aos';
 export class AppComponent implements OnInit {
   title = 'bagona-admin';
 
+  constructor(private router: Router) { }
+
   ngOnInit() {
     // Initialize AOS animations
     AOS.init({
@@ -19,6 +22,15 @@ export class AppComponent implements OnInit {
       easing: 'ease-in-out',
       once: true,
       mirror: false
+    });
+
+    // Refresh AOS on every navigation
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      setTimeout(() => {
+        AOS.refresh();
+      }, 100);
     });
   }
 }
