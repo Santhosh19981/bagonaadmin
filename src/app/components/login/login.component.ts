@@ -39,7 +39,13 @@ export class LoginComponent implements OnInit {
 
     this.loading = true;
 
-    this.apiService.loginUser(this.loginForm.value).subscribe({
+    const rawVal = this.loginForm.value;
+    const payload = {
+      username: (rawVal.username || '').trim(),
+      password: (rawVal.password || '').trim()
+    };
+
+    this.apiService.loginUser(payload).subscribe({
       next: (res: any) => {
         this.loading = false;
 
