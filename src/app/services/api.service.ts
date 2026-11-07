@@ -16,7 +16,10 @@ export class ApiService {
   }
 
   getImageUrl(path: string | null): string | null {
-    if (!path) return null;
+    if (typeof path !== 'string') return null;
+    path = path.trim();
+    // Ignore junk values ("", "undefined", "null") so callers fall back to a default image
+    if (!path || path === 'undefined' || path === 'null' || path === 'NaN') return null;
     if (path.startsWith('data:')) return path;
     if (path.startsWith('/')) {
       return `${this.baseUrl}${path}`;
