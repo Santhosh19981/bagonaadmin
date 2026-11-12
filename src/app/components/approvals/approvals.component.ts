@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { SidemenuComponent } from '../sidemenu/sidemenu.component';
 import { HeaderComponent } from '../header/header.component';
+import { PagerComponent } from '../pager/pager.component';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-approvals',
   standalone: true,
-  imports: [CommonModule, SidemenuComponent, HeaderComponent],
+  imports: [CommonModule, SidemenuComponent, HeaderComponent, PagerComponent],
   templateUrl: './approvals.component.html',
   styleUrl: './approvals.component.scss'
 })

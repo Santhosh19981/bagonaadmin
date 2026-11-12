@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SidemenuComponent } from '../sidemenu/sidemenu.component';
 import { HeaderComponent } from '../header/header.component';
+import { PagerComponent } from '../pager/pager.component';
 import { ApiService } from '../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { config } from '../../config';
@@ -10,7 +11,7 @@ import { config } from '../../config';
 @Component({
   selector: 'app-menu-items',
   standalone: true,
-  imports: [CommonModule, FormsModule, SidemenuComponent, HeaderComponent],
+  imports: [CommonModule, FormsModule, SidemenuComponent, HeaderComponent, PagerComponent],
   templateUrl: './menu-items.component.html',
   styleUrl: './menu-items.component.scss',
 })

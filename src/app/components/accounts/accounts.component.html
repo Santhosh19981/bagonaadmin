@@ -3,9 +3,9 @@
   <app-sidemenu [menuFromParent]="'accounts'" #sidebarComponent></app-sidemenu>
 
   <!-- MAIN CONTENT -->
-  <main class="lg:ml-72 min-h-screen transition-all duration-300">
+  <main class="lg:ml-64 min-h-screen transition-all duration-300">
     <!-- Header -->
-    <header class="p-6 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-10 border-b border-slate-200">
+    <header class="px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-10 border-b border-slate-200">
       <div>
         <h1 class="text-2xl font-black text-slate-800 tracking-tight">Accounts & Payouts</h1>
         <p class="text-slate-500 text-sm font-medium mt-1">Manage vendor bank details and settle payments</p>
@@ -19,7 +19,7 @@
       </div>
     </header>
 
-    <div class="p-6 space-y-8 max-w-7xl mx-auto">
+    <div class="px-4 sm:px-6 lg:px-8 py-6 space-y-8">
 
       <!-- Pending Payouts Section (Admin Only) -->
       <section *ngIf="currentUserRole === 4 && pendingPayouts.length > 0"

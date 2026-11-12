@@ -234,6 +234,16 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/vendors/services/${vendorId}`);
   }
 
+  /** Master items for a service (menu items for catering) with the vendor's picks and prices. */
+  getVendorCatalog(vendorId: number, serviceId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/vendor-catalog/${vendorId}/services/${serviceId}`);
+  }
+
+  /** Replaces the vendor's picked items for a service. price_override null = platform price. */
+  saveVendorCatalog(vendorId: number, serviceId: number, items: { item_id: number; price_override: number | null }[]): Observable<any> {
+    return this.http.put(`${this.baseUrl}/vendor-catalog/${vendorId}/services/${serviceId}`, { items });
+  }
+
   getVendorServiceItemsMaster(vendorId: number, serviceId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/vendors/service-items/${vendorId}/${serviceId}`);
   }
@@ -295,6 +305,27 @@ export class ApiService {
 
   deleteOffer(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/offers/${id}`);
+  }
+
+  // --- DISCOUNT RULES (guest count / bill amount) ---
+  getDiscounts(actor: { actor_id: number; actor_role: number }): Observable<any> {
+    return this.http.get(`${this.baseUrl}/discounts`, { params: actor as any });
+  }
+
+  createDiscount(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/discounts`, data);
+  }
+
+  updateDiscount(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/discounts/${id}`, data);
+  }
+
+  setDiscountStatus(id: number, isActive: number, actor: { actor_id: number; actor_role: number }): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/discounts/${id}/status`, { ...actor, is_active: isActive });
+  }
+
+  deleteDiscount(id: number, actor: { actor_id: number; actor_role: number }): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/discounts/${id}`, { params: actor as any });
   }
 
   // --- ORDER MANAGEMENT ---

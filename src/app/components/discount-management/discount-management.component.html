@@ -1,0 +1,423 @@
+<div class="flex h-screen bg-[#f8fafc] overflow-hidden">
+    <app-sidemenu [menuFromParent]="'discount-management'" #sidebarComponent></app-sidemenu>
+
+    <div class="flex-1 lg:ml-64 flex flex-col min-w-0 overflow-hidden">
+        <app-header (mobileMenuToggle)="sidebarComponent.toggleSidebar()"></app-header>
+
+        <main class="flex-1 overflow-y-auto px-4 py-8 sm:px-6 lg:px-8">
+            <div class="space-y-6">
+
+                <!-- Page Header -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-black text-slate-800 tracking-tight">Discounts</h1>
+                        <p class="text-sm text-slate-500 font-medium">
+                            Reward bigger orders automatically by guest count or bill amount
+                            <span *ngIf="isAdmin"> &middot; your discounts apply to every vendor and chef</span>
+                        </p>
+                    </div>
+                    <button (click)="openAddModal()"
+                        class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-2xl shadow-lg shadow-orange-600/30 transition-all active:scale-95 flex items-center justify-center gap-2">
+                        <i class="bi bi-plus-lg"></i>
+                        Create Discount
+                    </button>
+                </div>
+
+                <!-- Summary + Filters -->
+                <div *ngIf="!loading && discounts.length > 0" class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex flex-wrap gap-2">
+                        <button (click)="filter = 'all'"
+                            [class]="filter === 'all' ? 'bg-slate-800 text-white' : 'bg-white text-slate-500 hover:text-slate-800 border border-slate-100'"
+                            class="px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all">
+                            All <span class="opacity-60">({{ discounts.length }})</span>
+                        </button>
+                        <button (click)="filter = 'guest_count'"
+                            [class]="filter === 'guest_count' ? 'bg-slate-800 text-white' : 'bg-white text-slate-500 hover:text-slate-800 border border-slate-100'"
+                            class="px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all">
+                            <i class="bi bi-people mr-1"></i> Guest Count <span class="opacity-60">({{ countBy('guest_count') }})</span>
+                        </button>
+                        <button (click)="filter = 'bill_amount'"
+                            [class]="filter === 'bill_amount' ? 'bg-slate-800 text-white' : 'bg-white text-slate-500 hover:text-slate-800 border border-slate-100'"
+                            class="px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all">
+                            <i class="bi bi-receipt mr-1"></i> Bill Amount <span class="opacity-60">({{ countBy('bill_amount') }})</span>
+                        </button>
+                    </div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                        <span class="text-green-600 font-black">{{ activeCount }}</span> live now
+                    </p>
+                </div>
+
+                <!-- Discounts Grid -->
+                <div *ngIf="!loading && filteredDiscounts.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div *ngFor="let d of filteredDiscounts"
+                        class="group bg-white rounded-[2.5rem] p-6 border border-slate-100/60 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col relative overflow-hidden"
+                        [class.opacity-70]="statusOf(d) === 'paused' || statusOf(d) === 'expired'">
+
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-orange-50 rounded-bl-[5rem] -mr-8 -mt-8 opacity-40 group-hover:bg-orange-100 transition-colors"></div>
+
+                        <div class="relative space-y-4 flex flex-col flex-grow">
+                            <div class="flex justify-between items-start gap-2">
+                                <div class="flex flex-wrap gap-1.5">
+                                    <div class="px-3 py-1 bg-orange-50 text-orange-600 rounded-xl text-[10px] font-black tracking-widest uppercase border border-orange-100">
+                                        {{ valueLabel(d) }}
+                                    </div>
+                                    <div *ngIf="d.scope === 'platform'"
+                                        class="px-3 py-1 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-black tracking-widest uppercase border border-blue-100"
+                                        title="Applies to every vendor and chef">
+                                        <i class="bi bi-globe2"></i> Platform
+                                    </div>
+                                </div>
+                                <div *ngIf="d.can_edit" class="flex gap-1 shrink-0">
+                                    <button (click)="openEditModal(d)" title="Edit"
+                                        class="p-2 hover:bg-slate-50 text-slate-400 hover:text-blue-500 rounded-xl transition-colors">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button (click)="askDelete(d)" title="Delete"
+                                        class="p-2 hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-xl transition-colors">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </div>
+                                <span *ngIf="!d.can_edit" class="p-2 text-slate-300" title="Managed by admin">
+                                    <i class="bi bi-lock"></i>
+                                </span>
+                            </div>
+
+                            <div>
+                                <h3 class="font-black text-slate-800 text-lg truncate" [title]="d.title">{{ d.title }}</h3>
+                                <p *ngIf="d.description" class="text-xs text-slate-500 font-medium line-clamp-2 mt-1">{{ d.description }}</p>
+                                <p *ngIf="isAdmin && d.scope === 'vendor'" class="text-[11px] text-slate-400 font-bold mt-1 truncate">
+                                    <i class="bi bi-shop mr-1"></i>{{ d.vendor_name || ('Partner #' + d.vendor_id) }}
+                                </p>
+                            </div>
+
+                            <!-- Condition -->
+                            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl">
+                                <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-orange-500 shadow-sm shrink-0">
+                                    <i class="bi" [class.bi-people]="d.rule_type === 'guest_count'" [class.bi-receipt]="d.rule_type === 'bill_amount'"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Applies When</p>
+                                    <p class="text-[12px] font-bold text-slate-700 truncate">{{ conditionLabel(d) }}</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 flex-grow">
+                                <div>
+                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Valid</p>
+                                    <p class="text-[11px] font-bold text-slate-700">
+                                        <ng-container *ngIf="d.start_date || d.end_date; else always">
+                                            {{ d.start_date ? (d.start_date | date:'d MMM') : 'Now' }} – {{ d.end_date ? (d.end_date | date:'d MMM y') : 'No expiry' }}
+                                        </ng-container>
+                                        <ng-template #always>Always</ng-template>
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Times Used</p>
+                                    <p class="text-[11px] font-bold text-slate-700">{{ d.times_used }} orders</p>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-t border-slate-50 flex items-center justify-between">
+                                <div class="flex flex-col">
+                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Status</p>
+                                    <span class="text-[10px] font-black uppercase tracking-widest mt-0.5 px-2 py-0.5 rounded-lg w-fit" [class]="statusClass(d)">
+                                        {{ statusOf(d) }}
+                                    </span>
+                                </div>
+                                <button *ngIf="d.can_edit" (click)="toggleStatus(d)" [disabled]="togglingId === d.id"
+                                    [class]="d.is_active ? 'bg-slate-100 text-slate-600 hover:bg-slate-200' : 'bg-green-100 text-green-600 hover:bg-green-200'"
+                                    class="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-50">
+                                    {{ d.is_active ? 'Pause' : 'Activate' }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter has no results -->
+                <div *ngIf="!loading && discounts.length > 0 && filteredDiscounts.length === 0"
+                    class="text-center py-16 bg-white rounded-[3rem] border border-slate-100">
+                    <p class="text-sm font-bold text-slate-500">No discounts of this type yet.</p>
+                    <button (click)="openAddModal()" class="mt-3 text-orange-600 font-bold text-sm hover:underline">Create one</button>
+                </div>
+
+                <!-- Empty State -->
+                <div *ngIf="!loading && discounts.length === 0"
+                    class="flex flex-col items-center justify-center py-20 px-6 text-center bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
+                    <div class="w-20 h-20 bg-orange-50 rounded-3xl flex items-center justify-center mb-4">
+                        <i class="bi bi-percent text-3xl text-orange-300"></i>
+                    </div>
+                    <h3 class="text-lg font-black text-slate-800">No Discounts Yet</h3>
+                    <p class="text-sm text-slate-400 font-medium mt-1 max-w-md">
+                        Example: 10% off when an order has 100+ guests, or ₹2,000 off bills above ₹25,000.
+                    </p>
+                    <button (click)="openAddModal()" class="mt-6 text-orange-600 font-bold text-sm hover:underline">Create Discount Now</button>
+                </div>
+
+                <!-- Loading State -->
+                <div *ngIf="loading" class="flex justify-center py-20">
+                    <div class="w-10 h-10 border-4 border-slate-100 border-t-orange-600 rounded-full animate-spin"></div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Create / Edit Modal -->
+    <div *ngIf="showModal" (click)="closeModal()"
+        class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-sm">
+        <div (click)="$event.stopPropagation()"
+            class="bg-white w-full max-w-4xl max-h-[96vh] rounded-[1.75rem] shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
+
+            <!-- Header -->
+            <div class="flex items-center justify-between gap-4 px-6 py-4 border-b border-slate-100 shrink-0">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
+                        <i class="bi bi-percent"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <h2 class="text-base font-black text-slate-800 leading-tight">{{ isEdit ? 'Update' : 'Create' }} Discount</h2>
+                        <p class="text-[11px] text-slate-400 font-medium truncate">Applied automatically at checkout when an order qualifies</p>
+                    </div>
+                </div>
+                <button (click)="closeModal()" class="w-8 h-8 flex items-center justify-center hover:bg-slate-100 rounded-lg transition-colors shrink-0" title="Close">
+                    <i class="bi bi-x-lg text-slate-400"></i>
+                </button>
+            </div>
+
+            <!-- Body (fits without scrolling on normal screens; scrolls only on very small ones) -->
+            <div class="flex-1 overflow-y-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-5">
+
+                    <!-- Form -->
+                    <div class="lg:col-span-3 px-6 py-5 space-y-4">
+
+                        <!-- Details -->
+                        <section class="space-y-2.5">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Details</p>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1 px-0.5">Title <span class="text-red-400">*</span></label>
+                                <input type="text" [(ngModel)]="form.title" (ngModelChange)="revalidate()" maxlength="100"
+                                    placeholder="e.g. Bulk Order Saver"
+                                    [class.ring-2]="errors['title']" [class.ring-red-300]="errors['title']"
+                                    class="w-full px-3.5 py-2.5 bg-slate-50 border-none rounded-xl text-sm font-semibold text-slate-800 placeholder:text-slate-300 focus:ring-2 focus:ring-orange-500/20 outline-none">
+                                <p *ngIf="errors['title']" class="text-[11px] text-red-500 font-semibold mt-1 px-0.5">{{ errors['title'] }}</p>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1 px-0.5">
+                                    <label class="text-[11px] font-bold text-slate-600">Description <span class="font-medium text-slate-400">(optional)</span></label>
+                                    <span class="text-[10px] font-semibold text-slate-300">{{ (form.description || '').length }}/255</span>
+                                </div>
+                                <input type="text" [(ngModel)]="form.description" (ngModelChange)="revalidate()" maxlength="255"
+                                    placeholder="Shown to customers when the discount applies"
+                                    class="w-full px-3.5 py-2.5 bg-slate-50 border-none rounded-xl text-sm font-semibold text-slate-800 placeholder:text-slate-300 focus:ring-2 focus:ring-orange-500/20 outline-none">
+                                <p *ngIf="errors['description']" class="text-[11px] text-red-500 font-semibold mt-1 px-0.5">{{ errors['description'] }}</p>
+                            </div>
+                        </section>
+
+                        <!-- Apply when -->
+                        <section class="space-y-2.5">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Apply When <span class="text-red-400">*</span></p>
+                            <div class="grid grid-cols-2 gap-2.5">
+                                <button type="button" (click)="setRuleType('guest_count')"
+                                    [class]="form.rule_type === 'guest_count' ? 'border-orange-500 bg-orange-50/60' : 'border-slate-100 hover:border-slate-200 bg-white'"
+                                    class="px-3 py-2 rounded-xl border-2 border-solid text-left transition-all flex items-center gap-2.5">
+                                    <span [class]="form.rule_type === 'guest_count' ? 'bg-orange-600 text-white' : 'bg-slate-100 text-slate-500'"
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors"><i class="bi bi-people"></i></span>
+                                    <span class="min-w-0">
+                                        <span class="block text-sm font-bold text-slate-800 leading-tight">Guest Count</span>
+                                        <span class="block text-[10px] text-slate-400 font-medium">Number of guests</span>
+                                    </span>
+                                </button>
+                                <button type="button" (click)="setRuleType('bill_amount')"
+                                    [class]="form.rule_type === 'bill_amount' ? 'border-orange-500 bg-orange-50/60' : 'border-slate-100 hover:border-slate-200 bg-white'"
+                                    class="px-3 py-2 rounded-xl border-2 border-solid text-left transition-all flex items-center gap-2.5">
+                                    <span [class]="form.rule_type === 'bill_amount' ? 'bg-orange-600 text-white' : 'bg-slate-100 text-slate-500'"
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors"><i class="bi bi-receipt"></i></span>
+                                    <span class="min-w-0">
+                                        <span class="block text-sm font-bold text-slate-800 leading-tight">Bill Amount</span>
+                                        <span class="block text-[10px] text-slate-400 font-medium">Order subtotal</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1 px-0.5">
+                                    {{ form.rule_type === 'guest_count' ? 'Minimum guests' : 'Minimum bill amount' }} <span class="text-red-400">*</span>
+                                </label>
+                                <div class="relative">
+                                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">
+                                        {{ form.rule_type === 'guest_count' ? '≥' : '₹' }}
+                                    </span>
+                                    <input type="number" [(ngModel)]="form.min_value" (ngModelChange)="revalidate()" min="1"
+                                        [step]="form.rule_type === 'guest_count' ? 1 : 100"
+                                        [placeholder]="form.rule_type === 'guest_count' ? '100' : '25000'"
+                                        [class.ring-2]="errors['min_value']" [class.ring-red-300]="errors['min_value']"
+                                        class="w-full pl-9 pr-20 py-2.5 bg-slate-50 border-none rounded-xl text-sm font-semibold text-slate-800 placeholder:text-slate-300 focus:ring-2 focus:ring-orange-500/20 outline-none">
+                                    <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">
+                                        {{ form.rule_type === 'guest_count' ? 'guests' : 'or more' }}
+                                    </span>
+                                </div>
+                                <p *ngIf="errors['min_value']" class="text-[11px] text-red-500 font-semibold mt-1 px-0.5">{{ errors['min_value'] }}</p>
+                            </div>
+                        </section>
+
+                        <!-- Discount: type | value | max -->
+                        <section class="space-y-2.5">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Discount <span class="text-red-400">*</span></p>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-600 mb-1 px-0.5">Type</label>
+                                    <div class="grid grid-cols-2 gap-1 p-1 bg-slate-50 rounded-xl">
+                                        <button type="button" (click)="setDiscountType('fixed')"
+                                            [class]="form.discount_type === 'fixed' ? 'bg-white text-orange-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                                            class="py-1.5 rounded-lg text-xs font-bold transition-all">₹ Fixed</button>
+                                        <button type="button" (click)="setDiscountType('percentage')"
+                                            [class]="form.discount_type === 'percentage' ? 'bg-white text-orange-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                                            class="py-1.5 rounded-lg text-xs font-bold transition-all">% Percent</button>
+                                    </div>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-[11px] font-bold text-slate-600 mb-1 px-0.5">
+                                        {{ form.discount_type === 'percentage' ? 'Percentage off' : 'Amount off' }}
+                                    </label>
+                                    <div class="relative">
+                                        <span *ngIf="form.discount_type === 'fixed'" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">₹</span>
+                                        <input type="number" [(ngModel)]="form.discount_value" (ngModelChange)="revalidate()" min="0"
+                                            [max]="form.discount_type === 'percentage' ? 99.99 : 10000000"
+                                            [placeholder]="form.discount_type === 'percentage' ? '10' : '2000'"
+                                            [class.pl-9]="form.discount_type === 'fixed'" [class.pl-3.5]="form.discount_type !== 'fixed'"
+                                            [class.ring-2]="errors['discount_value']" [class.ring-red-300]="errors['discount_value']"
+                                            class="w-full pr-9 py-2.5 bg-slate-50 border-none rounded-xl text-sm font-semibold text-slate-800 placeholder:text-slate-300 focus:ring-2 focus:ring-orange-500/20 outline-none">
+                                        <span *ngIf="form.discount_type === 'percentage'" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p *ngIf="errors['discount_value']" class="text-[11px] text-red-500 font-semibold px-0.5">
+                                {{ errors['discount_value'] }}
+                            </p>
+                        </section>
+
+                        <!-- Validity: Always switch | start | end -->
+                        <section class="space-y-2.5">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Validity</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 items-end">
+                                <button type="button" (click)="toggleAlways()"
+                                    [class]="form.always ? 'border-orange-500 bg-orange-50/60' : 'border-slate-100 bg-white hover:border-slate-200'"
+                                    class="h-[42px] px-3 rounded-xl border-2 border-solid flex items-center justify-between gap-2 transition-all">
+                                    <span class="text-sm font-bold text-slate-800">Always</span>
+                                    <span [class]="form.always ? 'bg-orange-600' : 'bg-slate-200'" class="relative w-9 h-5 rounded-full transition-colors shrink-0">
+                                        <span [class]="form.always ? 'translate-x-4' : 'translate-x-0'"
+                                            class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform"></span>
+                                    </span>
+                                </button>
+                                <ng-container *ngIf="!form.always; else alwaysHint">
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-600 mb-1 px-0.5">Start date <span class="text-red-400">*</span></label>
+                                        <input type="date" [(ngModel)]="form.start_date" (ngModelChange)="revalidate()"
+                                            [class.ring-2]="errors['start_date']" [class.ring-red-300]="errors['start_date']"
+                                            class="w-full px-3 py-2.5 bg-slate-50 border-none rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-orange-500/20 outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-600 mb-1 px-0.5">End date <span class="text-red-400">*</span></label>
+                                        <input type="date" [(ngModel)]="form.end_date" (ngModelChange)="revalidate()" [min]="form.start_date || today"
+                                            [class.ring-2]="errors['end_date']" [class.ring-red-300]="errors['end_date']"
+                                            class="w-full px-3 py-2.5 bg-slate-50 border-none rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-orange-500/20 outline-none">
+                                    </div>
+                                </ng-container>
+                                <ng-template #alwaysHint>
+                                    <p class="sm:col-span-2 h-[42px] flex items-center text-[11px] font-medium text-slate-400 px-1">
+                                        Runs with no end date until you pause it. Turn off to set dates.
+                                    </p>
+                                </ng-template>
+                            </div>
+                            <p *ngIf="!form.always && (errors['start_date'] || errors['end_date'])" class="text-[11px] text-red-500 font-semibold px-0.5">
+                                {{ errors['start_date'] || errors['end_date'] }}
+                            </p>
+                        </section>
+                    </div>
+
+                    <!-- Preview -->
+                    <aside class="lg:col-span-2 bg-slate-50/70 border-t lg:border-t-0 lg:border-l border-slate-100 px-6 py-5 flex flex-col gap-4">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Preview</p>
+
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                            <div class="bg-gradient-to-br from-orange-500 to-orange-600 px-5 py-4 text-white">
+                                <p class="text-[10px] font-black uppercase tracking-widest opacity-80">{{ isAdmin ? 'Platform-wide' : 'Your customers' }}</p>
+                                <p class="text-2xl font-black mt-1 leading-none">{{ form.discount_value ? valueLabel(form) : '—' }}</p>
+                                <p class="text-sm font-semibold mt-1.5 opacity-90 truncate">{{ form.title || 'Discount title' }}</p>
+                            </div>
+                            <div class="px-5 py-3 space-y-2 border-t-2 border-dashed border-slate-100">
+                                <div class="flex items-center gap-2.5 text-sm font-bold text-slate-700">
+                                    <i class="bi text-orange-500" [class.bi-people]="form.rule_type === 'guest_count'" [class.bi-receipt]="form.rule_type === 'bill_amount'"></i>
+                                    {{ form.min_value ? conditionLabel(form) : (form.rule_type === 'guest_count' ? 'Set minimum guests' : 'Set minimum bill') }}
+                                </div>
+                                <div class="flex items-center gap-2.5 text-sm font-bold text-slate-700">
+                                    <i class="bi bi-calendar-event text-orange-500"></i>
+                                    <ng-container *ngIf="!form.always; else alwaysOn">
+                                        {{ form.start_date ? (form.start_date | date:'d MMM') : '…' }} – {{ form.end_date ? (form.end_date | date:'d MMM y') : '…' }}
+                                    </ng-container>
+                                    <ng-template #alwaysOn>Always on</ng-template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <p class="text-xs font-medium text-slate-500 leading-relaxed">{{ preview }}</p>
+                            <div *ngIf="exampleSaving" class="flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 rounded-xl text-xs font-bold">
+                                <i class="bi bi-graph-down-arrow"></i> {{ exampleSaving }}
+                            </div>
+                        </div>
+
+                        <button type="button" (click)="form.is_active = form.is_active ? 0 : 1"
+                            class="mt-auto w-full flex items-center justify-between px-4 py-3 bg-white rounded-xl border border-solid border-slate-100 text-left">
+                            <span>
+                                <span class="block text-sm font-bold text-slate-800">{{ form.is_active ? 'Active' : 'Paused' }}</span>
+                                <span class="block text-[11px] text-slate-400 font-medium">{{ form.is_active ? 'Applies to qualifying orders' : 'Saved but not applied' }}</span>
+                            </span>
+                            <span [class]="form.is_active ? 'bg-orange-600' : 'bg-slate-200'" class="relative w-11 h-6 rounded-full transition-colors shrink-0">
+                                <span [class]="form.is_active ? 'translate-x-5' : 'translate-x-0'"
+                                    class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"></span>
+                            </span>
+                        </button>
+                    </aside>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 px-6 py-3.5 border-t border-slate-100 bg-white shrink-0">
+                <button (click)="closeModal()" [disabled]="submitting"
+                    class="px-6 py-2.5 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-all disabled:opacity-50">Cancel</button>
+                <button (click)="saveDiscount()" [disabled]="submitting"
+                    class="sm:min-w-[190px] px-6 py-2.5 bg-orange-600 text-white font-bold rounded-xl shadow-lg shadow-orange-600/30 hover:bg-orange-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+                    <span *ngIf="submitting" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                    {{ submitting ? 'Saving...' : (isEdit ? 'Update Discount' : 'Create Discount') }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete confirmation -->
+    <div *ngIf="deleteTarget"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 text-center space-y-4">
+            <div class="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mx-auto">
+                <i class="bi bi-trash3 text-xl text-red-500"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-black text-slate-800">Delete discount?</h3>
+                <p class="text-sm text-slate-500 font-medium mt-1">
+                    "{{ deleteTarget.title }}" will stop applying to new orders. Orders that already used it keep their discount.
+                </p>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button (click)="cancelDelete()" [disabled]="deleting"
+                    class="flex-1 px-4 py-3 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all disabled:opacity-50">Cancel</button>
+                <button (click)="confirmDelete()" [disabled]="deleting"
+                    class="flex-1 px-4 py-3 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+                    <span *ngIf="deleting" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

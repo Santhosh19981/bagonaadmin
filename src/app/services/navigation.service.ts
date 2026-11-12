@@ -147,6 +147,13 @@ export class NavigationService {
             roles: [3, 4] // Vendor and Admin
         },
         {
+            id: 'discount-management',
+            label: 'Discounts',
+            route: '/discount-management',
+            icon: 'discounts',
+            roles: [2, 3, 4] // Chef, Vendor and Admin
+        },
+        {
             id: 'accounts',
             label: 'Accounts',
             route: '/accounts',

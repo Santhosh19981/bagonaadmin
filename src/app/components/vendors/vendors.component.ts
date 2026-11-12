@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SidemenuComponent } from '../sidemenu/sidemenu.component';
 import { HeaderComponent } from '../header/header.component';
+import { PagerComponent } from '../pager/pager.component';
 import { ApiService } from '../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-vendors',
   standalone: true,
-  imports: [CommonModule, FormsModule, SidemenuComponent, HeaderComponent],
+  imports: [CommonModule, FormsModule, SidemenuComponent, HeaderComponent, PagerComponent],
   templateUrl: './vendors.component.html',
   styleUrl: './vendors.component.scss'
 })

@@ -89,7 +89,7 @@
                                  <td class="px-6 py-4 text-center">
                                      <span
                                          class="px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-wider">
-                                         {{service.item_count || 0}} Items
+                                         {{service.item_count || 0}} {{ service.catalog_kind === 'menu' ? 'Dishes' : 'Items' }}
                                      </span>
                                  </td>
                                  <td class="px-8 py-4 text-right">
@@ -97,7 +97,7 @@
                                          class="inline-flex items-center gap-2 px-5 py-2 bg-slate-100 hover:bg-slate-900 text-slate-600 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm active:scale-95 group/btn">
                                          <i
                                              class="bi bi-pencil-square transition-transform group-hover/btn:rotate-12"></i>
-                                         <span>Edit items</span>
+                                         <span>Items &amp; Prices</span>
                                      </button>
                                  </td>
                              </tr>
@@ -119,108 +119,190 @@
         </main>
     </section>
 
-    <!-- CURATE ITEMS MODAL (Fixed Overlay) -->
-    <div *ngIf="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <!-- Backdrop -->
-        <div (click)="closeItems()"
-            class="absolute inset-0 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300"></div>
+    <!-- PICK ITEMS & SET PRICES MODAL -->
+    <div *ngIf="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6">
+        <div (click)="closeItems()" class="absolute inset-0 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300"></div>
 
-        <!-- Modal Content -->
-        <div
-            class="relative w-full max-w-2xl bg-white rounded-[40px] shadow-2xl border border-white/20 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 slide-in-from-bottom-5 duration-300">
+        <div class="relative w-full max-w-5xl bg-white rounded-[28px] shadow-2xl overflow-hidden flex flex-col max-h-[94vh] animate-in zoom-in-95 duration-300">
 
-            <!-- Modal Header -->
-            <div class="px-8 py-6 border-b border-slate-50 bg-slate-50/30 flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div
-                        class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-yellow-500 to-orange-400 flex items-center justify-center text-white shadow-lg">
-                        <i class="bi bi-pencil-square text-xl"></i>
+            <!-- Header -->
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between gap-4 shrink-0">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-yellow-500 to-orange-400 flex items-center justify-center text-white shadow-lg shrink-0">
+                        <i class="bi" [class.bi-egg-fried]="catalogKind === 'menu'" [class.bi-box-seam]="catalogKind !== 'menu'"></i>
                     </div>
-                    <div>
-                        <h2 class="text-xl font-black text-slate-900 tracking-tight">{{ selectedService.name }}</h2>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Select items you offer
-                            for this service</p>
+                    <div class="min-w-0">
+                        <h2 class="text-lg font-black text-slate-900 tracking-tight truncate">{{ selectedService.name }}</h2>
+                        <p class="text-[11px] font-medium text-slate-400 truncate">
+                            Pick the {{ catalogKind === 'menu' ? 'dishes' : 'items' }} you provide from the Bhagona catalog and set your own price.
+                            Leave the price empty to use the platform price.
+                        </p>
                     </div>
                 </div>
-                <button (click)="closeItems()"
-                    class="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors">
+                <button (click)="closeItems()" class="w-9 h-9 rounded-full bg-slate-50 hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors shrink-0">
                     <i class="bi bi-x-lg text-sm"></i>
                 </button>
             </div>
 
-            <!-- Search & Actions -->
-            <div
-                class="px-8 py-4 bg-white/50 backdrop-blur-sm border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div class="relative flex-1 w-full">
-                    <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
-                    <input type="text" [(ngModel)]="itemSearchQuery" placeholder="Search items in this service..."
-                        class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-[13px] focus:ring-4 focus:ring-yellow-500/10 focus:border-yellow-500/30 transition-all outline-none font-medium">
+            <!-- Toolbar -->
+            <div class="px-6 py-3 border-b border-slate-100 space-y-3 shrink-0">
+                <div class="flex flex-col lg:flex-row lg:items-center gap-3">
+                    <div class="relative flex-1">
+                        <i class="bi bi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                        <input type="text" [(ngModel)]="itemSearchQuery"
+                            [placeholder]="'Search ' + items.length + (catalogKind === 'menu' ? ' dishes...' : ' items...')"
+                            class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-4 focus:ring-yellow-500/10 focus:border-yellow-500/30 outline-none font-medium">
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <div class="flex p-1 bg-slate-50 rounded-xl border border-slate-100">
+                            <button (click)="showOnlySelected = false"
+                                [class]="!showOnlySelected ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-400'"
+                                class="px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">All</button>
+                            <button (click)="showOnlySelected = true"
+                                [class]="showOnlySelected ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-400'"
+                                class="px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all">Selected ({{ selectedItemCount }})</button>
+                        </div>
+                        <!-- Bulk price adjust -->
+                        <div class="flex items-center bg-slate-50 rounded-xl border border-slate-100 pl-3">
+                            <span class="text-[11px] font-bold text-slate-400 whitespace-nowrap">Adjust selected</span>
+                            <input type="number" [(ngModel)]="bulkPercent" placeholder="±%" (keyup.enter)="applyBulkPercent()"
+                                class="w-16 mx-2 px-2 py-1.5 bg-white border border-slate-100 rounded-lg text-xs font-bold text-center outline-none focus:border-yellow-500/40">
+                            <button (click)="applyBulkPercent()"
+                                class="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-r-xl text-[11px] font-bold transition-all">Apply</button>
+                        </div>
+                        <button (click)="toggleAllVisible()"
+                            class="px-3 py-2 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-xl text-[11px] font-bold border border-solid border-slate-100 transition-all whitespace-nowrap">
+                            {{ allVisibleSelected ? 'Deselect' : 'Select' }} {{ itemSearchQuery || categoryFilter !== 'all' ? 'shown' : 'all' }}
+                        </button>
+                    </div>
                 </div>
-                <div class="flex items-center gap-3 w-full sm:w-auto">
-                    <button (click)="toggleAllItems()"
-                        class="flex-1 sm:flex-none px-4 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-500 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-slate-100">
-                        {{ isAllSelected ? 'Deselect All' : 'Select All' }}
+
+                <!-- Categories (catering menu) -->
+                <div *ngIf="catalogKind === 'menu' && categories.length" class="flex gap-2 overflow-x-auto pb-1 -mb-1 custom-scrollbar">
+                    <button (click)="categoryFilter = 'all'"
+                        [class]="categoryFilter === 'all' ? 'bg-yellow-500 text-white border-yellow-500' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-300'"
+                        class="px-3 py-1.5 rounded-full border border-solid text-[11px] font-bold whitespace-nowrap transition-all">All dishes</button>
+                    <button *ngFor="let c of categories" (click)="categoryFilter = c"
+                        [class]="categoryFilter === c ? 'bg-yellow-500 text-white border-yellow-500' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-300'"
+                        class="px-3 py-1.5 rounded-full border border-solid text-[11px] font-bold whitespace-nowrap transition-all">
+                        {{ c }} <span *ngIf="selectedInCategory(c)" class="ml-1 opacity-70">· {{ selectedInCategory(c) }}</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Items List -->
-            <div class="flex-1 overflow-y-auto p-8 custom-scrollbar min-h-0 bg-slate-50/30">
+            <!-- Column headings -->
+            <div *ngIf="!loadingItems && filteredItems.length"
+                class="hidden md:grid grid-cols-[28px_1fr_110px_170px_70px] gap-4 px-6 py-2 bg-slate-50/70 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest shrink-0">
+                <span></span>
+                <span>{{ catalogKind === 'menu' ? 'Dish' : 'Item' }}</span>
+                <span class="text-right">Platform price</span>
+                <span>Your price</span>
+                <span class="text-right">Change</span>
+            </div>
+
+            <!-- Items -->
+            <div class="flex-1 overflow-y-auto min-h-0 custom-scrollbar">
                 <div *ngIf="loadingItems" class="flex flex-col items-center justify-center py-20 gap-3">
-                    <div class="w-10 h-10 border-4 border-slate-100 border-t-yellow-500 rounded-full animate-spin">
-                    </div>
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Fetching Master Items...
-                    </p>
+                    <div class="w-10 h-10 border-4 border-slate-100 border-t-yellow-500 rounded-full animate-spin"></div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Loading catalog...</p>
                 </div>
 
-                <div *ngIf="!loadingItems" class="grid grid-cols-1 gap-3">
-                    <div *ngFor="let item of filteredServiceItems" (click)="toggleItem(item)"
-                        class="group relative flex items-center gap-4 p-4 rounded-3xl bg-white border transition-all cursor-pointer select-none
-                                {{ item.is_selected ? 'border-yellow-500 bg-yellow-50/30 shadow-md shadow-yellow-500/5' : 'border-slate-100 hover:border-slate-300' }}">
+                <div *ngIf="!loadingItems" class="divide-y divide-slate-50">
+                    <div *ngFor="let item of filteredItems; trackBy: trackItem"
+                        [ngClass]="{ 'bg-yellow-50/40': item.is_selected }"
+                        class="grid grid-cols-[28px_1fr] md:grid-cols-[28px_1fr_110px_170px_70px] gap-x-4 gap-y-2 items-center px-6 py-3 hover:bg-slate-50/60 transition-colors">
 
-                        <!-- Checkmark -->
-                        <div
-                            class="w-6 h-6 rounded-full flex items-center justify-center transition-all flex-shrink-0
-                                    {{ item.is_selected ? 'bg-yellow-500 text-white scale-110 shadow-lg shadow-yellow-500/30' : 'bg-slate-50 text-slate-300 group-hover:bg-slate-100' }}">
-                            <i class="bi bi-check-lg text-xs font-black"></i>
+                        <!-- Checkbox -->
+                        <button (click)="toggleItem(item)" [attr.aria-pressed]="!!item.is_selected"
+                            [class]="item.is_selected ? 'bg-yellow-500 border-yellow-500 text-white' : 'bg-white border-slate-300 text-transparent hover:border-yellow-500'"
+                            class="w-6 h-6 shrink-0 rounded-lg border-2 border-solid flex items-center justify-center transition-all">
+                            <i class="bi bi-check-lg text-xs"></i>
+                        </button>
+
+                        <!-- Item -->
+                        <div (click)="toggleItem(item)" class="flex items-center gap-3 min-w-0 cursor-pointer select-none">
+                            <div class="w-10 h-10 rounded-xl bg-slate-100 overflow-hidden shrink-0 flex items-center justify-center">
+                                <img *ngIf="item.display_url" [src]="item.display_url" [alt]="item.name" class="w-full h-full object-cover" loading="lazy">
+                                <i *ngIf="!item.display_url" class="bi text-slate-300" [class.bi-egg-fried]="catalogKind === 'menu'" [class.bi-box]="catalogKind !== 'menu'"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-bold text-slate-800 truncate">{{ item.name }}</p>
+                                <p class="text-[11px] text-slate-400 font-medium truncate">
+                                    {{ catalogKind === 'menu' ? (item.category_name || 'Other') : (item.quantity_type || 'Standard') }}
+                                    <span class="md:hidden"> · Platform ₹{{ item.base_price | number:'1.0-2' }}</span>
+                                </p>
+                            </div>
                         </div>
 
-                        <!-- Info -->
-                        <div class="flex-1 min-w-0">
-                            <h4 class="text-sm font-black text-slate-800 leading-tight">{{ item.name }}</h4>
-                            <p class="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">{{
-                                item.quantity_type || 'Standard' }}</p>
+                        <!-- Platform price -->
+                        <p class="hidden md:block text-right text-sm font-bold"
+                            [class.text-slate-400]="hasCustomPrice(item)" [class.line-through]="hasCustomPrice(item) && !errors[item.item_id]"
+                            [class.text-slate-700]="!hasCustomPrice(item)">
+                            ₹{{ item.base_price | number:'1.0-2' }}
+                        </p>
+
+                        <!-- Your price -->
+                        <div class="col-start-2 md:col-start-auto">
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">₹</span>
+                                <input type="number" min="0.01" step="0.01"
+                                    [(ngModel)]="item.priceInput" (ngModelChange)="onPriceChange(item)"
+                                    [placeholder]="(item.base_price | number:'1.0-2') + ' (platform)'"
+                                    [disabled]="!item.is_selected"
+                                    [class.ring-2]="errors[item.item_id]" [class.ring-red-300]="errors[item.item_id]"
+                                    class="w-full pl-7 pr-8 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-800 placeholder:text-slate-300 placeholder:font-medium outline-none focus:border-yellow-500/50 focus:ring-2 focus:ring-yellow-500/10 disabled:bg-slate-50 disabled:text-slate-300 disabled:cursor-not-allowed">
+                                <button *ngIf="hasCustomPrice(item)" (click)="resetPrice(item)" title="Use platform price"
+                                    class="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-md text-slate-300 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center">
+                                    <i class="bi bi-arrow-counterclockwise text-xs"></i>
+                                </button>
+                            </div>
+                            <p *ngIf="errors[item.item_id]" class="text-[10px] text-red-500 font-semibold mt-0.5">{{ errors[item.item_id] }}</p>
                         </div>
 
-                        <!-- Price -->
-                        <div *ngIf="item.price" class="px-3 py-1 bg-white border border-slate-100 rounded-xl">
-                            <span class="text-xs font-black text-slate-900">₹{{ item.price }}</span>
+                        <!-- Change -->
+                        <div class="col-start-2 md:col-start-auto md:text-right">
+                            <span *ngIf="priceChange(item) as ch"
+                                [class]="ch > 0 ? 'bg-orange-50 text-orange-600' : 'bg-green-50 text-green-600'"
+                                class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md text-[11px] font-black">
+                                <i class="bi" [class.bi-arrow-up-short]="ch > 0" [class.bi-arrow-down-short]="ch < 0"></i>{{ ch > 0 ? '+' : '' }}{{ ch }}%
+                            </span>
+                            <span *ngIf="!priceChange(item) && item.is_selected" class="text-[11px] font-bold text-slate-300">Platform</span>
                         </div>
                     </div>
 
-                    <!-- No Items State -->
-                    <div *ngIf="serviceItems.length === 0" class="text-center py-10 opacity-50">
+                    <!-- Empty -->
+                    <div *ngIf="filteredItems.length === 0" class="text-center py-16">
                         <i class="bi bi-box2 text-2xl text-slate-300 block mb-2"></i>
-                        <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">No items found for
-                            this service</p>
+                        <p class="text-sm font-bold text-slate-500">
+                            {{ items.length === 0 ? 'Bhagona has not added items to this service yet.' : (showOnlySelected ? 'Nothing selected yet.' : 'No matches for your search.') }}
+                        </p>
                     </div>
                 </div>
             </div>
 
-            <!-- Modal Footer -->
-            <div class="px-8 py-6 border-t border-slate-50 bg-white flex items-center justify-between">
-                <div>
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Selected Items</p>
-                    <p class="text-sm font-black text-slate-900">{{ selectedItemCount }} <span
-                            class="text-slate-300 text-[10px] ml-1">Items Checked</span></p>
+            <!-- Footer -->
+            <div class="px-6 py-3.5 border-t border-slate-100 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
+                <div class="flex items-center gap-5">
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Selected</p>
+                        <p class="text-sm font-black text-slate-900">{{ selectedItemCount }} <span class="text-slate-300 text-xs">/ {{ items.length }}</span></p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Custom prices</p>
+                        <p class="text-sm font-black text-slate-900">
+                            {{ customPricedCount }}
+                            <button *ngIf="customPricedCount" (click)="resetAllPrices()" class="ml-1 text-[11px] font-bold text-slate-400 hover:text-slate-700 underline">reset all</button>
+                        </p>
+                    </div>
+                    <p *ngIf="errorCount" class="text-xs font-bold text-red-500"><i class="bi bi-exclamation-circle"></i> {{ errorCount }} invalid price{{ errorCount === 1 ? '' : 's' }}</p>
                 </div>
-                <div class="flex items-center gap-3">
-                    <button (click)="closeItems()"
-                        class="px-6 py-2.5 text-xs font-bold text-slate-400 hover:text-slate-900 transition-colors">Discard</button>
-                    <button (click)="saveItems()" [disabled]="savingItems"
-                        class="px-8 py-2.5 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-yellow-500/20 flex items-center gap-2 active:scale-95">
+                <div class="flex items-center gap-2">
+                    <button (click)="closeItems()" [disabled]="savingItems"
+                        class="px-5 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors disabled:opacity-50">Cancel</button>
+                    <button (click)="saveItems()" [disabled]="savingItems || !isDirty"
+                        class="px-7 py-2.5 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-black transition-all shadow-lg shadow-yellow-500/20 flex items-center gap-2 active:scale-95">
                         <i *ngIf="savingItems" class="bi bi-arrow-repeat animate-spin"></i>
-                        <span>{{ savingItems ? 'Syncing...' : 'Save Selection' }}</span>
+                        {{ savingItems ? 'Saving...' : (isDirty ? 'Save Changes' : 'No Changes') }}
                     </button>
                 </div>
             </div>

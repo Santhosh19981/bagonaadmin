@@ -8,7 +8,7 @@
     <app-header (mobileMenuToggle)="sidebarComponent.toggleSidebar()" (searchEvent)="onSearch($event)"></app-header>
 
     <!-- MAIN -->
-    <main class="p-2 sm:p-6 bg-[#f8fafc]">
+    <main class="p-4 bg-[#f8fafc]">
       <!-- Page Header -->
       <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4" data-aos="fade-down">
         <div>
@@ -293,20 +293,7 @@
 
           <!-- Mobile Pagination -->
           <div *ngIf="filteredMenuItems.length > 0" class="flex justify-center gap-2 pt-4">
-            <button (click)="setPage(currentPage - 1)" [disabled]="currentPage === 1"
-              class="p-2 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-yellow-600 hover:border-yellow-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
-              <i class="bi bi-chevron-left text-sm"></i>
-            </button>
-            <button *ngFor="let p of [].constructor(totalPages); let i = index" (click)="setPage(i + 1)"
-              [class.bg-yellow-500]="currentPage === (i + 1)" [class.text-white]="currentPage === (i + 1)"
-              [class.text-slate-500]="currentPage !== (i + 1)"
-              class="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 text-xs font-black transition-all hover:bg-slate-100">
-              {{i + 1}}
-            </button>
-            <button (click)="setPage(currentPage + 1)" [disabled]="currentPage === totalPages"
-              class="p-2 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-yellow-600 hover:border-yellow-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
-              <i class="bi bi-chevron-right text-sm"></i>
-            </button>
+            <app-pager [currentPage]="currentPage" [totalPages]="totalPages" (pageChange)="setPage($event)"></app-pager>
           </div>
         </div>
 
@@ -331,23 +318,7 @@
           </p>
 
           <div class="flex items-center gap-1">
-            <button (click)="setPage(currentPage - 1)" [disabled]="currentPage === 1"
-              class="p-2 rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-yellow-600 hover:border-yellow-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
-              <i class="bi bi-chevron-left text-sm"></i>
-            </button>
-
-            <div class="flex items-center gap-1 mx-2">
-              <button *ngFor="let p of [].constructor(totalPages); let i = index" (click)="setPage(i + 1)"
-                [class.active-page]="currentPage === (i + 1)"
-                class="w-9 h-9 flex items-center justify-center rounded-xl border border-transparent text-xs font-black transition-all hover:bg-slate-100 text-slate-500">
-                {{i + 1}}
-              </button>
-            </div>
-
-            <button (click)="setPage(currentPage + 1)" [disabled]="currentPage === totalPages"
-              class="p-2 rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-yellow-600 hover:border-yellow-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
-              <i class="bi bi-chevron-right text-sm"></i>
-            </button>
+            <app-pager [currentPage]="currentPage" [totalPages]="totalPages" (pageChange)="setPage($event)"></app-pager>
           </div>
         </div>
       </div>

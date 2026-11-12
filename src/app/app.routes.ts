@@ -21,6 +21,7 @@ import { BannerManagementComponent } from './components/banner-management/banner
 import { ReviewManagementComponent } from './components/review-management/review-management.component';
 import { OfferManagementComponent } from './components/offer-management/offer-management.component';
 import { AccountsComponent } from './components/accounts/accounts.component';
+import { DiscountManagementComponent } from './components/discount-management/discount-management.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full', },
@@ -44,6 +45,7 @@ export const routes: Routes = [
   { path: 'review-management', component: ReviewManagementComponent, canActivate: [AuthGuard] },
   { path: 'offer-management', component: OfferManagementComponent, canActivate: [AuthGuard] },
   { path: 'accounts', component: AccountsComponent, canActivate: [AuthGuard] },
+  { path: 'discount-management', component: DiscountManagementComponent, canActivate: [AuthGuard] },
 
 
 ];

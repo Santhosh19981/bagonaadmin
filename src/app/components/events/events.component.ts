@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SidemenuComponent } from '../sidemenu/sidemenu.component';
 import { HeaderComponent } from '../header/header.component';
+import { PagerComponent } from '../pager/pager.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
@@ -10,7 +11,7 @@ import { config } from '../../config';
 @Component({
   selector: 'app-events',
   standalone: true,
-  imports: [CommonModule, FormsModule, SidemenuComponent, HeaderComponent],
+  imports: [CommonModule, FormsModule, SidemenuComponent, HeaderComponent, PagerComponent],
   templateUrl: './events.component.html',
   styleUrl: './events.component.scss'
 })

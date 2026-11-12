@@ -6,7 +6,7 @@
     <section id="content">
         <app-header (mobileMenuToggle)="sidebarComponent.toggleSidebar()" (searchEvent)="onSearch($event)"></app-header>
 
-        <main class="p-2 sm:p-6 bg-[#f8fafc]">
+        <main class="p-4 bg-[#f8fafc]">
             <!-- Page Header -->
             <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4" data-aos="fade-down">
                 <div>
@@ -338,23 +338,7 @@
                         of <span class="text-slate-700">{{filteredSubcategories.length}}</span> entries
                     </p>
                     <div class="flex items-center gap-1">
-                        <button (click)="setPage(currentPage - 1)" [disabled]="currentPage === 1"
-                            class="w-10 h-10 flex items-center justify-center rounded-xl transition-all"
-                            [ngClass]="currentPage === 1 ? 'text-slate-300' : 'hover:bg-white hover:shadow-md text-slate-600'">
-                            <i class="bi bi-chevron-left"></i>
-                        </button>
-                        <div class="flex items-center gap-1 mx-2">
-                            <button *ngFor="let p of [].constructor(totalPages); let i = index" (click)="setPage(i + 1)"
-                                [ngClass]="currentPage === (i + 1) ? 'bg-yellow-500 text-white shadow-lg shadow-yellow-500/30' : 'hover:bg-white text-slate-400'"
-                                class="w-10 h-10 rounded-xl text-xs font-black transition-all">
-                                {{i + 1}}
-                            </button>
-                        </div>
-                        <button (click)="setPage(currentPage + 1)" [disabled]="currentPage === totalPages"
-                            class="w-10 h-10 flex items-center justify-center rounded-xl transition-all"
-                            [ngClass]="currentPage === totalPages ? 'text-slate-300' : 'hover:bg-white hover:shadow-md text-slate-600'">
-                            <i class="bi bi-chevron-right"></i>
-                        </button>
+                        <app-pager [currentPage]="currentPage" [totalPages]="totalPages" (pageChange)="setPage($event)"></app-pager>
                     </div>
                 </div>
             </div>

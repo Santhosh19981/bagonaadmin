@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { SidemenuComponent } from '../sidemenu/sidemenu.component';
 import { HeaderComponent } from '../header/header.component';
+import { PagerComponent } from '../pager/pager.component';
 import { ApiService } from '../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, SidemenuComponent, HeaderComponent],
+  imports: [CommonModule, SidemenuComponent, HeaderComponent, PagerComponent],
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss']
 })

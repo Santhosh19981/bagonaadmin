@@ -80,7 +80,7 @@
                 </div>
             </div>
 
-            <div class="p-2 sm:p-6 lg:p-8">
+            <div class="p-4">
                 <!-- Enhanced Table UI -->
                 <div class="table-container overflow-x-auto -mx-4 sm:mx-0">
                     <div class="inline-block min-w-full align-middle px-4 sm:px-0">
@@ -162,9 +162,8 @@
                         </table>
 
                         <!-- Premium Pagination -->
-                        <div class="pagination-container border-t border-slate-50" *ngIf="totalPages > 1">
-                            <button *ngFor="let p of [].constructor(totalPages); let i = index" (click)="setPage(i+1)"
-                                [class.active]="currentPage === i+1" class="page-btn">{{i+1}}</button>
+                        <div class="pagination-container border-t border-slate-50 flex justify-end" *ngIf="totalPages > 1">
+                            <app-pager [currentPage]="currentPage" [totalPages]="totalPages" (pageChange)="setPage($event)"></app-pager>
                         </div>
                     </div>
                 </div>
@@ -242,9 +241,8 @@
                             class="bi bi-person-dash text-5xl text-slate-300"></i>
                         <p class="text-slate-400 font-bold mt-4 text-sm">No records found</p>
                     </div>
-                    <div class="flex justify-center gap-2 pt-4" *ngIf="totalPages > 1"><button
-                            *ngFor="let p of [].constructor(totalPages); let i = index" (click)="setPage(i+1)"
-                            [class.active]="currentPage === i+1" class="page-btn">{{i+1}}</button></div>
+                    <div class="flex justify-center gap-2 pt-4" *ngIf="totalPages > 1">
+                        <app-pager [currentPage]="currentPage" [totalPages]="totalPages" (pageChange)="setPage($event)"></app-pager></div>
                 </div>
             </div>
         </main>
